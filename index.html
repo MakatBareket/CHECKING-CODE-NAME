@@ -92,7 +92,7 @@
             } else if (/^Q|U|L|K/.test(model)) {
                 return getTVDetails(model);
             } else {
-                return "❌ לא נמצא מידע על הדגם.";
+                return `⚠️ הדגם שהוזן אינו מזוהה, אך ייתכן שהוא שייך לקטגוריה אחרת. נסה לבדוק שוב.`;
             }
         }
 
