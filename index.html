@@ -68,7 +68,7 @@
         #result {
             margin-top: 25px;
             display: none;
-            text-align: right;
+            text-align: center;
             direction: rtl;
             max-width: 600px;
             margin-left: auto;
@@ -81,21 +81,26 @@
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
             animation: slideIn 0.5s ease-in-out;
             overflow: hidden;
+            text-align: right;
         }
         .card img {
             max-width: 100%;
             height: auto;
             border-radius: 10px;
             margin-top: 15px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
         .card a {
-            display: inline-block;
-            margin-top: 15px;
+            display: block;
+            margin: 15px auto 0;
             padding: 10px 20px;
             background: #007bff;
             color: white;
             text-decoration: none;
             border-radius: 8px;
+            width: fit-content;
             transition: background 0.3s;
         }
         .card a:hover {
@@ -220,7 +225,8 @@
         // דוגמאות לחיפוש חכם
         const sampleModels = [
             'QE85QN85CATXSQ', 'UE65RU8000KXSQ', 'UA43LS03NAU', 'QE50Q7FAAUXIL',
-            'RF65DG965EB1ML', 'WW80TA046AX', 'UA65RU8000KXSQ'
+            'RF65DG965EB1ML', 'WW80TA046AX', 'UA65RU8000KXSQ', 'QE85LS03D',
+            'QE85LS03C', 'QE85LS03B'
         ];
 
         function showSuggestions(input) {
@@ -303,7 +309,7 @@
                         🎨 גימור: ${finish}<br>
                         🌍 מדינה: ${country}<br>
                         ${image ? `<img src="${image}" alt="${config}">` : ''}
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">חיפוש הדגם באתר סמסונג:</a>
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
                     </div>`;
         }
 
@@ -328,31 +334,36 @@
                         🎨 צבע: ${color}<br>
                         🌍 מדינה: ${country}<br>
                         ${image ? `<img src="${image}" alt="מכונת כביסה">` : ''}
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">חיפוש הדגם באתר סמסונג:</a>
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
                     </div>`;
         }
 
         function getTVDetails(model) {
             let display = tvDisplay[model[0]] || 'לא ידוע';
-            if (model.includes('LS03')) display = 'The Frame';
+            let isFrame = model.includes('LS03');
+            if (isFrame) display = 'The Frame';
             let market = tvMarket[model[1]] || 'לא ידוע';
             let size = model[2] + model[3];
             let year = 'לא ידוע';
             let yearIndex = -1;
-            for (let i = 4; i < model.length - 2; i++) {
+
+            // זיהוי שנה דינמי, כולל תיקון ל-The Frame
+            for (let i = 4; i < model.length - (isFrame && model.length <= 10 ? 0 : 2); i++) {
                 if (yearCodes[model[i]]) {
                     year = yearCodes[model[i]];
                     yearIndex = i;
                     break;
                 }
             }
+
             let seriesStart = 4;
             let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
             if (yearIndex !== -1) {
                 seriesStart = 4;
                 seriesEnd = yearIndex;
             }
-            let series = model.includes('LS03') ? 'LS03' : model.slice(seriesStart, seriesEnd);
+            let series = isFrame ? 'LS03' : model.slice(seriesStart, seriesEnd);
+
             let broadcast = 'לא ידוע';
             let country = 'לא ידוע';
             let countryNote = '';
@@ -387,7 +398,7 @@
                         📡 מקלט שידור: ${broadcast}<br>
                         🌍 מדינה: ${country}${countryNote}<br>
                         ${image ? `<img src="${image}" alt="${display}">` : ''}
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">חיפוש הדגם באתר סמסונג:</a>
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
                     </div>`;
         }
     </script>
