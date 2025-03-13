@@ -484,30 +484,30 @@
             }
         }
 
-        function getFridgeDetails(model) {
-            let config = fridgeConfig[model[1]] || 'לא ידוע';
-            let capacity = model[2] + model[3];
-            let capacityLiters = capacity === '28' ? '580 ליטר' : capacity === '58' ? '580 ליטר' : capacity === '68' ? '680 ליטר' : 'לא ידוע';
-            let year = yearCodes[model[4]] || 'לא ידוע';
-            let series = model[5] || 'לא ידוע';
-            let finishCode = model.slice(6, 8);
-            let finish = fridgeFinish[finishCode] || 'לא ידוע';
-            let countryCode = model.slice(-2);
-            let country = countryCodesFridge[countryCode] || 'לא ידוע';
-            let image = productImages[config] || '';
+    function getFridgeDetails(model) {
+    let config = fridgeConfig[model[1]] || 'לא ידוע';
+    let capacityCode = parseInt(model[2] + model[3]); // לוקחים את 2 הספרות
+    let capacityLiters = capacityCode * 10 + ' ליטר'; // מכפילים ב-10
+    let year = yearCodes[model[4]] || 'לא ידוע';
+    let series = model[5] || 'לא ידוע';
+    let finishCode = model.slice(6, 8);
+    let finish = fridgeFinish[finishCode] || 'לא ידוע';
+    let countryCode = model.slice(-2);
+    let country = countryCodesFridge[countryCode] || 'לא ידוע';
+    let image = productImages[config] || '';
 
-            return `<div class="card">
-                        מקרר סמסונג - דגם: ${model}<br>
-                        תצורה: ${config}<br>
-                        נפח: ${capacityLiters}<br>
-                        שנת ייצור: ${year}<br>
-                        סדרת דגם: ${series}<br>
-                        גימור: ${finish}<br>
-                        מדינה: ${country}<br>
-                        ${image ? `<img src="${image}" alt="${config}">` : ''}
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                    </div>`;
-        }
+    return `<div class="card">
+                מקרר סמסונג - דגם: ${model}<br>
+                תצורה: ${config}<br>
+                נפח: ${capacityLiters}<br>
+                שנת ייצור: ${year}<br>
+                סדרת דגם: ${series}<br>
+                גימור: ${finish}<br>
+                מדינה: ${country}<br>
+                ${image ? `<img src="${image}" alt="${config}">` : ''}
+                <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+            </div>`;
+}
 
     function getWasherDetails(model) {
     let tech = washerTech[model.slice(0, 2)] || 'לא ידוע';
