@@ -163,7 +163,7 @@
                 return getFridgeDetails(model);
             } else if (/^W[WD]|DV/.test(model)) {
                 return getWasherDetails(model);
-            } else if (/^[QULPK]/.test(model)) {
+            } else if (/^[QULPK][NEA]/.test(model)) {
                 return getTVDetails(model);
             } else {
                 return `⚠️ הדגם שהוזן אינו מזוהה. אנא ודא שהקוד תקין ונסה שוב.`;
@@ -215,11 +215,47 @@
             if (model.includes('LS03')) display = 'The Frame';
             let market = tvMarket[model[1]] || 'לא ידוע';
             let size = model[2] + model[3];
-            let year = yearCodes[model[4]] || 'לא ידוע';
-            let series = model.slice(5, 9);
-            let broadcast = broadcastStandards[model[9]] || 'לא ידוע';
-            let countryCode = model.slice(-2);
-            let country = countryCodesTV[countryCode] || 'לא ידוע';
+
+            // זיהוי דינמי של שנת הייצור
+            let year = 'לא ידוע';
+            let yearIndex = -1;
+            for (let i = 4; i < model.length - 2; i++) {
+                if (yearCodes[model[i]]) {
+                    year = yearCodes[model[i]];
+                    yearIndex = i;
+                    break;
+                }
+            }
+
+            // זיהוי סדרה דינמי
+            let seriesStart = 4; // ברירת מחדל לפני שנת הייצור
+            let seriesEnd = model.length > 12 ? model.length - 3 : model.length; // לפני מקלט או סוף הקוד
+            if (yearIndex !== -1) {
+                seriesStart = 4; // תחילת הסדרה אחרי גודל המסך
+                seriesEnd = yearIndex; // סוף הסדרה לפני השנה
+            }
+            let series = model.includes('LS03') ? 'LS03' : model.slice(seriesStart, seriesEnd);
+
+            // זיהוי מקלט שידור וקוד מדינה
+            let broadcast = 'לא ידוע';
+            let country = 'לא ידוע';
+            let countryNote = '';
+            if (model.length >= 13) { // קוד מלא עם מדינה ומקלט
+                broadcast = broadcastStandards[model[model.length - 3]] || 'לא ידוע';
+                let countryCode = model.slice(-2);
+                country = countryCodesTV[countryCode] || 'לא ידוע';
+                if (country !== 'ישראל') {
+                    countryNote = ' - יבוא מקביל';
+                }
+            } else if (model.length === 10 || model.length === 12) { // ללא קוד מדינה
+                country = 'לא מצוין';
+                countryNote = ' - יבוא מקביל';
+            }
+
+            // התחלה ב-A (אסיה) מסמנת יבוא מקביל
+            if (model[1] === 'A') {
+                countryNote = ' - יבוא מקביל';
+            }
 
             return `📺 טלוויזיה סמסונג - דגם: ${model}<br>
                     🎨 סוג תצוגה: ${display}<br>
@@ -228,7 +264,7 @@
                     📅 שנת ייצור: ${year}<br>
                     🔢 סדרת דגם: ${series}<br>
                     📡 מקלט שידור: ${broadcast}<br>
-                    🌍 מדינה: ${country}`;
+                    🌍 מדינה: ${country}${countryNote}`;
         }
     </script>
 </body>
