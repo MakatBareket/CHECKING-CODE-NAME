@@ -85,10 +85,10 @@
         }
 
         function getModelDetails(model) {
-            if (/^WW|WD/.test(model)) {
-                return getWasherDetails(model);
-            } else if (/^RF|RS|RT|RB|RL/.test(model)) {
+            if (/^RF|RS|RT|RB|RL/.test(model)) {
                 return getFridgeDetails(model);
+            } else if (/^WW|WD/.test(model)) {
+                return getWasherDetails(model);
             } else if (/^Q|U|L|K/.test(model)) {
                 return getTVDetails(model);
             } else {
