@@ -89,7 +89,7 @@
                 return getFridgeDetails(model);
             } else if (/^WW|WD|DV/.test(model)) {
                 return getWasherDetails(model);
-            } else if (/^Q|U|L|K/.test(model)) {
+            } else if (/^(Q|U|L|K|UA|QA)/.test(model)) {
                 return getTVDetails(model);
             } else {
                 return `⚠️ הדגם שהוזן אינו מזוהה. נסה לבדוק שוב או לוודא שהוזן כראוי.`;
