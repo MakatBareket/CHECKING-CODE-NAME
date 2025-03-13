@@ -433,6 +433,69 @@
     0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
     100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
+        /* עיצוב הוליוודי למצב דרמטי */
+.dramatic-card.hollywood {
+    background: linear-gradient(135deg, #1a1a1a, #4a4a4a);
+    border: 2px solid gold;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+/* זרקורים נעים */
+.dramatic-card.hollywood::before {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: -100%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 70%);
+    animation: spotlight 6s infinite linear;
+    z-index: 0;
+}
+
+@keyframes spotlight {
+    0% { transform: translate(0, 0) rotate(45deg); }
+    25% { transform: translate(50%, 50%) rotate(45deg); }
+    50% { transform: translate(100%, 0) rotate(45deg); }
+    75% { transform: translate(50%, -50%) rotate(45deg); }
+    100% { transform: translate(0, 0) rotate(45deg); }
+}
+
+/* גופן קולנועי לשם המוצר */
+.dramatic-card.hollywood .tv-name {
+    font-family: 'Impact', sans-serif; /* גופן דרמטי */
+    font-size: 32px;
+    color: gold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    animation: titleReveal 1.5s ease-out 1.5s forwards;
+}
+
+@keyframes titleReveal {
+    0% { opacity: 0; transform: translateY(-30px) scale(0.8); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* דגל המדינה */
+.country-flag {
+    width: 60px;
+    height: 40px;
+    margin: 10px auto;
+    opacity: 0;
+    transform: scale(0.8);
+    animation: flagReveal 1s ease-out 2s forwards;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes flagReveal {
+    0% { opacity: 0; transform: scale(0.8) rotate(10deg); }
+    50% { transform: scale(1.1) rotate(-5deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
@@ -884,16 +947,43 @@ function getDramaticModelDetails(model) {
         let overallScore = 0;
         let stars = '';
         let celebrationEffect = '';
+        let countryCode = model.length >= 13 ? model.slice(-2) : 'לא ידוע';
+        let countryFlag = '';
+
+        // מיפוי דגלי מדינות (באמצעות URL של דגלים פשוטים)
+        const countryFlags = {
+            'IL': 'https://flagcdn.com/w80/il.png', // ישראל
+            'SQ': 'https://flagcdn.com/w80/il.png', // ישראל (מחסני חשמל)
+            'ZA': 'https://flagcdn.com/w80/za.png', // אפריקה
+            'RU': 'https://flagcdn.com/w80/ru.png', // רוסיה
+            'UA': 'https://flagcdn.com/w80/ua.png', // אוקראינה
+            '2C': 'https://flagcdn.com/w80/cn.png', // סין
+            'XU': 'https://flagcdn.com/w80/gb.png', // בריטניה
+            'XY': 'https://flagcdn.com/w80/au.png', // אוסטרליה
+            'AA': 'https://flagcdn.com/w80/us.png', // ארה"ב
+            'WT': 'https://flagcdn.com/w80/hk.png', // הונג קונג
+            'EC': 'https://flagcdn.com/w80/kr.png', // קוריאה
+            'TL': 'https://flagcdn.com/w80/in.png', // הודו
+            'EM': 'https://flagcdn.com/w80/mx.png', // מקסיקו
+            'US': 'https://flagcdn.com/w80/us.png', // ארה"ב (מכונות כביסה)
+            'LP': 'https://flagcdn.com/w80/hk.png', // הונג קונג (מכונות כביסה)
+            'AH': 'https://flagcdn.com/w80/kr.png', // קוריאה (מכונות כביסה)
+            'T1': 'https://flagcdn.com/w80/in.png', // הודו (מכונות כביסה)
+            'AX': 'https://flagcdn.com/w80/mx.png', // מקסיקו (מכונות כביסה)
+            'KJ': 'https://flagcdn.com/w80/il.png'  // ישראל (מכונות כביסה)
+        };
 
         if (/^R[FSBTL]/.test(model)) {
             displayType = fridgeConfig[model[1]] || 'לא ידוע';
             overallScore = Math.floor(Math.random() * (85 - 70 + 1)) + 70;
             if (size >= 60 && year >= '2023') overallScore += 5;
             image = productImages[displayType] || '';
+            countryFlag = countryFlags[countryCode] || '';
         } else if (/^W[WD]|^DV/.test(model)) {
             displayType = washerTech[model.slice(0, 2)] || 'לא ידוע';
             overallScore = Math.floor(Math.random() * (80 - 65 + 1)) + 65;
             image = productImages['מכונת כביסה'] || '';
+            countryFlag = countryFlags[countryCode] || '';
         } else if (/^[QULPK][NEA]/.test(model)) {
             displayType = tvDisplay[model[0]] || 'לא ידוע';
             let isFrame = model.includes('LS03');
@@ -920,6 +1010,7 @@ function getDramaticModelDetails(model) {
                 overallScore = Math.min(63 + Math.floor((size - 32) / 10), 71);
             }
             image = productImages[displayType === 'LED' ? 'CRYSTAL UHD' : displayType] || '';
+            countryFlag = countryFlags[countryCode] || '';
         }
 
         if (!image) {
@@ -937,14 +1028,15 @@ function getDramaticModelDetails(model) {
         if (overallScore >= 88) {
             celebrationEffect = ' celebration'; // מוסיף מחלקה לאפקט
             setTimeout(() => triggerConfetti(), 2000); // מפעיל קונפטי אחרי 2 שניות
-            // אפשר להוסיף צליל אם תרצה:
-            // let audio = new Audio('https://www.soundjay.com/buttons/cheer.mp3');
-            // audio.play();
         }
 
-        return `<div class="dramatic-card${celebrationEffect}">
+        // הוספת דגל אם קיים
+        let flagHtml = countryFlag ? `<img src="${countryFlag}" alt="דגל המדינה" class="country-flag">` : '';
+
+        return `<div class="dramatic-card hollywood${celebrationEffect}">
                     <img src="${image}" alt="${displayType}">
                     <div class="tv-name">${model} - ${displayType}</div>
+                    ${flagHtml}
                     <div class="stars">${stars}</div>
                     <div class="overall">${overallScore}</div>
                 </div>`;
