@@ -6,107 +6,116 @@
     <title>בדיקת מוצר סמסונג</title>
     <style>
         body {
-            font-family: 'Roboto', Arial, sans-serif;
+            font-family: 'Inter', Arial, sans-serif; /* פונט מודרני ומקצועי כמו שמשתמשים בחברות טכנולוגיה */
             text-align: center;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            background: linear-gradient(135deg, #0d1b2a, #1b263b); /* כחול כהה עמוק ומרשים */
             padding: 40px;
             margin: 0;
             min-height: 100vh;
             overflow-x: hidden;
+            color: #e0e1dd; /* צבע טקסט בהיר ונקי */
         }
         .container {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            max-width: 650px;
             margin: 0 auto 20px;
             text-align: center;
-            border: 1px solid rgba(0, 123, 255, 0.5);
-            backdrop-filter: blur(5px);
+            border: 1px solid rgba(69, 123, 157, 0.5); /* כחול קריר ומעודן */
+            backdrop-filter: blur(8px);
         }
         h2 {
-            color: #1e3c72;
-            margin-bottom: 20px;
-            font-weight: 700;
+            color: #1b263b; /* כחול כהה אלגנטי */
+            margin-bottom: 25px;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            font-size: 24px;
         }
         input {
             width: calc(100% - 24px);
-            padding: 12px;
+            padding: 14px;
             margin-top: 15px;
-            border: 2px solid #007bff;
+            border: 2px solid #457b9d; /* כחול בינוני מרשים */
             border-radius: 8px;
             font-size: 16px;
             text-align: center;
-            background: #f0f4ff;
+            background: #f7f9fb;
             transition: border-color 0.3s, box-shadow 0.3s;
+            font-family: 'Inter', sans-serif;
         }
         input:focus {
             outline: none;
-            border-color: #0056b3;
-            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+            border-color: #1d3557; /* כחול כהה עמוק */
+            box-shadow: 0 0 12px rgba(29, 53, 87, 0.5);
         }
         button {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             margin-top: 20px;
-            background: linear-gradient(90deg, #007bff, #00c4ff);
-            color: white;
+            background: linear-gradient(90deg, #457b9d, #a8dadc); /* גרדיאנט כחול קריר ואלגנטי */
+            color: #ffffff;
             border: none;
             border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.3s;
+            font-family: 'Inter', sans-serif;
         }
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.6);
+            box-shadow: 0 6px 20px rgba(69, 123, 157, 0.6);
         }
         #result {
-            margin-top: 25px;
+            margin-top: 30px;
             display: none;
             text-align: center;
             direction: rtl;
-            max-width: 600px;
+            max-width: 650px;
             margin-left: auto;
             margin-right: auto;
         }
         .card {
-            background: linear-gradient(135deg, #ffffff, #f8f9fa);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(135deg, #ffffff, #edf2f4); /* גרדיאנט עדין ורשמי */
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
             animation: slideIn 0.5s ease-in-out;
             overflow: hidden;
             text-align: right;
+            color: #1b263b; /* טקסט כחול כהה למראה רשמי */
+            font-size: 16px;
+            line-height: 1.6;
         }
         .card img {
             max-width: 100%;
             height: auto;
             border-radius: 10px;
-            margin-top: 15px;
+            margin-top: 20px;
             display: block;
             margin-left: auto;
             margin-right: auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         .card a {
             display: block;
-            margin: 15px auto 0;
-            padding: 10px 20px;
-            background: #007bff;
-            color: white;
+            margin: 20px auto 0;
+            padding: 10px 25px;
+            background: #1d3557; /* כחול כהה עמוק */
+            color: #ffffff;
             text-decoration: none;
             border-radius: 8px;
             width: fit-content;
             transition: background 0.3s;
+            font-weight: 500;
         }
         .card a:hover {
-            background: #0056b3;
+            background: #457b9d; /* כחול בינוני */
         }
-        /* אנימציית טעינה טכנולוגית חדשה */
+        /* אנימציית טעינה טכנולוגית */
         #loader {
             display: none;
             margin: 20px auto;
@@ -119,17 +128,17 @@
             width: 100%;
             height: 100%;
             border: 4px solid transparent;
-            border-top: 4px solid #007bff;
+            border-top: 4px solid #457b9d;
             border-radius: 50%;
             animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
         }
         .loader-circle:nth-child(2) {
-            border-top-color: #00c4ff;
+            border-top-color: #a8dadc;
             animation-delay: -0.4s;
             transform: scale(0.85);
         }
         .loader-circle:nth-child(3) {
-            border-top-color: #1e3c72;
+            border-top-color: #1d3557;
             animation-delay: -0.8s;
             transform: scale(0.7);
         }
@@ -139,8 +148,9 @@
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: 14px;
-            color: #007bff;
+            color: #457b9d;
             animation: pulseText 1.5s infinite;
+            font-weight: 500;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -157,8 +167,8 @@
         }
         .suggestions {
             position: absolute;
-            background: white;
-            border: 1px solid #007bff;
+            background: #ffffff;
+            border: 1px solid #457b9d;
             border-radius: 5px;
             max-height: 150px;
             overflow-y: auto;
@@ -166,17 +176,20 @@
             margin-top: 5px;
             z-index: 1000;
             display: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         .suggestion-item {
-            padding: 10px;
+            padding: 12px;
             cursor: pointer;
             transition: background 0.2s;
+            color: #1d3557;
+            font-weight: 500;
         }
         .suggestion-item:hover {
-            background: #f0f4ff;
+            background: #edf2f4;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -185,8 +198,8 @@
             <input type="text" id="modelInput" placeholder="הכנס קוד דגם" oninput="showSuggestions(this.value)">
             <div id="suggestions" class="suggestions"></div>
         </div>
-        <button onclick="lookupModel()">🔍 חפש</button>
-        <button onclick="suggestRandomModel()" style="background: linear-gradient(90deg, #28a745, #00ff7f); margin-top: 10px;">🎲 הצע דגם אקראי</button>
+        <button onclick="lookupModel()">חפש</button>
+        <button onclick="suggestRandomModel()" style="background: linear-gradient(90deg, #2a9d8f, #8ecae6); margin-top: 10px;">הצע דגם אקראי</button>
         <div id="loader">
             <div class="loader-circle"></div>
             <div class="loader-circle"></div>
@@ -197,7 +210,6 @@
     </div>
 
     <script>
-        // מילונים למיפוי המידע מהמקרא
         const fridgeConfig = {
             'F': 'French Door (דלת צרפתית)', 'S': 'Side by Side (דלת ליד דלת)', 'T': 'Top Freezer (מקפיא עליון)',
             'B': 'Bottom Freezer (מקפיא תחתון)', 'L': 'Bottom Freezer (מקפיא תחתון)'
@@ -245,7 +257,6 @@
             'F': 'ATSC/QAM', 'U': 'DVB', 'G': 'ISDB-T', 'T': '2xDVB'
         };
 
-        // מילון תמונות לפי סוג מוצר
         const productImages = {
             'QLED': 'https://images.samsung.com/is/image/samsung/p6pim/my/qa65q70dakxxm/gallery/my-qled-tv-qa65q70dakxxm-front-gray-540854235?$684_547_PNG$',
             'NEO QLED': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBlPyKp_atLUlx5rg7cEpI-XhH9t9MM3-wmg&s',
@@ -259,7 +270,6 @@
             'מכונת כביסה': 'https://images.samsung.com/is/image/samsung/il_WF1802WPC-YKJ_002_Front_white?$624_624_PNG$'
         };
 
-        // דוגמאות לחיפוש חכם
         const sampleModels = [
             'QE85QN85CATXSQ', 'UE65RU8000KXSQ', 'UA43LS03NAU', 'QE50Q7FAAUXIL',
             'RF65DG965EB1ML', 'WW80TA046AX', 'UA65RU8000KXSQ', 'QE85LS03D',
@@ -298,7 +308,7 @@
             var loader = document.getElementById("loader");
 
             if (!model || model.length < 5) {
-                resultDiv.innerHTML = '<div class="card">❌ יש להזין קוד דגם חוקי (מינימום 5 תווים).</div>';
+                resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין קוד דגם חוקי (מינימום 5 תווים).</div>';
                 resultDiv.style.display = "block";
                 return;
             }
@@ -310,7 +320,7 @@
                 resultDiv.innerHTML = details;
                 resultDiv.style.display = "block";
                 loader.style.display = "none";
-            }, 1000); // סימולציית טעינה של שנייה
+            }, 1000);
         }
 
         function suggestRandomModel() {
@@ -327,7 +337,7 @@
             } else if (/^[QULPK][NEA]/.test(model)) {
                 return getTVDetails(model);
             } else {
-                return `<div class="card">⚠️ הדגם שהוזן אינו מזוהה. אנא ודא שהקוד תקין ונסה שוב.</div>`;
+                return `<div class="card">שגיאה: הדגם שהוזן אינו מזוהה. אנא ודא שהקוד תקין ונסה שוב.</div>`;
             }
         }
 
@@ -344,13 +354,13 @@
             let image = productImages[config] || '';
 
             return `<div class="card">
-                        ❄️ מקרר סמסונג - דגם: ${model}<br>
-                        🚪 תצורה: ${config}<br>
-                        📦 נפח: ${capacityLiters}<br>
-                        📅 שנת ייצור: ${year}<br>
-                        🔢 סדרת דגם: ${series}<br>
-                        🎨 גימור: ${finish}<br>
-                        🌍 מדינה: ${country}<br>
+                        מקרר סמסונג - דגם: ${model}<br>
+                        תצורה: ${config}<br>
+                        נפח: ${capacityLiters}<br>
+                        שנת ייצור: ${year}<br>
+                        סדרת דגם: ${series}<br>
+                        גימור: ${finish}<br>
+                        מדינה: ${country}<br>
                         ${image ? `<img src="${image}" alt="${config}">` : ''}
                         <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
                     </div>`;
@@ -370,12 +380,12 @@
             let image = productImages['מכונת כביסה'] || '';
 
             return `<div class="card">
-                        🧺 ${tech} סמסונג - דגם: ${model}<br>
-                        🏋️ קיבולת: ${capacity}<br>
-                        📅 שנת ייצור: ${year}<br>
-                        📆 חודש ייצור: ${month}<br>
-                        🎨 צבע: ${color}<br>
-                        🌍 מדינה: ${country}<br>
+                        ${tech} סמסונג - דגם: ${model}<br>
+                        קיבולת: ${capacity}<br>
+                        שנת ייצור: ${year}<br>
+                        חודש ייצור: ${month}<br>
+                        צבע: ${color}<br>
+                        מדינה: ${country}<br>
                         ${image ? `<img src="${image}" alt="מכונת כביסה">` : ''}
                         <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
                     </div>`;
@@ -431,14 +441,14 @@
             let image = productImages[imageKey] || '';
 
             return `<div class="card">
-                        📺 טלוויזיה סמסונג - דגם: ${model}<br>
-                        🎨 סוג תצוגה: ${display}<br>
-                        🌍 אזור שוק: ${market}<br>
-                        📏 גודל מסך: ${size} אינץ'<br>
-                        📅 שנת ייצור: ${year}<br>
-                        🔢 סדרת דגם: ${series}<br>
-                        📡 מקלט שידור: ${broadcast}<br>
-                        🌍 מדינה: ${country}${countryNote}<br>
+                        טלוויזיה סמסונג - דגם: ${model}<br>
+                        סוג תצוגה: ${display}<br>
+                        אזור שוק: ${market}<br>
+                        גודל מסך: ${size} אינץ'<br>
+                        שנת ייצור: ${year}<br>
+                        סדרת דגם: ${series}<br>
+                        מקלט שידור: ${broadcast}<br>
+                        מדינה: ${country}${countryNote}<br>
                         ${image ? `<img src="${image}" alt="${display}">` : ''}
                         <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
                     </div>`;
