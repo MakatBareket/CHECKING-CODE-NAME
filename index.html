@@ -107,6 +107,23 @@
                     🎨 סוג תצוגה: ${series}<br>
                     🌍 מדינה: ${country}`;
         }
+        
+        function getFridgeDetails(model) {
+            return `❄️ מקרר סמסונג - דגם: ${model}<br>
+                    📅 שנת השקה: ${extractYear(model)}<br>
+                    📦 נפח: ${extractCapacity(model, 'fridge')} ליטר<br>
+                    🚪 סוג מקרר: ${extractFridgeType(model)}<br>
+                    🎨 גימור: ${extractFinish(model)}<br>
+                    🌍 מדינה: ${extractCountry(model)}`;
+        }
+
+        function getWasherDetails(model) {
+            return `🧺 מכונת כביסה סמסונג - דגם: ${model}<br>
+                    📅 שנת השקה: ${extractYear(model)}<br>
+                    🏋️ קיבולת: ${extractCapacity(model, 'washer')} ק"ג<br>
+                    🎨 צבע: ${extractColor(model)}<br>
+                    🌍 מדינה: ${extractCountry(model)}`;
+        }
 
         function extractCountry(model) {
             if (/^UA|QA/.test(model)) return "יבוא מקביל";
