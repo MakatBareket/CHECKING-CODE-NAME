@@ -303,7 +303,7 @@
                         🎨 גימור: ${finish}<br>
                         🌍 מדינה: ${country}<br>
                         ${image ? `<img src="${image}" alt="${config}">` : ''}
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">חפש מידע נוסף באתר סמסונג</a>
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">חיפוש הדגם באתר סמסונג:</a>
                     </div>`;
         }
 
@@ -328,7 +328,7 @@
                         🎨 צבע: ${color}<br>
                         🌍 מדינה: ${country}<br>
                         ${image ? `<img src="${image}" alt="מכונת כביסה">` : ''}
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">חפש מידע נוסף באתר סמסונג</a>
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">חיפוש הדגם באתר סמסונג:</a>
                     </div>`;
         }
 
@@ -374,7 +374,7 @@
             if (model[1] === 'A') {
                 countryNote = ' - יבוא מקביל';
             }
-            let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display; // ברירת מחדל ל-LED היא Crystal UHD
+            let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
             let image = productImages[imageKey] || '';
 
             return `<div class="card">
@@ -387,7 +387,7 @@
                         📡 מקלט שידור: ${broadcast}<br>
                         🌍 מדינה: ${country}${countryNote}<br>
                         ${image ? `<img src="${image}" alt="${display}">` : ''}
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">חפש מידע נוסף באתר סמסונג</a>
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">חיפוש הדגם באתר סמסונג:</a>
                     </div>`;
         }
     </script>
