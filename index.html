@@ -85,12 +85,12 @@
         }
 
         function getModelDetails(model) {
-            if (/^Q|U|L|K/.test(model)) {
-                return getTVDetails(model);
+            if (/^WW|WD/.test(model)) {
+                return getWasherDetails(model);
             } else if (/^RF|RS|RT|RB|RL/.test(model)) {
                 return getFridgeDetails(model);
-            } else if (/^WD|WW/.test(model)) {
-                return getWasherDetails(model);
+            } else if (/^Q|U|L|K/.test(model)) {
+                return getTVDetails(model);
             } else {
                 return "❌ לא נמצא מידע על הדגם.";
             }
@@ -142,7 +142,7 @@
             var cap = model.match(/\d+/);
             if (!cap) return "לא ידוע";
             var num = parseInt(cap[0]);
-            return type === 'washer' && num >= 10 ? num / 10 : num;
+            return type === 'washer' ? num / 10 : num;
         }
     </script>
 </body>
