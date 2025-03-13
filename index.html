@@ -102,14 +102,26 @@
             let displayType = extractDisplayType(model);
             let country = extractCountry(model);
             let series = model.includes("LS03") ? "THE FRAME" : displayType;
-            
+            let launchYear = extractYear(model);
+
             return `📺 טלוויזיה סמסונג - דגם: ${model}<br>
-                    📅 שנת השקה: ${extractYear(model)}<br>
+                    📅 שנת השקה: ${launchYear}<br>
                     📏 גודל מסך: ${extractSize(model)} אינץ'<br>
                     🎨 סוג תצוגה: ${series}<br>
                     🌍 מדינה: ${country}`;
         }
         
+        function extractYear(model) {
+            let yearMatch = model.match(/\d{2}[A-Z]$/);
+            if (yearMatch) {
+                let yearCode = yearMatch[0].substring(0, 2);
+                let year = parseInt(yearCode) + 2000; // המרה לשנה מלאה
+                return year;
+            }
+
+            return "לא ידוע";
+        }
+
         function getFridgeDetails(model) {
             return `❄️ מקרר סמסונג - דגם: ${model}<br>
                     📦 נפח: ${extractCapacity(model, 'fridge')} ליטר<br>
@@ -160,11 +172,6 @@
 
         function extractColor(model) {
             return /W/.test(model) ? "לבן" : /S/.test(model) ? "כסוף" : /B/.test(model) ? "שחור" : "לא ידוע";
-        }
-
-        function extractYear(model) {
-            var match = model.match(/(\d{2})[A-Z]$/);
-            return match ? `20${match[1]}` : "לא ידוע";
         }
     </script>
 </body>
