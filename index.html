@@ -256,6 +256,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: background 0.3s, transform 0.2s;
+            margin: 0 10px; /* מרווח בין הכפתורים */
         }
         .popup button:hover {
             background: #ffffff;
@@ -319,6 +320,7 @@
         <h3>שימו לב!</h3>
         <p>בדיקה לפי מספר סיריאלי מאפשרת לך לראות את תאריך הייצור וסטטוס האחריות בלבד. כדי לוודא אם המוצר ביבוא רשמי או מקביל, יש לבדוק לפי קוד הדגם.</p>
         <button onclick="switchToModelPage()">עבור לחיפוש לפי קוד דגם</button>
+        <button onclick="closePopup()">סגור</button>
     </div>
 
     <script>
@@ -471,7 +473,7 @@
             try {
                 if (/^R[FSBTL]/.test(model)) {
                     return getFridgeDetails(model);
-                } else if (/^W[WD]|^DV/.test(model)) { // תיקון התנאי למייבשים
+                } else if (/^W[WD]|^DV/.test(model)) {
                     return getWasherDetails(model);
                 } else if (/^[QULPK][NEA]/.test(model)) {
                     return getTVDetails(model);
@@ -486,8 +488,8 @@
 
         function getFridgeDetails(model) {
             let config = fridgeConfig[model[1]] || 'לא ידוע';
-            let capacityCode = parseInt(model[2] + model[3]); // לוקחים את 2 הספרות
-            let capacityLiters = capacityCode * 10 + ' ליטר'; // מכפילים ב-10
+            let capacityCode = parseInt(model[2] + model[3]);
+            let capacityLiters = capacityCode * 10 + ' ליטר';
             let year = yearCodes[model[4]] || 'לא ידוע';
             let series = model[5] || 'לא ידוע';
             let finishCode = model.slice(6, 8);
@@ -511,14 +513,14 @@
 
         function getWasherDetails(model) {
             let tech = washerTech[model.slice(0, 2)] || 'לא ידוע';
-            let capacityCode = model[2]; // בודקים רק את הספרה השלישית
+            let capacityCode = model[2];
             let capacity = '';
             switch (capacityCode) {
                 case '6': capacity = '6 ק"ג'; break;
                 case '7': capacity = '7 ק"ג'; break;
                 case '8': capacity = '8 ק"ג'; break;
                 case '9': capacity = '9 ק"ג'; break;
-                case '1': capacity = model[3] === '1' ? '11 ק"ג' : '10 ק"ג'; break; // 10 או 11 לפי הספרה הבאה
+                case '1': capacity = model[3] === '1' ? '11 ק"ג' : '10 ק"ג'; break;
                 case '2': capacity = '12 ק"ג'; break;
                 default: capacity = 'לא ידוע';
             }
@@ -546,7 +548,6 @@
             let isFrame = model.includes('LS03');
             if (isFrame) display = 'The Frame';
             
-            // קביעת CRYSTAL UHD עבור U החל מ-2018
             let yearCode = '';
             for (let i = 4; i < model.length; i++) {
                 if (yearCodes[model[i]]) {
@@ -561,7 +562,6 @@
             let market = tvMarket[model[1]] || 'לא ידוע';
             let size = model[2] + model[3];
 
-            // זיהוי סדרת דגם
             let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
             let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
             let series = isFrame ? 'LS03' : model.slice(seriesStart, seriesEnd);
@@ -603,7 +603,6 @@
                     </div>`;
         }
 
-        // פונקציה לפתיחת ה-POP UP
         function openPopup() {
             try {
                 document.getElementById("popup").style.display = "block";
@@ -613,7 +612,6 @@
             }
         }
 
-        // פונקציה לסגירת ה-POP UP
         function closePopup() {
             try {
                 document.getElementById("popup").style.display = "none";
@@ -623,7 +621,6 @@
             }
         }
 
-        // פונקציה למעבר לדף קוד דגם
         function switchToModelPage() {
             try {
                 closePopup();
