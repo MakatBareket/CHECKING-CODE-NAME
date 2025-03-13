@@ -16,7 +16,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
-            max-width: 400px;
+            max-width: 500px;
             margin: auto;
             text-align: center;
         }
@@ -57,6 +57,7 @@
             text-align: right;
             font-size: 16px;
             border-left: 5px solid #007bff;
+            direction: rtl;
         }
     </style>
 </head>
@@ -69,109 +70,141 @@
     </div>
 
     <script>
+        // מילונים למיפוי המידע מהמקרא
+        const fridgeConfig = {
+            'F': 'French Door (דלת צרפתית)',
+            'S': 'Side by Side (דלת ליד דלת)',
+            'T': 'Top Freezer (מקפיא עליון)',
+            'B': 'Bottom Freezer (מקפיא תחתון)',
+            'L': 'Bottom Freezer (מקפיא תחתון)'
+        };
+
+        const yearCodes = {
+            'N': '2018', 'R': '2019', 'T': '2020', 'A': '2021', 'B': '2022',
+            'C': '2023', 'D': '2024', 'F': '2025'
+        };
+
+        const fridgeFinish = {
+            'SP': 'נירוסטה', 'SR': 'נירוסטה', 'SL': 'כסוף', 'UT': 'כחול', 'SA': 'גרפיט', 'WW': 'לבן'
+        };
+
+        const countryCodesFridge = {
+            'AA': 'ארה"ב', 'WT': 'הונג קונג', 'EC': 'קוריאה', 'TL': 'הודו', 'EM': 'מקסיקו', 'ML': 'ישראל'
+        };
+
+        const washerTech = {
+            'WW': 'מכונת כביסה פתח קידמי', 'WD': 'מייבש כביסה עם משאבת חום', 'DV': 'מייבש סטנדרטי'
+        };
+
+        const washerColor = {
+            'G': 'לבן', 'P': 'נירוסטה', 'S': 'כסף', 'V': 'שחור'
+        };
+
+        const countryCodesWasher = {
+            'US': 'ארה"ב', 'LP': 'הונג קונג', 'AH': 'קוריאה', 'T1': 'הודו', 'AX': 'מקסיקו', 'KJ': 'ישראל'
+        };
+
+        const tvDisplay = {
+            'Q': 'QLED', 'U': 'LED', 'P': 'Plasma', 'L': 'LCD', 'K': 'OLED'
+        };
+
+        const tvMarket = {
+            'N': 'צפון אמריקה', 'E': 'אירופה', 'A': 'אסיה'
+        };
+
+        const countryCodesTV = {
+            'ZA': 'אפריקה', 'RU': 'רוסיה', 'UA': 'אוקראינה', '2C': 'סין', 'XU': 'בריטניה', 'XY': 'אוסטרליה', 'SQ': 'ישראל', 'IL': 'ישראל'
+        };
+
+        const broadcastStandards = {
+            'F': 'ATSC/QAM', 'U': 'DVB', 'G': 'ISDB-T', 'T': '2xDVB'
+        };
+
         function lookupModel() {
             var model = document.getElementById("modelInput").value.trim().toUpperCase();
             var resultDiv = document.getElementById("result");
 
-            console.log("קלט נכנס:", model); // בדיקה לקלט
-
-            if (!model) {
-                resultDiv.innerHTML = "❌ יש להזין קוד דגם חוקי.";
+            if (!model || model.length < 5) {
+                resultDiv.innerHTML = "❌ יש להזין קוד דגם חוקי (מינימום 5 תווים).";
                 resultDiv.style.display = "block";
                 return;
             }
-            
+
             var details = getModelDetails(model);
             resultDiv.innerHTML = details;
             resultDiv.style.display = "block";
         }
 
         function getModelDetails(model) {
-            if (/^RF|RS|RT|RB|RL/.test(model)) {
+            if (/^R[FSBTL]/.test(model)) {
                 return getFridgeDetails(model);
-            } else if (/^WW|WD|DV/.test(model)) {
+            } else if (/^W[WD]|DV/.test(model)) {
                 return getWasherDetails(model);
-            } else if (/^(Q|U|L|K|UA|QA|UE|QE|QN|BU)/.test(model)) { 
+            } else if (/^[QULPK]/.test(model)) {
                 return getTVDetails(model);
             } else {
-                return `⚠️ הדגם שהוזן אינו מזוהה. נסה לבדוק שוב או לוודא שהוזן כראוי.`;
+                return `⚠️ הדגם שהוזן אינו מזוהה. אנא ודא שהקוד תקין ונסה שוב.`;
             }
-        }
-
-        function getTVDetails(model) {
-            let displayType = extractDisplayType(model);
-            let country = extractCountry(model);
-            let series = model.includes("LS03") ? "THE FRAME" : displayType;
-            let launchYear = extractYear(model);
-
-            return `📺 טלוויזיה סמסונג - דגם: ${model}<br>
-                    📅 שנת השקה: ${launchYear}<br>
-                    📏 גודל מסך: ${extractSize(model)} אינץ'<br>
-                    🎨 סוג תצוגה: ${series}<br>
-                    🌍 מדינה: ${country}`;
-        }
-        
-        function extractYear(model) {
-            let yearMatch = model.match(/\d{2}[A-Z]$/);
-            if (yearMatch) {
-                let yearCode = yearMatch[0].substring(0, 2);
-                let year = parseInt(yearCode) + 2000; // המרה לשנה מלאה
-                return year;
-            }
-
-            return "לא ידוע";
         }
 
         function getFridgeDetails(model) {
+            let config = fridgeConfig[model[1]] || 'לא ידוע';
+            let capacity = model[2] + model[3];
+            let capacityLiters = capacity === '28' ? '580 ליטר' : capacity === '58' ? '580 ליטר' : capacity === '68' ? '680 ליטר' : 'לא ידוע';
+            let year = yearCodes[model[4]] || 'לא ידוע';
+            let series = model[5] || 'לא ידוע';
+            let finishCode = model.slice(6, 8);
+            let finish = fridgeFinish[finishCode] || 'לא ידוע';
+            let countryCode = model.slice(-2);
+            let country = countryCodesFridge[countryCode] || 'לא ידוע';
+
             return `❄️ מקרר סמסונג - דגם: ${model}<br>
-                    📦 נפח: ${extractCapacity(model, 'fridge')} ליטר<br>
-                    🚪 סוג מקרר: ${extractFridgeType(model)}<br>
-                    🎨 גימור: ${extractFinish(model)}<br>
-                    🌍 מדינה: ${extractCountry(model)}`;
+                    🚪 תצורה: ${config}<br>
+                    📦 נפח: ${capacityLiters}<br>
+                    📅 שנת ייצור: ${year}<br>
+                    🔢 סדרת דגם: ${series}<br>
+                    🎨 גימור: ${finish}<br>
+                    🌍 מדינה: ${country}`;
         }
 
         function getWasherDetails(model) {
-            return `🧺 מכונת כביסה סמסונג - דגם: ${model}<br>
-                    🏋️ קיבולת: ${extractCapacity(model, 'washer')} ק"ג<br>
-                    🎨 צבע: ${extractColor(model)}<br>
-                    🌍 מדינה: ${extractCountry(model)}`;
+            let tech = washerTech[model.slice(0, 2)] || 'לא ידוע';
+            let capacityCode = model[2] + model[3];
+            let capacity = capacityCode === '70' ? '7 ק"ג' : capacityCode === '80' ? '8 ק"ג' : 
+                          capacityCode === '90' ? '9 ק"ג' : capacityCode === '10' ? '10 ק"ג' : 
+                          capacityCode === '12' ? '12 ק"ג' : 'לא ידוע';
+            let year = yearCodes[model[4]] || 'לא ידוע';
+            let month = model[5] || 'לא ידוע';
+            let color = washerColor[model[9]] || 'לא ידוע';
+            let countryCode = model.slice(-2);
+            let country = countryCodesWasher[countryCode] || 'לא ידוע';
+
+            return `🧺 ${tech} סמסונג - דגם: ${model}<br>
+                    🏋️ קיבולת: ${capacity}<br>
+                    📅 שנת ייצור: ${year}<br>
+                    📆 חודש ייצור: ${month}<br>
+                    🎨 צבע: ${color}<br>
+                    🌍 מדינה: ${country}`;
         }
 
-        function extractCountry(model) {
-            if (/^UA|QA/.test(model)) return "יבוא מקביל";
-            return /SQ|IL|ML|LI$/.test(model) ? "ישראל" : "יבוא מקביל";
-        }
+        function getTVDetails(model) {
+            let display = tvDisplay[model[0]] || 'לא ידוע';
+            let market = tvMarket[model[1]] || 'לא ידוע';
+            let size = model[2] + model[3];
+            let year = yearCodes[model[4]] || 'לא ידוע';
+            let series = model.slice(5, 9);
+            let broadcast = broadcastStandards[model[9]] || 'לא ידוע';
+            let countryCode = model.slice(-2);
+            let country = countryCodesTV[countryCode] || 'לא ידוע';
 
-        function extractSize(model) {
-            var match = model.match(/\d+/);
-            return match ? match[0] : "לא ידוע";
-        }
-
-        function extractDisplayType(model) {
-            if (model.includes("LS03")) return "THE FRAME";
-            if (model.startsWith("Q")) return "QLED";
-            if (model.startsWith("U") && extractYear(model) >= 2019) return "Crystal UHD";
-            if (model.startsWith("QE") || model.startsWith("QN")) return "Neo QLED";
-            return "LED";
-        }
-
-        function extractCapacity(model, type) {
-            var match = model.match(/\d+/);
-            if (!match) return "לא ידוע";
-            var num = parseInt(match[0]);
-            return type === 'washer' ? num / 10 : num;
-        }
-
-        function extractFridgeType(model) {
-            return model.startsWith("RF") ? "דלת ליד דלת" : model.startsWith("RS") ? "Side by Side" : "סטנדרטי";
-        }
-
-        function extractFinish(model) {
-            return /S/.test(model) ? "נירוסטה" : /B/.test(model) ? "שחור" : "לבן";
-        }
-
-        function extractColor(model) {
-            return /W/.test(model) ? "לבן" : /S/.test(model) ? "כסוף" : /B/.test(model) ? "שחור" : "לא ידוע";
+            return `📺 טלוויזיה סמסונג - דגם: ${model}<br>
+                    🎨 סוג תצוגה: ${display}<br>
+                    🌍 אזור שוק: ${market}<br>
+                    📏 גודל מסך: ${size} אינץ'<br>
+                    📅 שנת ייצור: ${year}<br>
+                    🔢 סדרת דגם: ${series}<br>
+                    📡 מקלט שידור: ${broadcast}<br>
+                    🌍 מדינה: ${country}`;
         }
     </script>
 </body>
