@@ -73,41 +73,6 @@
     </div>
 
     <script>
-        function lookupSerial() {
-            var serial = document.getElementById("serialInput").value.trim();
-            var resultDiv = document.getElementById("result");
-            
-            if (serial.length !== 11 && serial.length !== 15) {
-                resultDiv.innerHTML = "❌ מספר סיריאלי שגוי, אנא בדוק והזן שוב.";
-                resultDiv.style.display = "block";
-                return;
-            }
-            
-            var yearCode, monthCode;
-            if (serial.length === 15) {
-                yearCode = serial[7];
-                monthCode = serial[8];
-            } else {
-                yearCode = serial[3];
-                monthCode = serial[4];
-            }
-            
-            var yearMap = {'F': 2014, 'G': 2015, 'H': 2016, 'J': 2017, 'K': 2018, 'M': 2019, 'N': 2020, 'R': 2021, 'T': 2022, 'W': 2023, 'X': 2024, 'Y': 2025};
-            var monthMap = {'1': 'ינואר', '2': 'פברואר', '3': 'מרץ', '4': 'אפריל', '5': 'מאי', '6': 'יוני', '7': 'יולי', '8': 'אוגוסט', 'A': 'אוקטובר', 'B': 'נובמבר', 'C': 'דצמבר'};
-            
-            var productionYear = yearMap[yearCode] || "לא ידוע";
-            var productionMonth = monthMap[monthCode] || "לא ידוע";
-            
-            var warrantyStatus = (productionYear < 2024) ? "❌ לא באחריות" : "✔️ באחריות סמליין";
-            var dvbSupport = (productionYear >= 2018) ? "📺 תומך DVB-T2" : "📺 תומך DVB-T1";
-            
-            resultDiv.innerHTML = `<strong>📅 שנת ייצור:</strong> ${productionYear}<br>
-                                   <strong>📆 חודש ייצור:</strong> ${productionMonth}<br>
-                                   <strong>🔧 סטטוס אחריות:</strong> ${warrantyStatus}<br>
-                                   <strong>📡 תמיכת שידור:</strong> ${dvbSupport}`;
-            resultDiv.style.display = "block";
-        }
-
         function lookupModel() {
             var model = document.getElementById("modelInput").value.trim().toUpperCase();
             var resultDiv = document.getElementById("result");
@@ -137,27 +102,27 @@
 
         function getTVDetails(model) {
             return `📺 טלוויזיה סמסונג - דגם: ${model}<br>
-                    📅 שנת השקה: ...<br>
-                    📏 גודל מסך: ...<br>
-                    🎨 סוג תצוגה: ...<br>
-                    🌍 קוד מדינה: ...`;
+                    📅 שנת השקה: ${model.match(/[HJKNMRTABCFD]/) || "לא ידוע"}<br>
+                    📏 גודל מסך: ${model.match(/\d+/) || "לא ידוע"} אינץ'<br>
+                    🎨 סוג תצוגה: ${model.startsWith("Q") ? "QLED" : model.startsWith("U") ? "LED" : model.startsWith("K") ? "OLED" : "לא ידוע"}<br>
+                    🌍 קוד מדינה: ${model.match(/[A-Z]{2}$/) || "לא ידוע"}`;
         }
 
         function getFridgeDetails(model) {
             return `❄️ מקרר סמסונג - דגם: ${model}<br>
-                    📅 שנת השקה: ...<br>
-                    📦 נפח: ...<br>
-                    🚪 סוג מקרר: ...<br>
-                    🎨 גימור: ...<br>
-                    🌍 קוד מדינה: ...`;
+                    📅 שנת השקה: ${model.match(/[KTCABD]/) || "לא ידוע"}<br>
+                    📦 נפח: ${model.match(/\d+/) || "לא ידוע"} ליטר<br>
+                    🚪 סוג מקרר: ${model.startsWith("RF") ? "דלת צרפתית" : model.startsWith("RS") ? "דלת לצד דלת" : model.startsWith("RT") ? "מקפיא עליון" : "לא ידוע"}<br>
+                    🎨 גימור: ${model.match(/WW|SA|SR/) || "לא ידוע"}<br>
+                    🌍 קוד מדינה: ${model.match(/[A-Z]{2}$/) || "לא ידוע"}`;
         }
 
         function getWasherDetails(model) {
             return `🧺 מכונת כביסה סמסונג - דגם: ${model}<br>
-                    📅 שנת השקה: ...<br>
-                    🏋️ קיבולת: ...<br>
-                    🎨 צבע: ...<br>
-                    🌍 קוד מדינה: ...`;
+                    📅 שנת השקה: ${model.match(/[RTCABD]/) || "לא ידוע"}<br>
+                    🏋️ קיבולת: ${model.match(/\d+/) || "לא ידוע"} ק"ג<br>
+                    🎨 צבע: ${model.match(/W|G|P|S|V/) || "לא ידוע"}<br>
+                    🌍 קוד מדינה: ${model.match(/[A-Z]{2}$/) || "לא ידוע"}`;
         }
     </script>
 </body>
