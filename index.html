@@ -118,17 +118,46 @@
                 return;
             }
             
-            var modelYearMap = {'H': 2014, 'J': 2015, 'K': 2016, 'M': 2017, 'N': 2018, 'R': 2019, 'T': 2020, 'A': 2021, 'B': 2022, 'C': 2023, 'D': 2024, 'F': 2025};
-            var year = modelYearMap[model.match(/[HJKNMRTABCFD]/)] || "לא ידוע";
-            var seriesMatch = model.match(/[A-Z]+([0-9]{2,4})/);
-            var size = seriesMatch ? seriesMatch[1] + ' אינץ\'' : "לא ידוע";
-            var series = model.match(/[A-Z]+([0-9]+)/) ? model.match(/[A-Z]+([0-9]+)/)[0] : "לא ידוע";
-            
-            resultDiv.innerHTML = `<strong>📺 דגם:</strong> ${model}<br>
-                                   <strong>📆 שנת השקה:</strong> ${year}<br>
-                                   <strong>📏 גודל מסך:</strong> ${size}<br>
-                                   <strong>🔍 סדרה:</strong> ${series}`;
+            var details = getModelDetails(model);
+            resultDiv.innerHTML = details;
             resultDiv.style.display = "block";
+        }
+
+        function getModelDetails(model) {
+            if (/^Q|U|L|K/.test(model)) {
+                return getTVDetails(model);
+            } else if (/^RF|RS|RT|RB|RL/.test(model)) {
+                return getFridgeDetails(model);
+            } else if (/^WD|WW/.test(model)) {
+                return getWasherDetails(model);
+            } else {
+                return "❌ לא נמצא מידע על הדגם.";
+            }
+        }
+
+        function getTVDetails(model) {
+            return `📺 טלוויזיה סמסונג - דגם: ${model}<br>
+                    📅 שנת השקה: ...<br>
+                    📏 גודל מסך: ...<br>
+                    🎨 סוג תצוגה: ...<br>
+                    🌍 קוד מדינה: ...`;
+        }
+
+        function getFridgeDetails(model) {
+            return `❄️ מקרר סמסונג - דגם: ${model}<br>
+                    📅 שנת השקה: ...<br>
+                    📦 נפח: ...<br>
+                    🚪 סוג מקרר: ...<br>
+                    🎨 גימור: ...<br>
+                    🌍 קוד מדינה: ...`;
+        }
+
+        function getWasherDetails(model) {
+            return `🧺 מכונת כביסה סמסונג - דגם: ${model}<br>
+                    📅 שנת השקה: ...<br>
+                    🏋️ קיבולת: ...<br>
+                    🎨 צבע: ...<br>
+                    🌍 קוד מדינה: ...`;
         }
     </script>
 </body>
