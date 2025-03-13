@@ -110,7 +110,6 @@
         
         function getFridgeDetails(model) {
             return `❄️ מקרר סמסונג - דגם: ${model}<br>
-                    📅 שנת השקה: ${extractYear(model)}<br>
                     📦 נפח: ${extractCapacity(model, 'fridge')} ליטר<br>
                     🚪 סוג מקרר: ${extractFridgeType(model)}<br>
                     🎨 גימור: ${extractFinish(model)}<br>
@@ -119,7 +118,6 @@
 
         function getWasherDetails(model) {
             return `🧺 מכונת כביסה סמסונג - דגם: ${model}<br>
-                    📅 שנת השקה: ${extractYear(model)}<br>
                     🏋️ קיבולת: ${extractCapacity(model, 'washer')} ק"ג<br>
                     🎨 צבע: ${extractColor(model)}<br>
                     🌍 מדינה: ${extractCountry(model)}`;
@@ -128,12 +126,6 @@
         function extractCountry(model) {
             if (/^UA|QA/.test(model)) return "יבוא מקביל";
             return /SQ|IL|ML|LI$/.test(model) ? "ישראל" : "יבוא מקביל";
-        }
-
-        function extractYear(model) {
-            var years = {"N": 2018, "R": 2019, "T": 2020, "A": 2021, "B": 2022, "C": 2023, "D": 2024};
-            var match = model.match(/[NRTABCD]/);
-            return match ? years[match[0]] : "לא ידוע";
         }
 
         function extractSize(model) {
@@ -146,6 +138,25 @@
             if (model.startsWith("Q")) return "QLED";
             if (model.startsWith("U") && extractYear(model) >= 2019) return "Crystal UHD";
             return "LED";
+        }
+
+        function extractCapacity(model, type) {
+            var match = model.match(/\d+/);
+            if (!match) return "לא ידוע";
+            var num = parseInt(match[0]);
+            return type === 'washer' ? num / 10 : num;
+        }
+
+        function extractFridgeType(model) {
+            return model.startsWith("RF") ? "דלת ליד דלת" : model.startsWith("RS") ? "Side by Side" : "סטנדרטי";
+        }
+
+        function extractFinish(model) {
+            return /S/.test(model) ? "נירוסטה" : /B/.test(model) ? "שחור" : "לבן";
+        }
+
+        function extractColor(model) {
+            return /W/.test(model) ? "לבן" : /S/.test(model) ? "כסוף" : /B/.test(model) ? "שחור" : "לא ידוע";
         }
     </script>
 </body>
