@@ -409,13 +409,17 @@
             'Side by Side (דלת ליד דלת)': 'https://www.electricshop.co.il/images/itempics/RF27T5001S92_12012023195056.jpg',
             'Bottom Freezer (מקפיא תחתון)': 'https://res.cloudinary.com/shufersal/image/upload/f_auto,q_auto/v1551800922/prod/product_images/products_zoom/WKW52_Z_P_8806090184161_2.png',
             'Top Freezer (מקפיא עליון)': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSO7r_kWY7GuXsXmU--f7VKVVBmm40A8FInjQ&s',
-            'מכונת כביסה': 'https://images.samsung.com/is/image/samsung/il_WF1802WPC-YKJ_002_Front_white?$624_624_PNG$'
+            'מכונת כביסה': 'https://images.samsung.com/is/image/samsung/il_WF1802WPC-YKJ_002_Front_white?$624_624_PNG$',
+            'N4000-N5500 Series': 'https://www.eplus.co.il/images/itempics/UE32T5300_18032022102312_large.jpg'
         };
 
         const sampleModels = [
             'QE85QN85CATXSQ', 'UE65RU8000KXSQ', 'UA43LS03NAU', 'QE50Q7FAAUXIL',
             'RF65DG965EB1ML', 'WW80TA046AX', 'UA65RU8000KXSQ', 'QE85LS03D',
-            'QE85LS03C', 'QE85LS03B', 'QE65S95D', 'QE65S90A', 'QE65S85T'
+            'QE85LS03C', 'QE85LS03B', 'QE65S95D', 'QE65S90A', 'QE65S85T',
+            'UE32N4000UXSQ', 'UE32N4100UXSQ', 'UE32N4200UXSQ', 'UE32N4300UXSQ',
+            'UE32N4400UXSQ', 'UE32N4500UXSQ', 'UE32N5000UXSQ', 'UE32N5100UXSQ',
+            'UE32N5200UXSQ', 'UE32N5300UXSQ', 'UE32N5400UXSQ', 'UE32N5500UXSQ'
         ];
 
         const productFeatures = {
@@ -462,6 +466,16 @@
                     'תמיכה ב-HDR לשיפור ניגודיות.',
                     'רזולוציה עד 4K (בדגמים מתקדמים).',
                     'מתאים לשימוש יומיומי פשוט.'
+                ]
+            },
+            'N4000-N5500 Series': {
+                description: 'סדרות N4000 עד N5500 הן טלוויזיות LED Full HD מבית סמסונג, המציעות איכות תמונה טובה לשימוש יומיומי עם עיצוב פשוט ופונקציונלי.',
+                features: [
+                    'רזולוציה Full HD (1920x1080) לתמונה חדה וברורה.',
+                    'טכנולוגיית PurColor לשיפור צבעים טבעיים.',
+                    'תמיכה ב-HDR בסיסי לניגודיות משופרת.',
+                    'מערכת הפעלה Tizen פשוטה לשימוש (גרסאות ישנות יותר בהתאם לשנה).',
+                    'עיצוב דק וקומפקטי המתאים לכל חלל.'
                 ]
             }
         };
@@ -610,9 +624,11 @@
                 let display = tvDisplay[model[0]] || 'לא ידוע';
                 let isFrame = model.includes('LS03');
                 let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
-                
+                let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model); // זיהוי N4000-N5500
+
                 if (isFrame) display = 'The Frame';
                 else if (isOLED) display = 'OLED';
+                else if (isNseries) display = 'N4000-N5500 Series';
                 else if (model[0] === 'U' && yearCodes[model[4]] >= 2018) display = 'CRYSTAL UHD';
                 else if (model[0] === 'U' && yearCodes[model[4]] < 2018) display = 'LED';
 
@@ -631,11 +647,10 @@
                 let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
                 let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
                 let series = isFrame ? 'LS03' : (isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd));
+                if (isNseries) series = model.slice(4, 9); // לדוגמה: N4000, N4100, ..., N5500
 
-                // התקן שידור לפי שנה
                 let broadcast = (year >= 2018 && year !== 'לא ידוע') ? 'DVB-T2' : 'DVB-T1';
 
-                // מערכת הפעלה לפי שנה
                 let os = 'לא צוינה';
                 if (year === '2023' || year === '2024' || year === '2025') os = 'Tizen 8.0';
                 else if (year === '2022') os = 'Tizen 7.0';
@@ -643,6 +658,7 @@
                 else if (year === '2020') os = 'Tizen 6.0';
                 else if (year === '2019') os = 'Tizen 5.0';
                 else if (year === '2017') os = 'Tizen 4.0';
+                else if (year < 2019) os = 'Tizen (גרסה ישנה יותר)';
 
                 let country = 'לא ידוע';
                 let countryNote = '';
@@ -665,7 +681,6 @@
                 let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
                 let image = productImages[imageKey] || '';
 
-                // הוספת תכונות ייחודיות
                 let featuresHtml = '';
                 if (productFeatures[display]) {
                     featuresHtml = `
@@ -724,75 +739,75 @@
         }
 
         function lookupSerial() {
-    try {
-        var serial = document.getElementById("serialInput").value.trim().toUpperCase();
-        var resultDiv = document.getElementById("serial-result");
-        var loader = document.getElementById("loader-serial");
+            try {
+                var serial = document.getElementById("serialInput").value.trim().toUpperCase();
+                var resultDiv = document.getElementById("serial-result");
+                var loader = document.getElementById("loader-serial");
 
-        if (!serial || (serial.length !== 11 && serial.length !== 15)) {
-            resultDiv.innerHTML = '<div class="card">שגיאה: מספר סיריאלי שגוי, אנא בדוק והזן שוב (11 או 15 תווים).</div>';
-            resultDiv.style.display = "block";
-            return;
+                if (!serial || (serial.length !== 11 && serial.length !== 15)) {
+                    resultDiv.innerHTML = '<div class="card">שגיאה: מספר סיריאלי שגוי, אנא בדוק והזן שוב (11 או 15 תווים).</div>';
+                    resultDiv.style.display = "block";
+                    return;
+                }
+
+                loader.style.display = "block";
+                resultDiv.style.display = "none";
+
+                setTimeout(() => {
+                    var yearCode, monthCode;
+                    if (serial.length === 15) {
+                        yearCode = serial[7];
+                        monthCode = serial[8];
+                    } else if (serial.length === 11) {
+                        yearCode = serial[3];
+                        monthCode = serial[4];
+                    }
+
+                    var yearMap = {
+                        'F': 2014, 'G': 2015, 'H': 2016, 'J': 2017,
+                        'K': 2018, 'M': 2019, 'N': 2020, 'R': 2021,
+                        'T': 2022, 'W': 2023, 'X': 2024, 'Y': 2025
+                    };
+
+                    var monthMap = {
+                        '1': 'ינואר', '2': 'פברואר', '3': 'מרץ', '4': 'אפריל', '5': 'מאי',
+                        '6': 'יוני', '7': 'יולי', '8': 'אוגוסט', '9': 'ספטמבר', 'A': 'אוקטובר',
+                        'B': 'נובמבר', 'C': 'דצמבר'
+                    };
+
+                    var productionYear = yearMap[yearCode] || "לא ידוע";
+                    var productionMonth = monthMap[monthCode] || "לא ידוע";
+
+                    var warrantyStatus = "לא ידוע";
+                    if (productionYear === "לא ידוע" || productionMonth === "לא ידוע") {
+                        warrantyStatus = "לא ניתן לקבוע עקב שגיאה בזיהוי תאריך ייצור";
+                    } else if (productionYear < 2024 || (productionYear === 2024 && ['1', '2'].includes(monthCode))) {
+                        warrantyStatus = "לא באחריות";
+                    } else if (productionYear === 2024 && ['3', '4', '5', '6', '7', '8', '9', 'A', 'B'].includes(monthCode)) {
+                        warrantyStatus = "באחריות סמליין";
+                    } else if (productionYear === 2024 && monthCode === 'C') {
+                        warrantyStatus = "באחריות סמסונג";
+                    } else if (productionYear >= 2025) {
+                        warrantyStatus = "באחריות סמסונג";
+                    }
+
+                    resultDiv.innerHTML = `<div class="card">
+                                        מספר סיריאלי: ${serial}<br>
+                                        שנת ייצור: ${productionYear}<br>
+                                        חודש ייצור: ${productionMonth}<br>
+                                        סטטוס אחריות: ${warrantyStatus}
+                                    </div>`;
+                    resultDiv.style.display = "block";
+                    loader.style.display = "none";
+
+                    openPopup();
+                }, 1000);
+            } catch (e) {
+                console.error("שגיאה ב-lookupSerial:", e);
+                document.getElementById("serial-result").innerHTML = `<div class="card">שגיאה בעיבוד הסיריאלי: ${e.message}</div>`;
+                document.getElementById("serial-result").style.display = "block";
+            }
         }
-
-        loader.style.display = "block";
-        resultDiv.style.display = "none";
-
-        setTimeout(() => {
-            var yearCode, monthCode;
-            if (serial.length === 15) {
-                yearCode = serial[7];
-                monthCode = serial[8];
-            } else if (serial.length === 11) {
-                yearCode = serial[3];
-                monthCode = serial[4];
-            }
-
-            var yearMap = {
-                'F': 2014, 'G': 2015, 'H': 2016, 'J': 2017,
-                'K': 2018, 'M': 2019, 'N': 2020, 'R': 2021,
-                'T': 2022, 'W': 2023, 'X': 2024, 'Y': 2025
-            };
-
-            var monthMap = {
-                '1': 'ינואר', '2': 'פברואר', '3': 'מרץ', '4': 'אפריל', '5': 'מאי',
-                '6': 'יוני', '7': 'יולי', '8': 'אוגוסט', '9': 'ספטמבר', 'A': 'אוקטובר',
-                'B': 'נובמבר', 'C': 'דצמבר'
-            };
-
-            var productionYear = yearMap[yearCode] || "לא ידוע";
-            var productionMonth = monthMap[monthCode] || "לא ידוע";
-
-            var warrantyStatus = "לא ידוע";
-            if (productionYear === "לא ידוע" || productionMonth === "לא ידוע") {
-                warrantyStatus = "לא ניתן לקבוע עקב שגיאה בזיהוי תאריך ייצור";
-            } else if (productionYear < 2024 || (productionYear === 2024 && ['1', '2'].includes(monthCode))) {
-                warrantyStatus = "לא באחריות";
-            } else if (productionYear === 2024 && ['3', '4', '5', '6', '7', '8', '9', 'A', 'B'].includes(monthCode)) {
-                warrantyStatus = "באחריות סמליין";
-            } else if (productionYear === 2024 && monthCode === 'C') {
-                warrantyStatus = "באחריות סמסונג";
-            } else if (productionYear >= 2025) {
-                warrantyStatus = "באחריות סמסונג";
-            }
-
-            resultDiv.innerHTML = `<div class="card">
-                                    מספר סיריאלי: ${serial}<br>
-                                    שנת ייצור: ${productionYear}<br>
-                                    חודש ייצור: ${productionMonth}<br>
-                                    סטטוס אחריות: ${warrantyStatus}
-                                </div>`;
-            resultDiv.style.display = "block";
-            loader.style.display = "none";
-
-            openPopup();
-        }, 1000);
-    } catch (e) {
-        console.error("שגיאה ב-lookupSerial:", e);
-        document.getElementById("serial-result").innerHTML = `<div class="card">שגיאה בעיבוד הסיריאלי: ${e.message}</div>`;
-        document.getElementById("serial-result").style.display = "block";
-    }
-}
     </script>
 </body>
 </html>
