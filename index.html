@@ -380,6 +380,59 @@
     0% { opacity: 0; transform: translateY(20px); }
     100% { opacity: 1; transform: translateY(0); }
 }
+        /* אפקט חגיגה לדירוג גבוה */
+.celebration {
+    position: relative;
+    overflow: hidden;
+}
+
+.celebration::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.3), transparent 70%);
+    opacity: 0;
+    animation: glowPulse 2s ease-in-out infinite;
+    z-index: -1;
+}
+
+@keyframes glowPulse {
+    0% { opacity: 0; transform: scale(0.8); }
+    50% { opacity: 0.7; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.8); }
+}
+
+/* קונפטי */
+.confetti {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3000;
+}
+
+.confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #f4a261;
+    opacity: 0.8;
+    animation: fall 3s linear infinite;
+}
+
+.confetti-piece:nth-child(odd) { background: #a8dadc; }
+.confetti-piece:nth-child(even) { background: #457b9d; }
+.confetti-piece:nth-child(3n) { background: #ffffff; }
+
+@keyframes fall {
+    0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
@@ -815,46 +868,91 @@
                 return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
             }
         }
-
-        function getDramaticModelDetails(model) {
-            try {
-                let displayType = '';
-                let image = '';
-                let overallScore = Math.floor(Math.random() * (94 - 50 + 1)) + 50;
-
-                if (/^R[FSBTL]/.test(model)) {
-                    displayType = fridgeConfig[model[1]] || 'לא ידוע';
-                    image = productImages[displayType] || '';
-                } else if (/^W[WD]|^DV/.test(model)) {
-                    displayType = washerTech[model.slice(0, 2)] || 'לא ידוע';
-                    image = productImages['מכונת כביסה'] || '';
-                } else if (/^[QULPK][NEA]/.test(model)) {
-                    displayType = tvDisplay[model[0]] || 'לא ידוע';
-                    let isFrame = model.includes('LS03');
-                    let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
-                    let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
-                    if (isFrame) displayType = 'The Frame';
-                    else if (isOLED) displayType = 'OLED';
-                    else if (isNseries) displayType = 'N4000-N5500 Series';
-                    else if (model[0] === 'U' && yearCodes[model[4]] >= 2018) displayType = 'CRYSTAL UHD';
-                    else if (model[0] === 'U' && yearCodes[model[4]] < 2018) displayType = 'LED';
-                    image = productImages[displayType === 'LED' ? 'CRYSTAL UHD' : displayType] || '';
-                }
-
-                if (!image) {
-                    return `<div class="card">שגיאה: לא נמצאה תמונה עבור הדגם הזה במצב דרמטי.</div>`;
-                }
-
-                return `<div class="dramatic-card">
-                            <img src="${image}" alt="${displayType}">
-                            <div class="tv-name">${model} - ${displayType}</div>
-                            <div class="overall">${overallScore}</div>
-                        </div>`;
-            } catch (e) {
-                console.error("שגיאה ב-getDramaticModelDetails:", e);
-                return `<div class="card">שגיאה בעיבוד הדגם הדרמטי: ${e.message}</div>`;
+function getDramaticModelDetails(model) {
+    try {
+        let displayType = '';
+        let image = '';
+        let size = parseInt(model[2] + model[3]) || 0; // גודל המסך באינצ'ים
+        let yearCode = '';
+        for (let i = 4; i < model.length; i++) {
+            if (yearCodes[model[i]]) {
+                yearCode = model[i];
+                break;
             }
         }
+        let year = yearCodes[yearCode] || 'לא ידוע';
+        let overallScore = 0;
+        let stars = '';
+        let celebrationEffect = '';
+
+        if (/^R[FSBTL]/.test(model)) {
+            displayType = fridgeConfig[model[1]] || 'לא ידוע';
+            overallScore = Math.floor(Math.random() * (85 - 70 + 1)) + 70;
+            if (size >= 60 && year >= '2023') overallScore += 5;
+            image = productImages[displayType] || '';
+        } else if (/^W[WD]|^DV/.test(model)) {
+            displayType = washerTech[model.slice(0, 2)] || 'לא ידוע';
+            overallScore = Math.floor(Math.random() * (80 - 65 + 1)) + 65;
+            image = productImages['מכונת כביסה'] || '';
+        } else if (/^[QULPK][NEA]/.test(model)) {
+            displayType = tvDisplay[model[0]] || 'לא ידוע';
+            let isFrame = model.includes('LS03');
+            let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
+            let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
+
+            if (isFrame) {
+                displayType = 'The Frame';
+                overallScore = Math.min(88 + Math.floor((size - 43) / 10), 93);
+            } else if (isOLED) {
+                displayType = 'OLED';
+                overallScore = Math.min(82 + Math.floor((size - 55) / 10), 91);
+            } else if (isNseries) {
+                displayType = 'N4000-N5500 Series';
+                overallScore = Math.min(63 + Math.floor((size - 32) / 10), 71);
+            } else if (model[0] === 'Q') {
+                displayType = 'QLED';
+                overallScore = Math.min(85 + Math.floor((size - 55) / 10), 93);
+            } else if (model[0] === 'U' && year >= '2018') {
+                displayType = 'CRYSTAL UHD';
+                overallScore = Math.min(75 + Math.floor((size - 43) / 10) + (year >= '2023' ? 3 : 0), 88);
+            } else {
+                displayType = 'LED';
+                overallScore = Math.min(63 + Math.floor((size - 32) / 10), 71);
+            }
+            image = productImages[displayType === 'LED' ? 'CRYSTAL UHD' : displayType] || '';
+        }
+
+        if (!image) {
+            return `<div class="card">שגיאה: לא נמצאה תמונה עבור הדגם הזה במצב דרמטי.</div>`;
+        }
+
+        // חישוב כוכבים לפי הציון
+        if (overallScore >= 90) stars = '★★★★★';
+        else if (overallScore >= 80) stars = '★★★★☆';
+        else if (overallScore >= 70) stars = '★★★☆☆';
+        else if (overallScore >= 60) stars = '★★☆☆☆';
+        else stars = '★☆☆☆☆';
+
+        // אפקט חגיגה לציון מעל 88
+        if (overallScore >= 88) {
+            celebrationEffect = ' celebration'; // מוסיף מחלקה לאפקט
+            setTimeout(() => triggerConfetti(), 2000); // מפעיל קונפטי אחרי 2 שניות
+            // אפשר להוסיף צליל אם תרצה:
+            // let audio = new Audio('https://www.soundjay.com/buttons/cheer.mp3');
+            // audio.play();
+        }
+
+        return `<div class="dramatic-card${celebrationEffect}">
+                    <img src="${image}" alt="${displayType}">
+                    <div class="tv-name">${model} - ${displayType}</div>
+                    <div class="stars">${stars}</div>
+                    <div class="overall">${overallScore}</div>
+                </div>`;
+    } catch (e) {
+        console.error("שגיאה ב-getDramaticModelDetails:", e);
+        return `<div class="card">שגיאה בעיבוד הדגם הדרמטי: ${e.message}</div>`;
+    }
+}
 
         function openPopup() {
             try {
@@ -953,6 +1051,24 @@
                 document.getElementById("serial-result").style.display = "block";
             }
         }
+        // פונקציה להפעלת קונפטי
+function triggerConfetti() {
+    const confettiContainer = document.createElement('div');
+    confettiContainer.className = 'confetti';
+    document.body.appendChild(confettiContainer);
+
+    for (let i = 0; i < 50; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.animationDelay = Math.random() * 2 + 's';
+        confettiContainer.appendChild(piece);
+    }
+
+    setTimeout(() => {
+        confettiContainer.remove();
+    }, 5000); // מסיר את הקונפטי אחרי 5 שניות
+}
     </script>
 </body>
 </html>
