@@ -632,11 +632,21 @@
                 let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
                 let series = isFrame ? 'LS03' : (isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd));
 
-                let broadcast = 'לא ידוע';
+                // התקן שידור לפי שנה
+                let broadcast = (year >= 2018 && year !== 'לא ידוע') ? 'DVB-T2' : 'DVB-T1';
+
+                // מערכת הפעלה לפי שנה
+                let os = 'לא צוינה';
+                if (year === '2023' || year === '2024' || year === '2025') os = 'Tizen 8.0';
+                else if (year === '2022') os = 'Tizen 7.0';
+                else if (year === '2021') os = 'Tizen 6.5';
+                else if (year === '2020') os = 'Tizen 6.0';
+                else if (year === '2019') os = 'Tizen 5.0';
+                else if (year === '2017') os = 'Tizen 4.0';
+
                 let country = 'לא ידוע';
                 let countryNote = '';
                 if (model.length >= 13) {
-                    broadcast = broadcastStandards[model[model.length - 3]] || 'לא ידוע';
                     let countryCode = model.slice(-2);
                     country = countryCodesTV[countryCode] || 'לא ידוע';
                     if (year === '2025') {
@@ -674,6 +684,7 @@
                             שנת ייצור: ${year}<br>
                             סדרת דגם: ${series}<br>
                             מקלט שידור: ${broadcast}<br>
+                            מערכת הפעלה: ${os}<br>
                             מדינה: ${country}${countryNote}<br>
                             ${image ? `<img src="${image}" alt="${display}">` : ''}
                             ${featuresHtml}
