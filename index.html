@@ -72,7 +72,9 @@
         function lookupModel() {
             var model = document.getElementById("modelInput").value.trim().toUpperCase();
             var resultDiv = document.getElementById("result");
-            
+
+            console.log("קלט נכנס:", model); // בדיקה לקלט
+
             if (!model) {
                 resultDiv.innerHTML = "❌ יש להזין קוד דגם חוקי.";
                 resultDiv.style.display = "block";
@@ -89,7 +91,7 @@
                 return getFridgeDetails(model);
             } else if (/^WW|WD|DV/.test(model)) {
                 return getWasherDetails(model);
-            } else if (/^(Q|U|L|K|UA|QA|UE)/.test(model)) {  // הוספתי UE
+            } else if (/^(Q|U|L|K|UA|QA|UE|QE|QN|BU)/.test(model)) { 
                 return getTVDetails(model);
             } else {
                 return `⚠️ הדגם שהוזן אינו מזוהה. נסה לבדוק שוב או לוודא שהוזן כראוי.`;
@@ -137,6 +139,7 @@
             if (model.includes("LS03")) return "THE FRAME";
             if (model.startsWith("Q")) return "QLED";
             if (model.startsWith("U") && extractYear(model) >= 2019) return "Crystal UHD";
+            if (model.startsWith("QE") || model.startsWith("QN")) return "Neo QLED";
             return "LED";
         }
 
@@ -157,6 +160,11 @@
 
         function extractColor(model) {
             return /W/.test(model) ? "לבן" : /S/.test(model) ? "כסוף" : /B/.test(model) ? "שחור" : "לא ידוע";
+        }
+
+        function extractYear(model) {
+            var match = model.match(/(\d{2})[A-Z]$/);
+            return match ? `20${match[1]}` : "לא ידוע";
         }
     </script>
 </body>
