@@ -403,7 +403,7 @@
             'QLED': 'https://images.samsung.com/is/image/samsung/p6pim/my/qa65q70dakxxm/gallery/my-qled-tv-qa65q70dakxxm-front-gray-540854235?$684_547_PNG$',
             'NEO QLED': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBlPyKp_atLUlx5rg7cEpI-XhH9t9MM3-wmg&s',
             'CRYSTAL UHD': 'https://images.samsung.com/is/image/samsung/p6pim/il/ue75cu7100uxsq/gallery/il-crystal-uhd-cu7000-ue75cu7100uxsq-536351326?$684_547_PNG$',
-            'OLED': 'https://image-us.samsung.com/SamsungUS/home/television-home-theater/tvs/oled-tvs/07252024/QN77S95DAFXZA-S.COM_Version_1_V01.jpg?$product-details-jpg$',
+            'OLED': 'https://www.electricshop.co.il/images/itempics/QE65S95D_030620241010481.jpg',
             'The Frame': 'https://www.topmarket.co.il/images/detailed/227/16e8949b60f75b0601296b8fe0b488db.jpg',
             'French Door (דלת צרפתית)': 'https://www.alm.co.il/media/catalog/product/r/f/rf65dg965eb1ml_001_front_black_1_.jpg?auto=webp&format=pjpg&width=640&height=800&fit=cover',
             'Side by Side (דלת ליד דלת)': 'https://www.electricshop.co.il/images/itempics/RF27T5001S92_12012023195056.jpg',
@@ -415,8 +415,56 @@
         const sampleModels = [
             'QE85QN85CATXSQ', 'UE65RU8000KXSQ', 'UA43LS03NAU', 'QE50Q7FAAUXIL',
             'RF65DG965EB1ML', 'WW80TA046AX', 'UA65RU8000KXSQ', 'QE85LS03D',
-            'QE85LS03C', 'QE85LS03B'
+            'QE85LS03C', 'QE85LS03B', 'QE65S95D', 'QE65S90A', 'QE65S85T'
         ];
+
+        const productFeatures = {
+            'QLED': {
+                description: 'טכנולוגיית QLED (Quantum Dot LED) מבית סמסונג מציעה צבעים עשירים וחדים במיוחד עם ניגודיות גבוהה.',
+                features: [
+                    '100% נפח צבע עם Quantum Dot - צבעים מדויקים בכל רמת בהירות.',
+                    'תאורה אחורית מתקדמת עם Quantum HDR לחוויית צפייה דינמית.',
+                    'זווית צפייה רחבה עם טכנולוגיית Anti-Reflection.',
+                    'חסכוני בחשמל בהשוואה לטלוויזיות LED רגילות.'
+                ]
+            },
+            'The Frame': {
+                description: 'טלוויזיית The Frame משלבת עיצוב ייחודי שמתאים לקיר כמו תמונה, עם איכות תצוגה מתקדמת.',
+                features: [
+                    'מצב אמנות (Art Mode) - הצגת תמונות ויצירות אמנות כשהטלוויזיה כבויה.',
+                    'חיישן תנועה ותאורה להתאמה אוטומטית של התצוגה.',
+                    'מסגרת הניתנת להתאמה אישית (לבן, חום, שחור ועוד).',
+                    'תמיכה ב-QLED לניגודיות וצבעים משופרים.'
+                ]
+            },
+            'OLED': {
+                description: 'טכנולוגיית OLED מספקת שחור מושלם וצבעים עמוקים בזכות פיקסלים שמאירים עצמאית.',
+                features: [
+                    'ניגודיות אינסופית עם שחור מוחלט.',
+                    'זמן תגובה מהיר במיוחד למשחקים ותנועה חלקה.',
+                    'זווית צפייה רחבה ללא איבוד איכות.',
+                    'עיצוב דק במיוחד עם גמישות תכנונית.'
+                ]
+            },
+            'CRYSTAL UHD': {
+                description: 'טלוויזיות Crystal UHD מציעות רזולוציה גבוהה עם מעבד Crystal לשיפור התמונה.',
+                features: [
+                    'מעבד Crystal 4K לשדרוג תמונה לרזולוציית 4K.',
+                    'HDR 10+ לפרטים משופרים באזורים מוארים וכהים.',
+                    'צבעים חיים עם טווח דינמי רחב.',
+                    'עיצוב AirSlim דק ומודרני.'
+                ]
+            },
+            'LED': {
+                description: 'טלוויזיות LED סטנדרטיות עם איכות תמונה טובה במחיר נגיש.',
+                features: [
+                    'תאורת LED חסכונית לאיכות תמונה בסיסית.',
+                    'תמיכה ב-HDR לשיפור ניגודיות.',
+                    'רזולוציה עד 4K (בדגמים מתקדמים).',
+                    'מתאים לשימוש יומיומי פשוט.'
+                ]
+            }
+        };
 
         function showSuggestions(input) {
             try {
@@ -558,63 +606,83 @@
         }
 
         function getTVDetails(model) {
-            let display = tvDisplay[model[0]] || 'לא ידוע';
-            let isFrame = model.includes('LS03');
-            if (isFrame) display = 'The Frame';
-            
-            let yearCode = '';
-            for (let i = 4; i < model.length; i++) {
-                if (yearCodes[model[i]]) {
-                    yearCode = model[i];
-                    break;
+            try {
+                let display = tvDisplay[model[0]] || 'לא ידוע';
+                let isFrame = model.includes('LS03');
+                let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
+                
+                if (isFrame) display = 'The Frame';
+                else if (isOLED) display = 'OLED';
+                else if (model[0] === 'U' && yearCodes[model[4]] >= 2018) display = 'CRYSTAL UHD';
+                else if (model[0] === 'U' && yearCodes[model[4]] < 2018) display = 'LED';
+
+                let yearCode = '';
+                for (let i = 4; i < model.length; i++) {
+                    if (yearCodes[model[i]]) {
+                        yearCode = model[i];
+                        break;
+                    }
                 }
-            }
-            let year = yearCodes[yearCode] || 'לא ידוע';
-            if (model[0] === 'U' && year >= 2018) display = 'CRYSTAL UHD';
-            else if (model[0] === 'U' && year < 2018) display = 'LED';
+                let year = yearCodes[yearCode] || 'לא ידוע';
 
-            let market = tvMarket[model[1]] || 'לא ידוע';
-            let size = model[2] + model[3];
+                let market = tvMarket[model[1]] || 'לא ידוע';
+                let size = model[2] + model[3];
 
-            let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
-            let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
-            let series = isFrame ? 'LS03' : model.slice(seriesStart, seriesEnd);
+                let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
+                let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
+                let series = isFrame ? 'LS03' : (isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd));
 
-            let broadcast = 'לא ידוע';
-            let country = 'לא ידוע';
-            let countryNote = '';
-            if (model.length >= 13) {
-                broadcast = broadcastStandards[model[model.length - 3]] || 'לא ידוע';
-                let countryCode = model.slice(-2);
-                country = countryCodesTV[countryCode] || 'לא ידוע';
-                if (year === '2025') {
-                    if (countryCode === 'IL') country = 'ישראל (ניופאן)';
-                    else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
+                let broadcast = 'לא ידוע';
+                let country = 'לא ידוע';
+                let countryNote = '';
+                if (model.length >= 13) {
+                    broadcast = broadcastStandards[model[model.length - 3]] || 'לא ידוע';
+                    let countryCode = model.slice(-2);
+                    country = countryCodesTV[countryCode] || 'לא ידוע';
+                    if (year === '2025') {
+                        if (countryCode === 'IL') country = 'ישראל (ניופאן)';
+                        else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
+                    }
+                    if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
+                        countryNote = ' - יבוא מקביל';
+                    }
+                } else if (model.length === 10 || model.length === 12) {
+                    country = 'לא צוין';
                 }
-                if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
+                if (model[1] === 'A') {
                     countryNote = ' - יבוא מקביל';
                 }
-            } else if (model.length === 10 || model.length === 12) {
-                country = 'לא צוין';
-            }
-            if (model[1] === 'A') {
-                countryNote = ' - יבוא מקביל';
-            }
-            let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
-            let image = productImages[imageKey] || '';
+                let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
+                let image = productImages[imageKey] || '';
 
-            return `<div class="card">
-                        טלוויזיה סמסונג - דגם: ${model}<br>
-                        סוג תצוגה: ${display}<br>
-                        אזור שוק: ${market}<br>
-                        גודל מסך: ${size} אינץ'<br>
-                        שנת ייצור: ${year}<br>
-                        סדרת דגם: ${series}<br>
-                        מקלט שידור: ${broadcast}<br>
-                        מדינה: ${country}${countryNote}<br>
-                        ${image ? `<img src="${image}" alt="${display}">` : ''}
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                    </div>`;
+                // הוספת תכונות ייחודיות
+                let featuresHtml = '';
+                if (productFeatures[display]) {
+                    featuresHtml = `
+                        <br><strong>${productFeatures[display].description}</strong><br>
+                        <ul style="text-align: right; padding-right: 20px;">
+                            ${productFeatures[display].features.map(feature => `<li>${feature}</li>`).join('')}
+                        </ul>
+                    `;
+                }
+
+                return `<div class="card">
+                            טלוויזיה סמסונג - דגם: ${model}<br>
+                            סוג תצוגה: ${display}<br>
+                            אזור שוק: ${market}<br>
+                            גודל מסך: ${size} אינץ'<br>
+                            שנת ייצור: ${year}<br>
+                            סדרת דגם: ${series}<br>
+                            מקלט שידור: ${broadcast}<br>
+                            מדינה: ${country}${countryNote}<br>
+                            ${image ? `<img src="${image}" alt="${display}">` : ''}
+                            ${featuresHtml}
+                            <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                        </div>`;
+            } catch (e) {
+                console.error("שגיאה ב-getTVDetails:", e);
+                return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
+            }
         }
 
         function openPopup() {
