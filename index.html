@@ -554,66 +554,66 @@
         }
 
         function getTVDetails(model) {
-            let display = tvDisplay[model[0]] || 'לא ידוע';
-            let isFrame = model.includes('LS03');
-            if (isFrame) display = 'The Frame';
-            let market = tvMarket[model[1]] || 'לא ידוע';
-            let size = model[2] + model[3];
-            let year = 'לא ידוע';
-            let yearIndex = -1;
-
-            for (let i = 4; i < model.length - (isFrame && model.length <= 10 ? 0 : 2); i++) {
-                if (yearCodes[model[i]]) {
-                    year = yearCodes[model[i]];
-                    yearIndex = i;
-                    break;
-                }
-            }
-
-            let seriesStart = 4;
-            let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
-            if (yearIndex !== -1) {
-                seriesStart = 4;
-                seriesEnd = yearIndex;
-            }
-            let series = isFrame ? 'LS03' : model.slice(seriesStart, seriesEnd);
-
-            let broadcast = 'לא ידוע';
-            let country = 'לא ידוע';
-            let countryNote = '';
-            if (model.length >= 13) {
-                broadcast = broadcastStandards[model[model.length - 3]] || 'לא ידוע';
-                let countryCode = model.slice(-2);
-                country = countryCodesTV[countryCode] || 'לא ידוע';
-                if (year === '2025') {
-                    if (countryCode === 'IL') country = 'ישראל (ניופאן)';
-                    else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
-                }
-                if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
-                    countryNote = ' - יבוא מקביל';
-                }
-            } else if (model.length === 10 || model.length === 12) {
-                country = 'לא צוין';
-            }
-            if (model[1] === 'A') {
-                countryNote = ' - יבוא מקביל';
-            }
-            let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
-            let image = productImages[imageKey] || '';
-
-            return `<div class="card">
-                        טלוויזיה סמסונג - דגם: ${model}<br>
-                        סוג תצוגה: ${display}<br>
-                        אזור שוק: ${market}<br>
-                        גודל מסך: ${size} אינץ'<br>
-                        שנת ייצור: ${year}<br>
-                        סדרת דגם: ${series}<br>
-                        מקלט שידור: ${broadcast}<br>
-                        מדינה: ${country}${countryNote}<br>
-                        ${image ? `<img src="${image}" alt="${display}">` : ''}
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                    </div>`;
+    let display = tvDisplay[model[0]] || 'לא ידוע';
+    let isFrame = model.includes('LS03');
+    if (isFrame) display = 'The Frame';
+    
+    // קביעת CRYSTAL UHD עבור U החל מ-2018
+    let yearCode = '';
+    for (let i = 4; i < model.length; i++) {
+        if (yearCodes[model[i]]) {
+            yearCode = model[i];
+            break;
         }
+    }
+    let year = yearCodes[yearCode] || 'לא ידוע';
+    if (model[0] === 'U' && year >= 2018) display = 'CRYSTAL UHD';
+    else if (model[0] === 'U' && year < 2018) display = 'LED';
+
+    let market = tvMarket[model[1]] || 'לא ידוע';
+    let size = model[2] + model[3];
+
+    // זיהוי סדרת דגם
+    let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
+    let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
+    let series = isFrame ? 'LS03' : model.slice(seriesStart, seriesEnd);
+
+    let broadcast = 'לא ידוע';
+    let country = 'לא ידוע';
+    let countryNote = '';
+    if (model.length >= 13) {
+        broadcast = broadcastStandards[model[model.length - 3]] || 'לא ידוע';
+        let countryCode = model.slice(-2);
+        country = countryCodesTV[countryCode] || 'לא ידוע';
+        if (year === '2025') {
+            if (countryCode === 'IL') country = 'ישראל (ניופאן)';
+            else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
+        }
+        if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
+            countryNote = ' - יבוא מקביל';
+        }
+    } else if (model.length === 10 || model.length === 12) {
+        country = 'לא צוין';
+    }
+    if (model[1] === 'A') {
+        countryNote = ' - יבוא מקביל';
+    }
+    let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
+    let image = productImages[imageKey] || '';
+
+    return `<div class="card">
+                טלוויזיה סמסונג - דגם: ${model}<br>
+                סוג תצוגה: ${display}<br>
+                אזור שוק: ${market}<br>
+                גודל מסך: ${size} אינץ'<br>
+                שנת ייצור: ${year}<br>
+                סדרת דגם: ${series}<br>
+                מקלט שידור: ${broadcast}<br>
+                מדינה: ${country}${countryNote}<br>
+                ${image ? `<img src="${image}" alt="${display}">` : ''}
+                <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+            </div>`;
+}
 
         // פונקציה לפתיחת ה-POP UP
         function openPopup() {
