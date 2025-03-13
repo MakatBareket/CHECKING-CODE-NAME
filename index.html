@@ -582,7 +582,93 @@
         resultDiv.style.display = "block";
         return;
     }
+// פונקציה לפתיחת ה-POP UP
+function openPopup() {
+    document.getElementById("popup").style.display = "block";
+    document.getElementById("popup-overlay").style.display = "block";
+}
 
+// פונקציה לסגירת ה-POP UP
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
+    document.getElementById("popup-overlay").style.display = "none";
+}
+
+// פונקציה למעבר לדף קוד דגם
+function switchToModelPage() {
+    closePopup();
+    showPage('model');
+}
+
+// עדכון פונקציית lookupSerial
+function lookupSerial() {
+    var serial = document.getElementById("serialInput").value.trim().toUpperCase();
+    var resultDiv = document.getElementById("serial-result");
+    var loader = document.getElementById("loader-serial");
+
+    if (!serial || (serial.length !== 11 && serial.length !== 15)) {
+        resultDiv.innerHTML = '<div class="card">שגיאה: מספר סיריאלי שגוי, אנא בדוק והזן שוב (11 או 15 תווים).</div>';
+        resultDiv.style.display = "block";
+        return;
+    }
+
+    loader.style.display = "block";
+    resultDiv.style.display = "none";
+
+    setTimeout(() => {
+        var yearCode, monthCode;
+        if (serial.length === 15) {
+            yearCode = serial[7];
+            monthCode = serial[8];
+        } else if (serial.length === 11) {
+            yearCode = serial[3];
+            monthCode = serial[4];
+        }
+
+        var yearMap = {
+            'F': 2014, 'G': 2015, 'H': 2016, 'J': 2017,
+            'K': 2018, 'M': 2019, 'N': 2020, 'R': 2021,
+            'T': 2022, 'W': 2023, 'X': 2024, 'Y': 2025
+        };
+
+        var monthMap = {
+            '1': 'ינואר', '2': 'פברואר', '3': 'מרץ', '4': 'אפריל', '5': 'מאי',
+            '6': 'יוני', '7': 'יולי', '8': 'אוגוסט', '9': 'ספטמבר', 'A': 'אוקטובר',
+            'B': 'נובמבר', 'C': 'דצמבר'
+        };
+
+        var productionYear = yearMap[yearCode] || "לא ידוע";
+        var productionMonth = monthMap[monthCode] || "לא ידוע";
+
+        var warrantyStatus = "לא ידוע";
+        if (productionYear === "לא ידוע" || productionMonth === "לא ידוע") {
+            warrantyStatus = "לא ניתן לקבוע עקב שגיאה בזיהוי תאריך ייצור";
+        } else if (productionYear < 2024 || (productionYear === 2024 && ['1', '2'].includes(monthCode))) {
+            warrantyStatus = "לא באחריות";
+        } else if (productionYear === 2024 && ['3', '4', '5', '6', '7', '8', '9', 'A', 'B'].includes(monthCode)) {
+            warrantyStatus = "באחריות סמליין";
+        } else if (productionYear === 2024 && monthCode === 'C') {
+            warrantyStatus = "באחריות סמסונג";
+        } else if (productionYear >= 2025) {
+            warrantyStatus = "באחריות סמסונג";
+        }
+
+        var dvbSupport = (productionYear >= 2018 && productionYear !== "לא ידוע") ? "תומך DVB-T2" : "תומך DVB-T1";
+
+        resultDiv.innerHTML = `<div class="card">
+                                מספר סיריאלי: ${serial}<br>
+                                שנת ייצור: ${productionYear}<br>
+                                חודש ייצור: ${productionMonth}<br>
+                                סטטוס אחריות: ${warrantyStatus}<br>
+                                תמיכת שידור: ${dvbSupport}
+                            </div>`;
+        resultDiv.style.display = "block";
+        loader.style.display = "none";
+
+        // פתיחת ה-POP UP לאחר הצגת התוצאה
+        openPopup();
+    }, 1000);
+}
     loader.style.display = "block";
     resultDiv.style.display = "none";
 
@@ -695,5 +781,11 @@
             }, 1000);
         }
     </script>
+    <div id="popup-overlay" class="popup-overlay" onclick="closePopup()"></div>
+<div id="popup" class="popup">
+    <h3>שימו לב!</h3>
+    <p>בדיקה לפי מספר סיריאלי מאפשרת לך לראות את תאריך הייצור וסטטוס האחריות בלבד. כדי לוודא אם המוצר ביבוא רשמי או מקביל, יש לבדוק לפי קוד הדגם.</p>
+    <button onclick="switchToModelPage()">עבור לחיפוש לפי קוד דגם</button>
+</div>
 </body>
 </html>
