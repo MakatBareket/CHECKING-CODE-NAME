@@ -471,7 +471,7 @@
             try {
                 if (/^R[FSBTL]/.test(model)) {
                     return getFridgeDetails(model);
-                } else if (/^W[WD]|DV/.test(model)) {
+                } else if (/^W[WD]|^DV/.test(model)) { // תיקון התנאי למייבשים
                     return getWasherDetails(model);
                 } else if (/^[QULPK][NEA]/.test(model)) {
                     return getTVDetails(model);
@@ -484,62 +484,50 @@
             }
         }
 
-    function getFridgeDetails(model) {
-    let config = fridgeConfig[model[1]] || 'לא ידוע';
-    let capacityCode = parseInt(model[2] + model[3]); // לוקחים את 2 הספרות
-    let capacityLiters = capacityCode * 10 + ' ליטר'; // מכפילים ב-10
-    let year = yearCodes[model[4]] || 'לא ידוע';
-    let series = model[5] || 'לא ידוע';
-    let finishCode = model.slice(6, 8);
-    let finish = fridgeFinish[finishCode] || 'לא ידוע';
-    let countryCode = model.slice(-2);
-    let country = countryCodesFridge[countryCode] || 'לא ידוע';
-    let image = productImages[config] || '';
+        function getFridgeDetails(model) {
+            let config = fridgeConfig[model[1]] || 'לא ידוע';
+            let capacityCode = parseInt(model[2] + model[3]); // לוקחים את 2 הספרות
+            let capacityLiters = capacityCode * 10 + ' ליטר'; // מכפילים ב-10
+            let year = yearCodes[model[4]] || 'לא ידוע';
+            let series = model[5] || 'לא ידוע';
+            let finishCode = model.slice(6, 8);
+            let finish = fridgeFinish[finishCode] || 'לא ידוע';
+            let countryCode = model.slice(-2);
+            let country = countryCodesFridge[countryCode] || 'לא ידוע';
+            let image = productImages[config] || '';
 
-    return `<div class="card">
-                מקרר סמסונג - דגם: ${model}<br>
-                תצורה: ${config}<br>
-                נפח: ${capacityLiters}<br>
-                שנת ייצור: ${year}<br>
-                סדרת דגם: ${series}<br>
-                גימור: ${finish}<br>
-                מדינה: ${country}<br>
-                ${image ? `<img src="${image}" alt="${config}">` : ''}
-                <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-            </div>`;
-}
+            return `<div class="card">
+                        מקרר סמסונג - דגם: ${model}<br>
+                        תצורה: ${config}<br>
+                        נפח: ${capacityLiters}<br>
+                        שנת ייצור: ${year}<br>
+                        סדרת דגם: ${series}<br>
+                        גימור: ${finish}<br>
+                        מדינה: ${country}<br>
+                        ${image ? `<img src="${image}" alt="${config}">` : ''}
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                    </div>`;
+        }
 
-    function getWasherDetails(model) {
-    let tech = washerTech[model.slice(0, 2)] || 'לא ידוע';
-    let capacityCode = model[2]; // בודקים רק את הספרה השלישית
-    let capacity = '';
-    switch (capacityCode) {
-        case '6': capacity = '6 ק"ג'; break;
-        case '7': capacity = '7 ק"ג'; break;
-        case '8': capacity = '8 ק"ג'; break;
-        case '9': capacity = '9 ק"ג'; break;
-        case '1': capacity = model[3] === '1' ? '11 ק"ג' : '10 ק"ג'; break; // 10 או 11 לפי הספרה הבאה
-        case '2': capacity = '12 ק"ג'; break;
-        default: capacity = 'לא ידוע';
-    }
-    let year = yearCodes[model[4]] || 'לא ידוע';
-    let month = model[5] || 'לא ידוע';
-    let color = washerColor[model[9]] || 'לא ידוע';
-    let countryCode = model.slice(-2);
-    let country = countryCodesWasher[countryCode] || 'לא ידוע';
-    let image = productImages['מכונת כביסה'] || '';
-
-    return `<div class="card">
-                ${tech} סמסונג - דגם: ${model}<br>
-                קיבולת: ${capacity}<br>
-                שנת ייצור: ${year}<br>
-                חודש ייצור: ${month}<br>
-                צבע: ${color}<br>
-                מדינה: ${country}<br>
-                ${image ? `<img src="${image}" alt="מכונת כביסה">` : ''}
-                <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-            </div>`;
-}
+        function getWasherDetails(model) {
+            let tech = washerTech[model.slice(0, 2)] || 'לא ידוע';
+            let capacityCode = model[2]; // בודקים רק את הספרה השלישית
+            let capacity = '';
+            switch (capacityCode) {
+                case '6': capacity = '6 ק"ג'; break;
+                case '7': capacity = '7 ק"ג'; break;
+                case '8': capacity = '8 ק"ג'; break;
+                case '9': capacity = '9 ק"ג'; break;
+                case '1': capacity = model[3] === '1' ? '11 ק"ג' : '10 ק"ג'; break; // 10 או 11 לפי הספרה הבאה
+                case '2': capacity = '12 ק"ג'; break;
+                default: capacity = 'לא ידוע';
+            }
+            let year = yearCodes[model[4]] || 'לא ידוע';
+            let month = model[5] || 'לא ידוע';
+            let color = washerColor[model[9]] || 'לא ידוע';
+            let countryCode = model.slice(-2);
+            let country = countryCodesWasher[countryCode] || 'לא ידוע';
+            let image = productImages['מכונת כביסה'] || '';
 
             return `<div class="card">
                         ${tech} סמסונג - דגם: ${model}<br>
@@ -554,66 +542,66 @@
         }
 
         function getTVDetails(model) {
-    let display = tvDisplay[model[0]] || 'לא ידוע';
-    let isFrame = model.includes('LS03');
-    if (isFrame) display = 'The Frame';
-    
-    // קביעת CRYSTAL UHD עבור U החל מ-2018
-    let yearCode = '';
-    for (let i = 4; i < model.length; i++) {
-        if (yearCodes[model[i]]) {
-            yearCode = model[i];
-            break;
+            let display = tvDisplay[model[0]] || 'לא ידוע';
+            let isFrame = model.includes('LS03');
+            if (isFrame) display = 'The Frame';
+            
+            // קביעת CRYSTAL UHD עבור U החל מ-2018
+            let yearCode = '';
+            for (let i = 4; i < model.length; i++) {
+                if (yearCodes[model[i]]) {
+                    yearCode = model[i];
+                    break;
+                }
+            }
+            let year = yearCodes[yearCode] || 'לא ידוע';
+            if (model[0] === 'U' && year >= 2018) display = 'CRYSTAL UHD';
+            else if (model[0] === 'U' && year < 2018) display = 'LED';
+
+            let market = tvMarket[model[1]] || 'לא ידוע';
+            let size = model[2] + model[3];
+
+            // זיהוי סדרת דגם
+            let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
+            let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
+            let series = isFrame ? 'LS03' : model.slice(seriesStart, seriesEnd);
+
+            let broadcast = 'לא ידוע';
+            let country = 'לא ידוע';
+            let countryNote = '';
+            if (model.length >= 13) {
+                broadcast = broadcastStandards[model[model.length - 3]] || 'לא ידוע';
+                let countryCode = model.slice(-2);
+                country = countryCodesTV[countryCode] || 'לא ידוע';
+                if (year === '2025') {
+                    if (countryCode === 'IL') country = 'ישראל (ניופאן)';
+                    else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
+                }
+                if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
+                    countryNote = ' - יבוא מקביל';
+                }
+            } else if (model.length === 10 || model.length === 12) {
+                country = 'לא צוין';
+            }
+            if (model[1] === 'A') {
+                countryNote = ' - יבוא מקביל';
+            }
+            let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
+            let image = productImages[imageKey] || '';
+
+            return `<div class="card">
+                        טלוויזיה סמסונג - דגם: ${model}<br>
+                        סוג תצוגה: ${display}<br>
+                        אזור שוק: ${market}<br>
+                        גודל מסך: ${size} אינץ'<br>
+                        שנת ייצור: ${year}<br>
+                        סדרת דגם: ${series}<br>
+                        מקלט שידור: ${broadcast}<br>
+                        מדינה: ${country}${countryNote}<br>
+                        ${image ? `<img src="${image}" alt="${display}">` : ''}
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                    </div>`;
         }
-    }
-    let year = yearCodes[yearCode] || 'לא ידוע';
-    if (model[0] === 'U' && year >= 2018) display = 'CRYSTAL UHD';
-    else if (model[0] === 'U' && year < 2018) display = 'LED';
-
-    let market = tvMarket[model[1]] || 'לא ידוע';
-    let size = model[2] + model[3];
-
-    // זיהוי סדרת דגם
-    let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
-    let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
-    let series = isFrame ? 'LS03' : model.slice(seriesStart, seriesEnd);
-
-    let broadcast = 'לא ידוע';
-    let country = 'לא ידוע';
-    let countryNote = '';
-    if (model.length >= 13) {
-        broadcast = broadcastStandards[model[model.length - 3]] || 'לא ידוע';
-        let countryCode = model.slice(-2);
-        country = countryCodesTV[countryCode] || 'לא ידוע';
-        if (year === '2025') {
-            if (countryCode === 'IL') country = 'ישראל (ניופאן)';
-            else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
-        }
-        if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
-            countryNote = ' - יבוא מקביל';
-        }
-    } else if (model.length === 10 || model.length === 12) {
-        country = 'לא צוין';
-    }
-    if (model[1] === 'A') {
-        countryNote = ' - יבוא מקביל';
-    }
-    let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
-    let image = productImages[imageKey] || '';
-
-    return `<div class="card">
-                טלוויזיה סמסונג - דגם: ${model}<br>
-                סוג תצוגה: ${display}<br>
-                אזור שוק: ${market}<br>
-                גודל מסך: ${size} אינץ'<br>
-                שנת ייצור: ${year}<br>
-                סדרת דגם: ${series}<br>
-                מקלט שידור: ${broadcast}<br>
-                מדינה: ${country}${countryNote}<br>
-                ${image ? `<img src="${image}" alt="${display}">` : ''}
-                <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-            </div>`;
-}
 
         // פונקציה לפתיחת ה-POP UP
         function openPopup() {
