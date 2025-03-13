@@ -62,10 +62,6 @@
 </head>
 <body>
     <div class="container">
-        <h2>בדיקת מוצר לפי מספר סיריאלי</h2>
-        <input type="text" id="serialInput" placeholder="הכנס מספר סיריאלי">
-        <button onclick="lookupSerial()">🔍 חפש</button>
-        <hr>
         <h2>בדיקת מוצר לפי קוד דגם</h2>
         <input type="text" id="modelInput" placeholder="הכנס קוד דגם">
         <button onclick="lookupModel()">🔍 חפש</button>
@@ -102,27 +98,44 @@
 
         function getTVDetails(model) {
             return `📺 טלוויזיה סמסונג - דגם: ${model}<br>
-                    📅 שנת השקה: ${model.match(/[HJKNMRTABCFD]/) || "לא ידוע"}<br>
-                    📏 גודל מסך: ${model.match(/\d+/) || "לא ידוע"} אינץ'<br>
-                    🎨 סוג תצוגה: ${model.startsWith("Q") ? "QLED" : model.startsWith("U") ? "LED" : model.startsWith("K") ? "OLED" : "לא ידוע"}<br>
-                    🌍 קוד מדינה: ${model.match(/[A-Z]{2}$/) || "לא ידוע"}`;
+                    📅 שנת השקה: ${extractYear(model)}<br>
+                    📏 גודל מסך: ${extractSize(model)} אינץ'<br>
+                    🎨 סוג תצוגה: ${extractDisplayType(model)}<br>
+                    🌍 מדינה: ${extractCountry(model)}`;
         }
 
         function getFridgeDetails(model) {
             return `❄️ מקרר סמסונג - דגם: ${model}<br>
-                    📅 שנת השקה: ${model.match(/[KTCABD]/) || "לא ידוע"}<br>
-                    📦 נפח: ${model.match(/\d+/) || "לא ידוע"} ליטר<br>
-                    🚪 סוג מקרר: ${model.startsWith("RF") ? "דלת צרפתית" : model.startsWith("RS") ? "דלת לצד דלת" : model.startsWith("RT") ? "מקפיא עליון" : "לא ידוע"}<br>
-                    🎨 גימור: ${model.match(/WW|SA|SR/) || "לא ידוע"}<br>
-                    🌍 קוד מדינה: ${model.match(/[A-Z]{2}$/) || "לא ידוע"}`;
+                    📅 שנת השקה: ${extractYear(model)}<br>
+                    📦 נפח: ${extractCapacity(model)} ליטר<br>
+                    🚪 סוג מקרר: ${extractFridgeType(model)}<br>
+                    🎨 גימור: ${extractFinish(model)}<br>
+                    🌍 מדינה: ${extractCountry(model)}`;
         }
 
         function getWasherDetails(model) {
             return `🧺 מכונת כביסה סמסונג - דגם: ${model}<br>
-                    📅 שנת השקה: ${model.match(/[RTCABD]/) || "לא ידוע"}<br>
-                    🏋️ קיבולת: ${model.match(/\d+/) || "לא ידוע"} ק"ג<br>
-                    🎨 צבע: ${model.match(/W|G|P|S|V/) || "לא ידוע"}<br>
-                    🌍 קוד מדינה: ${model.match(/[A-Z]{2}$/) || "לא ידוע"}`;
+                    📅 שנת השקה: ${extractYear(model)}<br>
+                    🏋️ קיבולת: ${extractCapacity(model)} ק"ג<br>
+                    🎨 צבע: ${extractColor(model)}<br>
+                    🌍 מדינה: ${extractCountry(model)}`;
+        }
+
+        function extractCountry(model) {
+            return /SQ|IL|ML|LI$/.test(model) ? "ישראל" : "יבוא מקביל";
+        }
+
+        function extractYear(model) {
+            var years = {"N": 2018, "R": 2019, "T": 2020, "A": 2021, "B": 2022, "C": 2023, "D": 2024};
+            return years[model.match(/[NRTABCD]/)] || "לא ידוע";
+        }
+
+        function extractSize(model) {
+            return model.match(/\d+/) || "לא ידוע";
+        }
+
+        function extractDisplayType(model) {
+            return model.startsWith("Q") ? "QLED" : model.startsWith("U") ? "LED" : model.startsWith("K") ? "OLED" : "לא ידוע";
         }
     </script>
 </body>
