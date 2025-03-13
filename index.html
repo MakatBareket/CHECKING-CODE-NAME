@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>בדיקת מוצר</title>
+    <title>בדיקת מוצר סמסונג</title>
     <style>
         body {
             font-family: 'Roboto', Arial, sans-serif;
@@ -12,14 +12,15 @@
             padding: 40px;
             margin: 0;
             min-height: 100vh;
+            overflow-x: hidden;
         }
         .container {
             background: rgba(255, 255, 255, 0.95);
             padding: 25px;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
-            margin: auto;
+            max-width: 600px;
+            margin: 0 auto 20px;
             text-align: center;
             border: 1px solid rgba(0, 123, 255, 0.5);
             backdrop-filter: blur(5px);
@@ -66,20 +67,77 @@
         }
         #result {
             margin-top: 25px;
-            padding: 20px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #e9ecef, #f8f9fa);
             display: none;
             text-align: right;
-            font-size: 16px;
-            border-left: 5px solid #007bff;
             direction: rtl;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 0.5s ease-in-out;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        .card {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            animation: slideIn 0.5s ease-in-out;
+            overflow: hidden;
+        }
+        .card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        .card a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .card a:hover {
+            background: #0056b3;
+        }
+        #loader {
+            display: none;
+            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        .suggestions {
+            position: absolute;
+            background: white;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            max-height: 150px;
+            overflow-y: auto;
+            width: calc(100% - 24px);
+            margin-top: 5px;
+            z-index: 1000;
+            display: none;
+        }
+        .suggestion-item {
+            padding: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .suggestion-item:hover {
+            background: #f0f4ff;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -87,25 +145,25 @@
 <body>
     <div class="container">
         <h2>בדיקת מוצר סמסונג</h2>
-        <input type="text" id="modelInput" placeholder="הכנס קוד דגם">
+        <div style="position: relative;">
+            <input type="text" id="modelInput" placeholder="הכנס קוד דגם" oninput="showSuggestions(this.value)">
+            <div id="suggestions" class="suggestions"></div>
+        </div>
         <button onclick="lookupModel()">🔍 חפש</button>
+        <div id="loader"></div>
         <div id="result"></div>
     </div>
 
     <script>
         // מילונים למיפוי המידע מהמקרא
         const fridgeConfig = {
-            'F': 'French Door (דלת צרפתית)',
-            'S': 'Side by Side (דלת ליד דלת)',
-            'T': 'Top Freezer (מקפיא עליון)',
-            'B': 'Bottom Freezer (מקפיא תחתון)',
-            'L': 'Bottom Freezer (מקפיא תחתון)'
+            'F': 'French Door (דלת צרפתית)', 'S': 'Side by Side (דלת ליד דלת)', 'T': 'Top Freezer (מקפיא עליון)',
+            'B': 'Bottom Freezer (מקפיא תחתון)', 'L': 'Bottom Freezer (מקפיא תחתון)'
         };
 
         const yearCodes = {
-            'H': '2014', 'J': '2015', 'K': '2016', 'M': '2017',
-            'N': '2018', 'R': '2019', 'T': '2020', 'A': '2021', 'B': '2022',
-            'C': '2023', 'D': '2024', 'F': '2025'
+            'H': '2014', 'J': '2015', 'K': '2016', 'M': '2017', 'N': '2018', 'R': '2019', 'T': '2020',
+            'A': '2021', 'B': '2022', 'C': '2023', 'D': '2024', 'F': '2025'
         };
 
         const fridgeFinish = {
@@ -145,19 +203,71 @@
             'F': 'ATSC/QAM', 'U': 'DVB', 'G': 'ISDB-T', 'T': '2xDVB'
         };
 
+        // מילון תמונות לפי סוג מוצר
+        const productImages = {
+            'QLED': 'https://images.samsung.com/is/image/samsung/p6pim/my/qa65q70dakxxm/gallery/my-qled-tv-qa65q70dakxxm-front-gray-540854235?$684_547_PNG$',
+            'NEO QLED': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBlPyKp_atLUlx5rg7cEpI-XhH9t9MM3-wmg&s',
+            'CRYSTAL UHD': 'https://images.samsung.com/is/image/samsung/p6pim/il/ue75cu7100uxsq/gallery/il-crystal-uhd-cu7000-ue75cu7100uxsq-536351326?$684_547_PNG$',
+            'OLED': 'https://image-us.samsung.com/SamsungUS/home/television-home-theater/tvs/oled-tvs/07252024/QN77S95DAFXZA-S.COM_Version_1_V01.jpg?$product-details-jpg$',
+            'The Frame': 'https://www.topmarket.co.il/images/detailed/227/16e8949b60f75b0601296b8fe0b488db.jpg',
+            'French Door (דלת צרפתית)': 'https://www.alm.co.il/media/catalog/product/r/f/rf65dg965eb1ml_001_front_black_1_.jpg?auto=webp&format=pjpg&width=640&height=800&fit=cover',
+            'Side by Side (דלת ליד דלת)': 'https://www.electricshop.co.il/images/itempics/RF27T5001S92_12012023195056.jpg',
+            'Bottom Freezer (מקפיא תחתון)': 'https://res.cloudinary.com/shufersal/image/upload/f_auto,q_auto/v1551800922/prod/product_images/products_zoom/WKW52_Z_P_8806090184161_2.png',
+            'Top Freezer (מקפיא עליון)': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSO7r_kWY7GuXsXmU--f7VKVVBmm40A8FInjQ&s',
+            'מכונת כביסה': 'https://images.samsung.com/is/image/samsung/il_WF1802WPC-YKJ_002_Front_white?$624_624_PNG$'
+        };
+
+        // דוגמאות לחיפוש חכם
+        const sampleModels = [
+            'QE85QN85CATXSQ', 'UE65RU8000KXSQ', 'UA43LS03NAU', 'QE50Q7FAAUXIL',
+            'RF65DG965EB1ML', 'WW80TA046AX', 'UA65RU8000KXSQ'
+        ];
+
+        function showSuggestions(input) {
+            const suggestionsDiv = document.getElementById('suggestions');
+            suggestionsDiv.innerHTML = '';
+            if (input.length < 2) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+            const filtered = sampleModels.filter(model => model.toUpperCase().startsWith(input.toUpperCase()));
+            if (filtered.length > 0) {
+                filtered.forEach(model => {
+                    const item = document.createElement('div');
+                    item.className = 'suggestion-item';
+                    item.textContent = model;
+                    item.onclick = () => {
+                        document.getElementById('modelInput').value = model;
+                        suggestionsDiv.style.display = 'none';
+                        lookupModel();
+                    };
+                    suggestionsDiv.appendChild(item);
+                });
+                suggestionsDiv.style.display = 'block';
+            } else {
+                suggestionsDiv.style.display = 'none';
+            }
+        }
+
         function lookupModel() {
             var model = document.getElementById("modelInput").value.trim().toUpperCase();
             var resultDiv = document.getElementById("result");
+            var loader = document.getElementById("loader");
 
             if (!model || model.length < 5) {
-                resultDiv.innerHTML = "❌ יש להזין קוד דגם חוקי (מינימום 5 תווים).";
+                resultDiv.innerHTML = '<div class="card">❌ יש להזין קוד דגם חוקי (מינימום 5 תווים).</div>';
                 resultDiv.style.display = "block";
                 return;
             }
 
-            var details = getModelDetails(model);
-            resultDiv.innerHTML = details;
-            resultDiv.style.display = "block";
+            loader.style.display = "block";
+            resultDiv.style.display = "none";
+            setTimeout(() => {
+                var details = getModelDetails(model);
+                resultDiv.innerHTML = details;
+                resultDiv.style.display = "block";
+                loader.style.display = "none";
+            }, 1000); // סימולציית טעינה של שנייה
         }
 
         function getModelDetails(model) {
@@ -168,7 +278,7 @@
             } else if (/^[QULPK][NEA]/.test(model)) {
                 return getTVDetails(model);
             } else {
-                return `⚠️ הדגם שהוזן אינו מזוהה. אנא ודא שהקוד תקין ונסה שוב.`;
+                return `<div class="card">⚠️ הדגם שהוזן אינו מזוהה. אנא ודא שהקוד תקין ונסה שוב.</div>`;
             }
         }
 
@@ -182,14 +292,19 @@
             let finish = fridgeFinish[finishCode] || 'לא ידוע';
             let countryCode = model.slice(-2);
             let country = countryCodesFridge[countryCode] || 'לא ידוע';
+            let image = productImages[config] || '';
 
-            return `❄️ מקרר סמסונג - דגם: ${model}<br>
-                    🚪 תצורה: ${config}<br>
-                    📦 נפח: ${capacityLiters}<br>
-                    📅 שנת ייצור: ${year}<br>
-                    🔢 סדרת דגם: ${series}<br>
-                    🎨 גימור: ${finish}<br>
-                    🌍 מדינה: ${country}`;
+            return `<div class="card">
+                        ❄️ מקרר סמסונג - דגם: ${model}<br>
+                        🚪 תצורה: ${config}<br>
+                        📦 נפח: ${capacityLiters}<br>
+                        📅 שנת ייצור: ${year}<br>
+                        🔢 סדרת דגם: ${series}<br>
+                        🎨 גימור: ${finish}<br>
+                        🌍 מדינה: ${country}<br>
+                        ${image ? `<img src="${image}" alt="${config}">` : ''}
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">חפש מידע נוסף באתר סמסונג</a>
+                    </div>`;
         }
 
         function getWasherDetails(model) {
@@ -203,13 +318,18 @@
             let color = washerColor[model[9]] || 'לא ידוע';
             let countryCode = model.slice(-2);
             let country = countryCodesWasher[countryCode] || 'לא ידוע';
+            let image = productImages['מכונת כביסה'] || '';
 
-            return `🧺 ${tech} סמסונג - דגם: ${model}<br>
-                    🏋️ קיבולת: ${capacity}<br>
-                    📅 שנת ייצור: ${year}<br>
-                    📆 חודש ייצור: ${month}<br>
-                    🎨 צבע: ${color}<br>
-                    🌍 מדינה: ${country}`;
+            return `<div class="card">
+                        🧺 ${tech} סמסונג - דגם: ${model}<br>
+                        🏋️ קיבולת: ${capacity}<br>
+                        📅 שנת ייצור: ${year}<br>
+                        📆 חודש ייצור: ${month}<br>
+                        🎨 צבע: ${color}<br>
+                        🌍 מדינה: ${country}<br>
+                        ${image ? `<img src="${image}" alt="מכונת כביסה">` : ''}
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">חפש מידע נוסף באתר סמסונג</a>
+                    </div>`;
         }
 
         function getTVDetails(model) {
@@ -217,8 +337,6 @@
             if (model.includes('LS03')) display = 'The Frame';
             let market = tvMarket[model[1]] || 'לא ידוע';
             let size = model[2] + model[3];
-
-            // זיהוי דינמי של שנת הייצור
             let year = 'לא ידוע';
             let yearIndex = -1;
             for (let i = 4; i < model.length - 2; i++) {
@@ -228,51 +346,49 @@
                     break;
                 }
             }
-
-            // זיהוי סדרה דינמי
-            let seriesStart = 4; // ברירת מחדל לפני שנת הייצור
-            let seriesEnd = model.length > 12 ? model.length - 3 : model.length; // לפני מקלט או סוף הקוד
+            let seriesStart = 4;
+            let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
             if (yearIndex !== -1) {
-                seriesStart = 4; // תחילת הסדרה אחרי גודל המסך
-                seriesEnd = yearIndex; // סוף הסדרה לפני השנה
+                seriesStart = 4;
+                seriesEnd = yearIndex;
             }
             let series = model.includes('LS03') ? 'LS03' : model.slice(seriesStart, seriesEnd);
-
-            // זיהוי מקלט שידור וקוד מדינה
             let broadcast = 'לא ידוע';
             let country = 'לא ידוע';
             let countryNote = '';
-            if (model.length >= 13) { // קוד מלא עם מדינה ומקלט
+            if (model.length >= 13) {
                 broadcast = broadcastStandards[model[model.length - 3]] || 'לא ידוע';
                 let countryCode = model.slice(-2);
                 country = countryCodesTV[countryCode] || 'לא ידוע';
-                // החל מ-2025, הבחנה בין ניופאן למחסני חשמל
                 if (year === '2025') {
                     if (countryCode === 'IL') country = 'ישראל (ניופאן)';
                     else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
                 }
-                // יבוא מקביל: רק אם לא ישראל
                 if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
                     countryNote = ' - יבוא מקביל';
                 }
-            } else if (model.length === 10 || model.length === 12) { // ללא קוד מדינה
+            } else if (model.length === 10 || model.length === 12) {
                 country = 'לא מצוין';
                 countryNote = ' - יבוא מקביל';
             }
-
-            // התחלה ב-A (אסיה) מסמנת יבוא מקביל
             if (model[1] === 'A') {
                 countryNote = ' - יבוא מקביל';
             }
+            let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display; // ברירת מחדל ל-LED היא Crystal UHD
+            let image = productImages[imageKey] || '';
 
-            return `📺 טלוויזיה סמסונג - דגם: ${model}<br>
-                    🎨 סוג תצוגה: ${display}<br>
-                    🌍 אזור שוק: ${market}<br>
-                    📏 גודל מסך: ${size} אינץ'<br>
-                    📅 שנת ייצור: ${year}<br>
-                    🔢 סדרת דגם: ${series}<br>
-                    📡 מקלט שידור: ${broadcast}<br>
-                    🌍 מדינה: ${country}${countryNote}`;
+            return `<div class="card">
+                        📺 טלוויזיה סמסונג - דגם: ${model}<br>
+                        🎨 סוג תצוגה: ${display}<br>
+                        🌍 אזור שוק: ${market}<br>
+                        📏 גודל מסך: ${size} אינץ'<br>
+                        📅 שנת ייצור: ${year}<br>
+                        🔢 סדרת דגם: ${series}<br>
+                        📡 מקלט שידור: ${broadcast}<br>
+                        🌍 מדינה: ${country}${countryNote}<br>
+                        ${image ? `<img src="${image}" alt="${display}">` : ''}
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">חפש מידע נוסף באתר סמסונג</a>
+                    </div>`;
         }
     </script>
 </body>
