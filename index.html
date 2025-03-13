@@ -246,6 +246,7 @@
             font-size: 16px;
             line-height: 1.5;
         }
+        /* שינוי עיצוב הכפתורים בתוך ה-pop-up */
         .popup button {
             background: #a8dadc;
             color: #1d3557;
@@ -256,11 +257,22 @@
             font-weight: 600;
             cursor: pointer;
             transition: background 0.3s, transform 0.2s;
-            margin: 0 20px; /* שינוי למרווח גדול יותר בין הכפתורים */
+            display: inline-block;
+            margin: 10px 15px;
+            min-width: 140px;
         }
         .popup button:hover {
             background: #ffffff;
             transform: scale(1.05);
+        }
+        /* הוספת קונטיינר לכפתורים למרכוז מושלם */
+        .popup-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
         }
         @keyframes popIn {
             0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
@@ -319,8 +331,10 @@
     <div id="popup" class="popup">
         <h3>שימו לב!</h3>
         <p>בדיקה לפי מספר סיריאלי מאפשרת לך לראות את תאריך הייצור וסטטוס האחריות בלבד. כדי לוודא אם המוצר ביבוא רשמי או מקביל, יש לבדוק לפי קוד הדגם.</p>
-        <button onclick="switchToModelPage()">עבור לחיפוש לפי קוד דגם</button>
-        <button onclick="closePopup()">סגור</button>
+        <div class="popup-buttons">
+            <button onclick="switchToModelPage()">עבור לחיפוש לפי קוד דגם</button>
+            <button onclick="closePopup()">סגור</button>
+        </div>
     </div>
 
     <script>
