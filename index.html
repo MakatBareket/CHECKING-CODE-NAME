@@ -107,7 +107,7 @@
         function getFridgeDetails(model) {
             return `❄️ מקרר סמסונג - דגם: ${model}<br>
                     📅 שנת השקה: ${extractYear(model)}<br>
-                    📦 נפח: ${extractCapacity(model)} ליטר<br>
+                    📦 נפח: ${extractCapacity(model, 'fridge')} ליטר<br>
                     🚪 סוג מקרר: ${extractFridgeType(model)}<br>
                     🎨 גימור: ${extractFinish(model)}<br>
                     🌍 מדינה: ${extractCountry(model)}`;
@@ -116,7 +116,7 @@
         function getWasherDetails(model) {
             return `🧺 מכונת כביסה סמסונג - דגם: ${model}<br>
                     📅 שנת השקה: ${extractYear(model)}<br>
-                    🏋️ קיבולת: ${extractCapacity(model)} ק"ג<br>
+                    🏋️ קיבולת: ${extractCapacity(model, 'washer')} ק"ג<br>
                     🎨 צבע: ${extractColor(model)}<br>
                     🌍 מדינה: ${extractCountry(model)}`;
         }
@@ -131,11 +131,18 @@
         }
 
         function extractSize(model) {
-            return model.match(/\d+/) || "לא ידוע";
+            return model.match(/^\D+(\d+)/) ? RegExp.$1 : "לא ידוע";
         }
 
         function extractDisplayType(model) {
             return model.startsWith("Q") ? "QLED" : model.startsWith("U") ? "LED" : model.startsWith("K") ? "OLED" : "לא ידוע";
+        }
+
+        function extractCapacity(model, type) {
+            var cap = model.match(/\d+/);
+            if (!cap) return "לא ידוע";
+            var num = parseInt(cap[0]);
+            return type === 'washer' && num >= 10 ? num / 10 : num;
         }
     </script>
 </body>
