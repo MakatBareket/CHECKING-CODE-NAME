@@ -97,31 +97,19 @@
         }
 
         function getTVDetails(model) {
+            let displayType = extractDisplayType(model);
+            let country = extractCountry(model);
+            let series = model.includes("LS03") ? "THE FRAME" : displayType;
+            
             return `📺 טלוויזיה סמסונג - דגם: ${model}<br>
                     📅 שנת השקה: ${extractYear(model)}<br>
                     📏 גודל מסך: ${extractSize(model)} אינץ'<br>
-                    🎨 סוג תצוגה: ${extractDisplayType(model)}<br>
-                    🌍 מדינה: ${extractCountry(model)}`;
-        }
-
-        function getFridgeDetails(model) {
-            return `❄️ מקרר סמסונג - דגם: ${model}<br>
-                    📅 שנת השקה: ${extractYear(model)}<br>
-                    📦 נפח: ${extractCapacity(model, 'fridge')} ליטר<br>
-                    🚪 סוג מקרר: ${extractFridgeType(model)}<br>
-                    🎨 גימור: ${extractFinish(model)}<br>
-                    🌍 מדינה: ${extractCountry(model)}`;
-        }
-
-        function getWasherDetails(model) {
-            return `🧺 מכונת כביסה סמסונג - דגם: ${model}<br>
-                    📅 שנת השקה: ${extractYear(model)}<br>
-                    🏋️ קיבולת: ${extractCapacity(model, 'washer')} ק"ג<br>
-                    🎨 צבע: ${extractColor(model)}<br>
-                    🌍 מדינה: ${extractCountry(model)}`;
+                    🎨 סוג תצוגה: ${series}<br>
+                    🌍 מדינה: ${country}`;
         }
 
         function extractCountry(model) {
+            if (/^UA|QA/.test(model)) return "יבוא מקביל";
             return /SQ|IL|ML|LI$/.test(model) ? "ישראל" : "יבוא מקביל";
         }
 
@@ -137,26 +125,10 @@
         }
 
         function extractDisplayType(model) {
-            return model.startsWith("Q") ? "QLED" : model.startsWith("U") ? "LED" : model.startsWith("K") ? "OLED" : "לא ידוע";
-        }
-
-        function extractCapacity(model, type) {
-            var match = model.match(/\d+/);
-            if (!match) return "לא ידוע";
-            var num = parseInt(match[0]);
-            return type === 'washer' ? num / 10 : num;
-        }
-
-        function extractFridgeType(model) {
-            return model.startsWith("RF") ? "דלת ליד דלת" : model.startsWith("RS") ? "Side by Side" : "סטנדרטי";
-        }
-
-        function extractFinish(model) {
-            return /S/.test(model) ? "נירוסטה" : /B/.test(model) ? "שחור" : "לבן";
-        }
-
-        function extractColor(model) {
-            return /W/.test(model) ? "לבן" : /S/.test(model) ? "כסוף" : /B/.test(model) ? "שחור" : "לא ידוע";
+            if (model.includes("LS03")) return "THE FRAME";
+            if (model.startsWith("Q")) return "QLED";
+            if (model.startsWith("U") && extractYear(model) >= 2019) return "Crystal UHD";
+            return "LED";
         }
     </script>
 </body>
