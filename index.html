@@ -103,6 +103,7 @@
         };
 
         const yearCodes = {
+            'H': '2014', 'J': '2015', 'K': '2016', 'M': '2017',
             'N': '2018', 'R': '2019', 'T': '2020', 'A': '2021', 'B': '2022',
             'C': '2023', 'D': '2024', 'F': '2025'
         };
@@ -136,7 +137,8 @@
         };
 
         const countryCodesTV = {
-            'ZA': 'אפריקה', 'RU': 'רוסיה', 'UA': 'אוקראינה', '2C': 'סין', 'XU': 'בריטניה', 'XY': 'אוסטרליה', 'SQ': 'ישראל', 'IL': 'ישראל'
+            'ZA': 'אפריקה', 'RU': 'רוסיה', 'UA': 'אוקראינה', '2C': 'סין', 'XU': 'בריטניה', 'XY': 'אוסטרליה',
+            'SQ': 'ישראל', 'IL': 'ישראל'
         };
 
         const broadcastStandards = {
@@ -244,7 +246,13 @@
                 broadcast = broadcastStandards[model[model.length - 3]] || 'לא ידוע';
                 let countryCode = model.slice(-2);
                 country = countryCodesTV[countryCode] || 'לא ידוע';
-                if (country !== 'ישראל') {
+                // החל מ-2025, הבחנה בין ניופאן למחסני חשמל
+                if (year === '2025') {
+                    if (countryCode === 'IL') country = 'ישראל (ניופאן)';
+                    else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
+                }
+                // יבוא מקביל: רק אם לא ישראל
+                if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
                     countryNote = ' - יבוא מקביל';
                 }
             } else if (model.length === 10 || model.length === 12) { // ללא קוד מדינה
