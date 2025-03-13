@@ -509,18 +509,37 @@
                     </div>`;
         }
 
-        function getWasherDetails(model) {
-            let tech = washerTech[model.slice(0, 2)] || 'לא ידוע';
-            let capacityCode = model[2] + model[3];
-            let capacity = capacityCode === '70' ? '7 ק"ג' : capacityCode === '80' ? '8 ק"ג' : 
-                          capacityCode === '90' ? '9 ק"ג' : capacityCode === '10' ? '10 ק"ג' : 
-                          capacityCode === '12' ? '12 ק"ג' : 'לא ידוע';
-            let year = yearCodes[model[4]] || 'לא ידוע';
-            let month = model[5] || 'לא ידוע';
-            let color = washerColor[model[9]] || 'לא ידוע';
-            let countryCode = model.slice(-2);
-            let country = countryCodesWasher[countryCode] || 'לא ידוע';
-            let image = productImages['מכונת כביסה'] || '';
+    function getWasherDetails(model) {
+    let tech = washerTech[model.slice(0, 2)] || 'לא ידוע';
+    let capacityCode = model[2]; // בודקים רק את הספרה השלישית
+    let capacity = '';
+    switch (capacityCode) {
+        case '6': capacity = '6 ק"ג'; break;
+        case '7': capacity = '7 ק"ג'; break;
+        case '8': capacity = '8 ק"ג'; break;
+        case '9': capacity = '9 ק"ג'; break;
+        case '1': capacity = model[3] === '1' ? '11 ק"ג' : '10 ק"ג'; break; // 10 או 11 לפי הספרה הבאה
+        case '2': capacity = '12 ק"ג'; break;
+        default: capacity = 'לא ידוע';
+    }
+    let year = yearCodes[model[4]] || 'לא ידוע';
+    let month = model[5] || 'לא ידוע';
+    let color = washerColor[model[9]] || 'לא ידוע';
+    let countryCode = model.slice(-2);
+    let country = countryCodesWasher[countryCode] || 'לא ידוע';
+    let image = productImages['מכונת כביסה'] || '';
+
+    return `<div class="card">
+                ${tech} סמסונג - דגם: ${model}<br>
+                קיבולת: ${capacity}<br>
+                שנת ייצור: ${year}<br>
+                חודש ייצור: ${month}<br>
+                צבע: ${color}<br>
+                מדינה: ${country}<br>
+                ${image ? `<img src="${image}" alt="מכונת כביסה">` : ''}
+                <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+            </div>`;
+}
 
             return `<div class="card">
                         ${tech} סמסונג - דגם: ${model}<br>
