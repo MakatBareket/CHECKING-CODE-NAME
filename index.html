@@ -344,26 +344,42 @@
             0% { opacity: 0; transform: scale(0.5); }
             100% { opacity: 1; transform: scale(1); }
         }
-        /* עיצוב אייקון ההגדרות */
-        #dramaticModeBtn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            font-size: 24px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            color: #e0e1dd;
-            transition: background 0.3s, transform 0.2s;
-        }
-        #dramaticModeBtn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
-        }
+        /* עיצוב מחודש לאייקון ההגדרות */
+#dramaticModeBtn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: transparent; /* הסרת הרקע המוזר */
+    border: none;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    color: #e0e1dd;
+    opacity: 0; /* חבוי כברירת מחדל */
+    transition: opacity 0.3s, transform 0.2s;
+}
+
+#dramaticModeBtn:hover {
+    opacity: 1; /* מופיע בהעברת עכבר */
+    transform: scale(1.1);
+}
+
+/* סגנון הכוכבים */
+.stars {
+    font-size: 24px;
+    color: #f4a261;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: starsReveal 1s ease-out 2s forwards;
+    margin: 15px 0;
+}
+
+@keyframes starsReveal {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
