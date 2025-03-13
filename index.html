@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>בדיקת מוצר</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, #2193b0, #6dd5ed);
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            margin: auto;
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: center;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f8f9fa;
+            display: none;
+            text-align: right;
+            font-size: 16px;
+            border-left: 5px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>בדיקת מוצר לפי מספר סיריאלי</h2>
+        <input type="text" id="serialInput" placeholder="הכנס מספר סיריאלי">
+        <button onclick="lookupSerial()">🔍 חפש</button>
+        <hr>
+        <h2>בדיקת מוצר לפי קוד דגם</h2>
+        <input type="text" id="modelInput" placeholder="הכנס קוד דגם">
+        <button onclick="lookupModel()">🔍 חפש</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function lookupSerial() {
+            var serial = document.getElementById("serialInput").value.trim();
+            var resultDiv = document.getElementById("result");
+            
+            if (serial.length !== 11 && serial.length !== 15) {
+                resultDiv.innerHTML = "❌ מספר סיריאלי שגוי, אנא בדוק והזן שוב.";
+                resultDiv.style.display = "block";
+                return;
+            }
+            
+            var yearCode, monthCode;
+            if (serial.length === 15) {
+                yearCode = serial[7];
+                monthCode = serial[8];
+            } else {
+                yearCode = serial[3];
+                monthCode = serial[4];
+            }
+            
+            var yearMap = {'F': 2014, 'G': 2015, 'H': 2016, 'J': 2017, 'K': 2018, 'M': 2019, 'N': 2020, 'R': 2021, 'T': 2022, 'W': 2023, 'X': 2024, 'Y': 2025};
+            var monthMap = {'1': 'ינואר', '2': 'פברואר', '3': 'מרץ', '4': 'אפריל', '5': 'מאי', '6': 'יוני', '7': 'יולי', '8': 'אוגוסט', 'A': 'אוקטובר', 'B': 'נובמבר', 'C': 'דצמבר'};
+            
+            var productionYear = yearMap[yearCode] || "לא ידוע";
+            var productionMonth = monthMap[monthCode] || "לא ידוע";
+            
+            var warrantyStatus = (productionYear < 2024) ? "❌ לא באחריות" : "✔️ באחריות סמליין";
+            var dvbSupport = (productionYear >= 2018) ? "📺 תומך DVB-T2" : "📺 תומך DVB-T1";
+            
+            resultDiv.innerHTML = `<strong>📅 שנת ייצור:</strong> ${productionYear}<br>
+                                   <strong>📆 חודש ייצור:</strong> ${productionMonth}<br>
+                                   <strong>🔧 סטטוס אחריות:</strong> ${warrantyStatus}<br>
+                                   <strong>📡 תמיכת שידור:</strong> ${dvbSupport}`;
+            resultDiv.style.display = "block";
+        }
+
+        function lookupModel() {
+            var model = document.getElementById("modelInput").value.trim().toUpperCase();
+            var resultDiv = document.getElementById("result");
+            
+            if (!model) {
+                resultDiv.innerHTML = "❌ יש להזין קוד דגם חוקי.";
+                resultDiv.style.display = "block";
+                return;
+            }
+            
+            var modelYearMap = {'H': 2014, 'J': 2015, 'K': 2016, 'M': 2017, 'N': 2018, 'R': 2019, 'T': 2020, 'A': 2021, 'B': 2022, 'C': 2023, 'D': 2024, 'F': 2025};
+            var year = modelYearMap[model.match(/[HJKNMRTABCFD]/)] || "לא ידוע";
+            var seriesMatch = model.match(/[A-Z]+([0-9]{2,4})/);
+            var size = seriesMatch ? seriesMatch[1] + ' אינץ\'' : "לא ידוע";
+            var series = model.match(/[A-Z]+([0-9]+)/) ? model.match(/[A-Z]+([0-9]+)/)[0] : "לא ידוע";
+            
+            resultDiv.innerHTML = `<strong>📺 דגם:</strong> ${model}<br>
+                                   <strong>📆 שנת השקה:</strong> ${year}<br>
+                                   <strong>📏 גודל מסך:</strong> ${size}<br>
+                                   <strong>🔍 סדרה:</strong> ${series}`;
+            resultDiv.style.display = "block";
+        }
+    </script>
+</body>
+</html>
