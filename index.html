@@ -496,11 +496,73 @@
     50% { transform: scale(1.1) rotate(-5deg); }
     100% { opacity: 1; transform: scale(1) rotate(0deg); }
 }
+        #teamCards ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+#teamCards li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+#teamCards li button {
+    background: #f4a261;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    color: #1d3557;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#teamCards li button:hover {
+    background: #ffffff;
+}
+
+.popup-buttons {
+    gap: 15px; /* מרווח אחיד בין הלחצנים */
+}
+#leagueTable table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#leagueTable th, #leagueTable td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#leagueTable th {
+    background: #1d3557;
+    font-weight: 600;
+}
+
+#leagueTable tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+#leagueTable tr:hover {
+    background: rgba(69, 123, 157, 0.3);
+}        
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <button id="dramaticModeBtn" onclick="showTeamOptions()" title="מצב דרמטי וניהול קבוצה">⚙️</button>
+ <button id="dramaticModeBtn" onclick="showTeamOptions()" title="מצב Ultimate וניהול קבוצה">⚙️</button>
     <div class="navbar">
         <a href="#" onclick="showPage('model')" class="active">חיפוש לפי קוד דגם</a>
         <a href="#" onclick="showPage('serial')">בדיקה לפי מספר סיריאלי</a>
@@ -547,37 +609,73 @@
     </div>
 <div id="login-overlay" class="popup-overlay" onclick="closeLoginPopup()"></div>
 <div id="login-popup" class="popup">
-    <h3>התחבר למצב דרמטי</h3>
+    <h3>התחבר למצב Ultimate</h3>
     <input type="text" id="usernameInput" placeholder="הזן שם משתמש" style="color: #1d3557;">
     <div class="popup-buttons">
         <button onclick="login()">התחבר</button>
         <button onclick="closeLoginPopup()">סגור</button>
     </div>
 </div>
-    <div id="team-overlay" class="popup-overlay" onclick="closeTeamPopup()"></div>
+  <div id="team-overlay" class="popup-overlay" onclick="closeTeamPopup()"></div>
 <div id="team-popup" class="popup" style="max-width: 600px;">
     <h3>ניהול קבוצה</h3>
     <input type="text" id="teamNameInput" placeholder="הזן שם לקבוצה" style="color: #1d3557;">
     <button onclick="saveTeamName()">שמור שם קבוצה</button>
     <div id="teamCards" style="margin-top: 20px; text-align: right;"></div>
     <div class="popup-buttons">
+        <button onclick="toggleUltimateMode(); closeTeamPopup()">חזור למצב רגיל</button>
         <button onclick="closeTeamPopup()">סגור</button>
     </div>
 </div>
-    <script>
-        // בדיקת טעינה של הדף
-        console.log("הדף נטען בהצלחה");
 
-        let dramaticMode = false;
+<!-- חלון הליגה החדש שהוספתי -->
+<div id="league-overlay" class="popup-overlay" onclick="closeLeaguePopup()"></div>
+<div id="league-popup" class="popup" style="max-width: 800px; padding: 40px;">
+    <h3>ליגת Ultimate</h3>
+    <div id="leagueTable" style="margin-top: 20px;"></div>
+    <div class="popup-buttons">
+        <button onclick="closeLeaguePopup()">סגור</button>
+    </div>
+</div>
 
-        function toggleDramaticMode() {
-            dramaticMode = !dramaticMode;
+<script>
+    // בדיקת טעינה של הדף
+    console.log("הדף נטען בהצלחה");
+
+    let ultimateMode = false;
+    function toggleUltimateMode() {
+        const username = localStorage.getItem("username");
+        if (!username) {
+            openLoginPopup();
+        } else {
+            ultimateMode = !ultimateMode;
             const btn = document.getElementById('dramaticModeBtn');
-            btn.style.background = dramaticMode ? 'rgba(69, 123, 157, 0.5)' : 'rgba(255, 255, 255, 0.1)';
+            btn.style.background = ultimateMode ? 'rgba(69, 123, 157, 0.5)' : 'rgba(255, 255, 255, 0.1)';
             if (document.getElementById('result').style.display === 'block') {
                 lookupModel();
             }
         }
+    }
+    <!-- שאר הקוד שלך ממשיך כאן -->
+</script>
+    <script>
+        // בדיקת טעינה של הדף
+        console.log("הדף נטען בהצלחה");
+
+        let ultimateMode = false;
+       function toggleUltimateMode() {
+    const username = localStorage.getItem("username");
+    if (!username) {
+        openLoginPopup();
+    } else {
+        ultimateMode = !ultimateMode;
+        const btn = document.getElementById('dramaticModeBtn');
+        btn.style.background = ultimateMode ? 'rgba(69, 123, 157, 0.5)' : 'rgba(255, 255, 255, 0.1)';
+        if (document.getElementById('result').style.display === 'block') {
+            lookupModel();
+        }
+    }
+}
 
         function showPage(pageId) {
             try {
@@ -1199,12 +1297,11 @@ function login() {
     }
     localStorage.setItem("username", username);
     closeLoginPopup();
-    alert(`ברוך הבא, ${username}! אתה במצב דרמטי.`);
-    toggleDramaticMode(); // מפעיל מצב דרמטי לאחר התחברות
-}
+    alert(`ברוך הבא, ${username}! אתה במצב Ultimate.`);
+    toggleUltimateMode(); // במקום toggleDramaticMode()
 
 // שינוי פונקציית toggleDramaticMode
-function toggleDramaticMode() {
+function UltimateMode() {
     const username = localStorage.getItem("username");
     if (!username) {
         openLoginPopup(); // דורש התחברות אם אין משתמש
@@ -1255,8 +1352,9 @@ function openTeamPopup() {
     const teamCardsDiv = document.getElementById("teamCards");
     teamCardsDiv.innerHTML = `<p>חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרות: ${teamData.savesLeft}</p>`;
     if (teamData.cards.length > 0) {
-        teamCardsDiv.innerHTML += `<ul>${teamData.cards.map((card, index) => 
-            `<li>${card.model} (${card.role}, ${card.rating}) <button onclick="removeCard(${index})">מחק</button></li>`).join('')}</ul>`;
+        teamCardsDiv.innerHTML += `<h4>שחקנים בקבוצה (${teamData.cards.length}/11):</h4>
+            <ul>${teamData.cards.map((card, index) => 
+                `<li>${card.model} (${card.role}, ${card.rating}) <button onclick="removeCard(${index})">מחק</button></li>`).join('')}</ul>`;
     } else {
         teamCardsDiv.innerHTML += "<p>אין קלפים בקבוצה עדיין.</p>";
     }
