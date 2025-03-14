@@ -772,8 +772,7 @@
     background: #666;
     cursor: not-allowed;
 }
-</style>
-<script>
+</style><script>
     console.log("הדף נטען בהצלחה");
 
     let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
@@ -788,45 +787,45 @@
     }
 
     function toggleUltimateMode() {
-    const username = localStorage.getItem("currentUser");
-    const btn = document.getElementById("dramaticModeBtn");
-    const teamBtn = document.getElementById("teamManagementBtn");
+        const username = localStorage.getItem("currentUser");
+        const btn = document.getElementById("dramaticModeBtn");
+        const teamBtn = document.getElementById("teamManagementBtn");
 
-    if (!username) {
-        openLoginPopup();
-        return;
+        if (!username) {
+            openLoginPopup();
+            return;
+        }
+
+        ultimateMode = !ultimateMode;
+        localStorage.setItem("ultimateMode", ultimateMode);
+        btn.classList.toggle("active", ultimateMode);
+        teamBtn.style.display = ultimateMode ? "block" : "none";
+
+        const notif = document.getElementById("ultimate-notif");
+        const overlay = document.getElementById("ultimate-notif-overlay");
+        if (ultimateMode) {
+            notif.innerHTML = `<h3>Ultimate Mode הופעל!</h3><p>ברוכים הבאים לעולם העתידני של ניהול קבוצות!</p>`;
+            notif.style.display = "block";
+            overlay.style.display = "block";
+            setTimeout(() => {
+                notif.style.display = "none";
+                overlay.style.display = "none";
+                openUltimateMenu();
+            }, 2000);
+        } else {
+            notif.innerHTML = `<h3>Ultimate Mode כובה</h3><p>חזרת למצב הרגיל. נתראה שוב!</p>`;
+            notif.style.display = "block";
+            overlay.style.display = "block";
+            setTimeout(() => {
+                notif.style.display = "none";
+                overlay.style.display = "none";
+            }, 2000);
+        }
+
+        if (document.getElementById("result").style.display === "block") {
+            lookupModel();
+        }
     }
-
-    ultimateMode = !ultimateMode;
-    localStorage.setItem("ultimateMode", ultimateMode);
-    btn.classList.toggle("active", ultimateMode);
-    teamBtn.style.display = ultimateMode ? "block" : "none";
-
-    const notif = document.getElementById("ultimate-notif");
-    const overlay = document.getElementById("ultimate-notif-overlay");
-    if (ultimateMode) {
-        notif.innerHTML = `<h3>Ultimate Mode הופעל!</h3><p>ברוכים הבאים לעולם העתידני של ניהול קבוצות!</p>`;
-        notif.style.display = "block";
-        overlay.style.display = "block";
-        setTimeout(() => {
-            notif.style.display = "none";
-            overlay.style.display = "none";
-            openUltimateMenu(); // פותח את תפריט Ultimate לאחר ההתראה
-        }, 2000);
-    } else {
-        notif.innerHTML = `<h3>Ultimate Mode כובה</h3><p>חזרת למצב הרגיל. נתראה שוב!</p>`;
-        notif.style.display = "block";
-        overlay.style.display = "block";
-        setTimeout(() => {
-            notif.style.display = "none";
-            overlay.style.display = "none";
-        }, 2000);
-    }
-
-    if (document.getElementById("result").style.display === "block") {
-        lookupModel(); // מעדכן את תוצאת החיפוש אם היא מוצגת
-    }
-}
 
     function showPage(pageId) {
         try {
@@ -845,15 +844,15 @@
         'B': 'Bottom Freezer (מקפיא תחתון)', 'L': 'Bottom Freezer (מקפיא תחתון)'
     };
 
- const serialYearCodes = {
-    'F': '2014', 'G': '2015', 'H': '2016', 'J': '2017', 'K': '2018', 'M': '2019', 'N': '2020',
-    'R': '2021', 'T': '2022', 'W': '2023', 'X': '2024', 'Y': '2025'
-};
+    const serialYearCodes = {
+        'F': '2014', 'G': '2015', 'H': '2016', 'J': '2017', 'K': '2018', 'M': '2019', 'N': '2020',
+        'R': '2021', 'T': '2022', 'W': '2023', 'X': '2024', 'Y': '2025'
+    };
 
-const modelYearCodes = {
-    'H': '2014', 'J': '2015', 'K': '2016', 'M': '2017', 'N': '2018', 'R': '2019', 'T': '2020',
-    'A': '2021', 'B': '2022', 'C': '2023', 'D': '2024', 'F': '2025'
-};
+    const modelYearCodes = {
+        'H': '2014', 'J': '2015', 'K': '2016', 'M': '2017', 'N': '2018', 'R': '2019', 'T': '2020',
+        'A': '2021', 'B': '2022', 'C': '2023', 'D': '2024', 'F': '2025'
+    };
 
     const monthCodes = {
         '1': 'ינואר', '2': 'פברואר', '3': 'מרץ', '4': 'אפריל', '5': 'מאי', '6': 'יוני',
@@ -977,48 +976,20 @@ const modelYearCodes = {
             ]
         }
     };
-const teamLocations = {
-    'ישראל': {
-        cities: ['תל אביב', 'ירושלים', 'חיפה', 'באר שבע', 'אילת'],
-        flag: 'https://flagcdn.com/w80/il.png'
-    },
-    'בריטניה': {
-        cities: ['לונדון', 'מנצ\'סטר', 'ליברפול', 'בירמינגהם', 'גלזגו'],
-        flag: 'https://flagcdn.com/w80/gb.png'
-    },
-    'צרפת': {
-        cities: ['פריז', 'מרסיי', 'ליון', 'טולוז', 'ניס'],
-        flag: 'https://flagcdn.com/w80/fr.png'
-    },
-    'ספרד': {
-        cities: ['מדריד', 'ברצלונה', 'ולנסיה', 'סביליה', 'בילבאו'],
-        flag: 'https://flagcdn.com/w80/es.png'
-    },
-    'ברזיל': {
-        cities: ['ריו דה ז\'ניירו', 'סאו פאולו', 'ברזיליה', 'סלבדור', 'מנאוס'],
-        flag: 'https://flagcdn.com/w80/br.png'
-    },
-    'ערב הסעודית': {
-        cities: ['ריאד', 'ג\'דה', 'מכה'],
-        flag: 'https://flagcdn.com/w80/sa.png'
-    },
-    'ארגנטינה': {
-        cities: ['בואנוס איירס', 'קורדובה'],
-        flag: 'https://flagcdn.com/w80/ar.png'
-    },
-    'פורטוגל': {
-        cities: ['ליסבון', 'פורטו'],
-        flag: 'https://flagcdn.com/w80/pt.png'
-    },
-    'גרמניה': {
-        cities: ['ברלין', 'מינכן', 'המבורג'],
-        flag: 'https://flagcdn.com/w80/de.png'
-    },
-    'בלגיה': {
-        cities: ['בריסל', 'אנטוורפן'],
-        flag: 'https://flagcdn.com/w80/be.png'
-    }
-};
+
+    const teamLocations = {
+        'ישראל': { cities: ['תל אביב', 'ירושלים', 'חיפה', 'באר שבע', 'אילת'], flag: 'https://flagcdn.com/w80/il.png' },
+        'בריטניה': { cities: ['לונדון', 'מנצ\'סטר', 'ליברפול', 'בירמינגהם', 'גלזגו'], flag: 'https://flagcdn.com/w80/gb.png' },
+        'צרפת': { cities: ['פריז', 'מרסיי', 'ליון', 'טולוז', 'ניס'], flag: 'https://flagcdn.com/w80/fr.png' },
+        'ספרד': { cities: ['מדריד', 'ברצלונה', 'ולנסיה', 'סביליה', 'בילבאו'], flag: 'https://flagcdn.com/w80/es.png' },
+        'ברזיל': { cities: ['ריו דה ז\'ניירו', 'סאו פאולו', 'ברזיליה', 'סלבדור', 'מנאוס'], flag: 'https://flagcdn.com/w80/br.png' },
+        'ערב הסעודית': { cities: ['ריאד', 'ג\'דה', 'מכה'], flag: 'https://flagcdn.com/w80/sa.png' },
+        'ארגנטינה': { cities: ['בואנוס איירס', 'קורדובה'], flag: 'https://flagcdn.com/w80/ar.png' },
+        'פורטוגל': { cities: ['ליסבון', 'פורטו'], flag: 'https://flagcdn.com/w80/pt.png' },
+        'גרמניה': { cities: ['ברלין', 'מינכן', 'המבורג'], flag: 'https://flagcdn.com/w80/de.png' },
+        'בלגיה': { cities: ['בריסל', 'אנטוורפן'], flag: 'https://flagcdn.com/w80/be.png' }
+    };
+
     // פונקציות חיפוש ועיבוד דגמים
     function showSuggestions(input) {
         try {
@@ -1114,75 +1085,164 @@ const teamLocations = {
     }
 
     function getFridgeDetails(model) {
-    let config = fridgeConfig[model[1]] || 'לא ידוע';
-    let capacityCode = parseInt(model[2] + model[3]) || 0;
-    let capacityLiters = capacityCode ? capacityCode * 10 + ' ליטר' : 'לא זמין';
-    let year = modelYearCodes[model[4]] || 'לא ידוע';
-    let series = model[5] || 'לא ידוע';
-    let finishCode = model.length >= 8 ? model.slice(6, 8) : '';
-    let finish = finishCode ? fridgeFinish[finishCode] || 'לא ידוע' : 'לא זמין';
-    let countryCode = model.length >= 10 ? model.slice(-2) : '';
-    let country = countryCode ? countryCodesFridge[countryCode] || 'לא ידוע' : 'לא זמין';
-    let image = productImages[config] || '';
+        let config = fridgeConfig[model[1]] || 'לא ידוע';
+        let capacityCode = parseInt(model[2] + model[3]) || 0;
+        let capacityLiters = capacityCode ? capacityCode * 10 + ' ליטר' : 'לא זמין';
+        let year = modelYearCodes[model[4]] || 'לא ידוע';
+        let series = model[5] || 'לא ידוע';
+        let finishCode = model.length >= 8 ? model.slice(6, 8) : '';
+        let finish = finishCode ? fridgeFinish[finishCode] || 'לא ידוע' : 'לא זמין';
+        let countryCode = model.length >= 10 ? model.slice(-2) : '';
+        let country = countryCode ? countryCodesFridge[countryCode] || 'לא ידוע' : 'לא זמין';
+        let image = productImages[config] || '';
 
-    return `<div class="card">
-                מקרר סמסונג - דגם: ${model}<br>
-                תצורה: ${config}<br>
-                נפח: ${capacityLiters}<br>
-                שנת ייצור: ${year}<br>
-                סדרת דגם: ${series}<br>
-                גימור: ${finish}<br>
-                מדינה: ${country}<br>
-                ${image ? `<img src="${image}" alt="${config}">` : ''}
-                <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-            </div>`;
-}
+        return `<div class="card">
+                    מקרר סמסונג - דגם: ${model}<br>
+                    תצורה: ${config}<br>
+                    נפח: ${capacityLiters}<br>
+                    שנת ייצור: ${year}<br>
+                    סדרת דגם: ${series}<br>
+                    גימור: ${finish}<br>
+                    מדינה: ${country}<br>
+                    ${image ? `<img src="${image}" alt="${config}">` : ''}
+                    <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                </div>`;
+    }
 
     function getWasherDetails(model) {
-    let tech = washerTech[model.slice(0, 2)] || 'לא ידוע';
-    let capacityCode = model[2];
-    let capacity = '';
-    switch (capacityCode) {
-        case '6': capacity = '6 ק"ג'; break;
-        case '7': capacity = '7 ק"ג'; break;
-        case '8': capacity = '8 ק"ג'; break;
-        case '9': capacity = '9 ק"ג'; break;
-        case '1': capacity = model[3] === '1' ? '11 ק"ג' : '10 ק"ג'; break;
-        case '2': capacity = '12 ק"ג'; break;
-        default: capacity = 'לא זמין';
-    }
-    let year = modelYearCodes[model[4]] || 'לא ידוע';
-    let month = model.length >= 6 ? model[5] || 'לא ידוע' : 'לא זמין';
-    let color = model.length >= 10 ? washerColor[model[9]] || 'לא ידוע' : 'לא זמין';
-    let countryCode = model.length >= 12 ? model.slice(-2) : '';
-    let country = countryCode ? countryCodesWasher[countryCode] || 'לא ידוע' : 'לא זמין';
-    let image = productImages['מכונת כביסה'] || '';
+        let tech = washerTech[model.slice(0, 2)] || 'לא ידוע';
+        let capacityCode = model[2];
+        let capacity = '';
+        switch (capacityCode) {
+            case '6': capacity = '6 ק"ג'; break;
+            case '7': capacity = '7 ק"ג'; break;
+            case '8': capacity = '8 ק"ג'; break;
+            case '9': capacity = '9 ק"ג'; break;
+            case '1': capacity = model[3] === '1' ? '11 ק"ג' : '10 ק"ג'; break;
+            case '2': capacity = '12 ק"ג'; break;
+            default: capacity = 'לא זמין';
+        }
+        let year = modelYearCodes[model[4]] || 'לא ידוע';
+        let month = model.length >= 6 ? model[5] || 'לא ידוע' : 'לא זמין';
+        let color = model.length >= 10 ? washerColor[model[9]] || 'לא ידוע' : 'לא זמין';
+        let countryCode = model.length >= 12 ? model.slice(-2) : '';
+        let country = countryCode ? countryCodesWasher[countryCode] || 'לא ידוע' : 'לא זמין';
+        let image = productImages['מכונת כביסה'] || '';
 
-    return `<div class="card">
-                ${tech} סמסונג - דגם: ${model}<br>
-                קיבולת: ${capacity}<br>
-                שנת ייצור: ${year}<br>
-                חודש ייצור: ${month}<br>
-                צבע: ${color}<br>
-                מדינה: ${country}<br>
-                ${image ? `<img src="${image}" alt="מכונת כביסה">` : ''}
-                <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-            </div>`;
-}
+        return `<div class="card">
+                    ${tech} סמסונג - דגם: ${model}<br>
+                    קיבולת: ${capacity}<br>
+                    שנת ייצור: ${year}<br>
+                    חודש ייצור: ${month}<br>
+                    צבע: ${color}<br>
+                    מדינה: ${country}<br>
+                    ${image ? `<img src="${image}" alt="מכונת כביסה">` : ''}
+                    <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                </div>`;
+    }
 
     function getTVDetails(model) {
-    try {
-        let display = tvDisplay[model[0]] || 'לא ידוע';
-        let isFrame = model.includes('LS03');
-        let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
-        let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
+        try {
+            let display = tvDisplay[model[0]] || 'לא ידוע';
+            let isFrame = model.includes('LS03');
+            let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
+            let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
 
-        if (isFrame) display = 'The Frame';
-        else if (isOLED) display = 'OLED';
-        else if (isNseries) display = 'N4000-N5500 Series';
-        else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) >= 2018) display = 'CRYSTAL UHD';
-        else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) < 2018) display = 'LED';
+            if (isFrame) display = 'The Frame';
+            else if (isOLED) display = 'OLED';
+            else if (isNseries) display = 'N4000-N5500 Series';
+            else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) >= 2018) display = 'CRYSTAL UHD';
+            else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) < 2018) display = 'LED';
 
+            let yearCode = '';
+            for (let i = 4; i < model.length; i++) {
+                if (modelYearCodes[model[i]]) {
+                    yearCode = model[i];
+                    break;
+                }
+            }
+            let year = modelYearCodes[yearCode] || 'לא ידוע';
+
+            let market = tvMarket[model[1]] || 'לא ידוע';
+            let size = model.length >= 4 ? model[2] + model[3] : 'לא זמין';
+
+            let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
+            let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
+            let series = isFrame ? 'LS03' : (isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd));
+            if (isNseries) series = model.slice(4, 9);
+            if (!series) series = 'לא ידוע';
+
+            let broadcast = (year >= '2018' && year !== 'לא ידוע') ? 'DVB-T2' : 'DVB-T1';
+
+            let os = 'לא צוינה';
+            if (year === '2023' || year === '2024' || year === '2025') os = 'Tizen 8.0';
+            else if (year === '2022') os = 'Tizen 7.0';
+            else if (year === '2021') os = 'Tizen 6.5';
+            else if (year === '2020') os = 'Tizen 6.0';
+            else if (year === '2019') os = 'Tizen 5.0';
+            else if (year === '2017') os = 'Tizen 4.0';
+            else if (year < '2019' && year !== 'לא ידוע') os = 'Tizen (גרסה ישנה יותר)';
+
+            let country = 'לא ידוע';
+            let countryNote = '';
+            if (model.length >= 13) {
+                let countryCode = model.slice(-2);
+                country = countryCodesTV[countryCode] || 'לא ידוע';
+                if (year === '2025') {
+                    if (countryCode === 'IL') country = 'ישראל (ניופאן)';
+                    else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
+                }
+                if (model[1] === 'U' || model[1] === 'Q') {
+                    countryNote = ' - יבוא מקביל';
+                } else if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
+                    countryNote = ' - יבוא מקביל';
+                }
+            }
+            let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
+            let image = productImages[imageKey] || '';
+
+            let featuresHtml = productFeatures[display] ? `
+                <br><strong>${productFeatures[display].description}</strong><br>
+                <ul style="text-align: right; padding-right: 20px;">
+                    ${productFeatures[display].features.map(feature => `<li>${feature}</li>`).join('')}
+                </ul>
+            ` : '';
+
+            return `<div class="card">
+                        טלוויזיה סמסונג - דגם: ${model}<br>
+                        סוג תצוגה: ${display}<br>
+                        אזור שוק: ${market}<br>
+                        גודל מסך: ${size} אינץ'<br>
+                        שנת ייצור: ${year}<br>
+                        סדרת דגם: ${series}<br>
+                        מקלט שידור: ${broadcast}<br>
+                        מערכת הפעלה: ${os}<br>
+                        מדינה: ${country}${countryNote}<br>
+                        ${image ? `<img src="${image}" alt="${display}">` : ''}
+                        ${featuresHtml}
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                    </div>`;
+        } catch (e) {
+            console.error("שגיאה ב-getTVDetails:", e);
+            return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
+        }
+    }
+
+    function getDramaticModelDetails(model) {
+        if (!model || model.length < 5) {
+            return `<div class="dramatic-card">שגיאה: קוד דגם לא תקין (${model.length} תווים, נדרש לפחות 5).</div>`;
+        }
+
+        const username = localStorage.getItem("currentUser");
+        let teamData = initTeamData();
+
+        if (teamData && teamData.searchesLeft <= 0) {
+            return `<div class="dramatic-card">שגיאה: נגמרו לך החיפושים להיום!</div>`;
+        }
+
+        let displayType = '';
+        let image = '';
+        let size = parseInt(model[2] + model[3]) || 0;
         let yearCode = '';
         for (let i = 4; i < model.length; i++) {
             if (modelYearCodes[model[i]]) {
@@ -1191,197 +1251,108 @@ const teamLocations = {
             }
         }
         let year = modelYearCodes[yearCode] || 'לא ידוע';
+        let overallScore = 0;
+        let stars = '';
+        let celebrationEffect = '';
+        let countryCode = model.length >= 13 ? model.slice(-2) : 'לא ידוע';
+        let countryFlag = '';
 
-        let market = tvMarket[model[1]] || 'לא ידוע';
-        let size = model.length >= 4 ? model[2] + model[3] : 'לא זמין';
+        const countryFlags = {
+            'IL': 'https://flagcdn.com/w80/il.png',
+            'SQ': 'https://flagcdn.com/w80/il.png',
+            'ZA': 'https://flagcdn.com/w80/za.png',
+            'RU': 'https://flagcdn.com/w80/ru.png',
+            'UA': 'https://flagcdn.com/w80/ua.png',
+            '2C': 'https://flagcdn.com/w80/cn.png',
+            'XU': 'https://flagcdn.com/w80/gb.png',
+            'XY': 'https://flagcdn.com/w80/au.png',
+            'AA': 'https://flagcdn.com/w80/us.png',
+            'WT': 'https://flagcdn.com/w80/hk.png',
+            'EC': 'https://flagcdn.com/w80/kr.png',
+            'TL': 'https://flagcdn.com/w80/in.png',
+            'EM': 'https://flagcdn.com/w80/mx.png',
+            'US': 'https://flagcdn.com/w80/us.png',
+            'LP': 'https://flagcdn.com/w80/hk.png',
+            'AH': 'https://flagcdn.com/w80/kr.png',
+            'T1': 'https://flagcdn.com/w80/in.png',
+            'AX': 'https://flagcdn.com/w80/mx.png',
+            'KJ': 'https://flagcdn.com/w80/il.png'
+        };
 
-        let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
-        let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
-        let series = isFrame ? 'LS03' : (isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd));
-        if (isNseries) series = model.slice(4, 9);
-        if (!series) series = 'לא ידוע';
+        const defaultImage = 'https://via.placeholder.com/300x200?text=מוצר+סמסונג';
 
-        let broadcast = (year >= '2018' && year !== 'לא ידוע') ? 'DVB-T2' : 'DVB-T1';
+        if (/^R[FSBTL]/.test(model)) {
+            displayType = fridgeConfig[model[1]] || 'מקרר לא ידוע';
+            overallScore = Math.floor(Math.random() * (85 - 70 + 1)) + 70;
+            if (size >= 60 && year >= '2023') overallScore += 5;
+            image = productImages[displayType] || defaultImage;
+        } else if (/^W[WD]|^DV/.test(model)) {
+            displayType = washerTech[model.slice(0, 2)] || 'מכונת כביסה לא ידועה';
+            overallScore = Math.floor(Math.random() * (80 - 65 + 1)) + 65;
+            image = productImages['מכונת כביסה'] || defaultImage;
+        } else if (/^[QULPK][NEA]/.test(model)) {
+            let isFrame = model.includes('LS03');
+            let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
+            let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
 
-        let os = 'לא צוינה';
-        if (year === '2023' || year === '2024' || year === '2025') os = 'Tizen 8.0';
-        else if (year === '2022') os = 'Tizen 7.0';
-        else if (year === '2021') os = 'Tizen 6.5';
-        else if (year === '2020') os = 'Tizen 6.0';
-        else if (year === '2019') os = 'Tizen 5.0';
-        else if (year === '2017') os = 'Tizen 4.0';
-        else if (year < '2019' && year !== 'לא ידוע') os = 'Tizen (גרסה ישנה יותר)';
+            if (isFrame) displayType = 'The Frame';
+            else if (isOLED) displayType = 'OLED';
+            else if (isNseries) displayType = 'N4000-N5500 Series';
+            else if (model[0] === 'U' && year >= '2018') displayType = 'CRYSTAL UHD';
+            else if (model[0] === 'U' && year < '2018') displayType = 'LED';
+            else displayType = tvDisplay[model[0]] || 'טלוויזיה לא ידועה';
 
-        let country = 'לא ידוע';
-        let countryNote = '';
-        if (model.length >= 13) {
-            let countryCode = model.slice(-2);
-            country = countryCodesTV[countryCode] || 'לא ידוע';
-            if (year === '2025') {
-                if (countryCode === 'IL') country = 'ישראל (ניופאן)';
-                else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
-            }
-            // בדיקת יבוא מקביל: אם אזור השוק הוא U או Q, זה יבוא מקביל גם אם הסיומת היא ישראל
-            if (model[1] === 'U' || model[1] === 'Q') {
-                countryNote = ' - יבוא מקביל';
-            } else if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
-                countryNote = ' - יבוא מקביל';
-            }
+            if (isFrame && size >= 85 && year === '2024') overallScore = 94;
+            else if (model[0] === 'Q' && size >= 85 && year === '2024') overallScore = 94;
+            else if (isFrame) overallScore = Math.min(88 + Math.floor((size - 43) / 10), 93);
+            else if (isOLED) overallScore = Math.min(82 + Math.floor((size - 55) / 10), 91);
+            else if (model[0] === 'Q') overallScore = Math.min(85 + Math.floor((size - 55) / 10), 93);
+            else overallScore = Math.min(75 + Math.floor((size - 43) / 10), 88);
+            image = productImages[displayType] || defaultImage;
+        } else {
+            displayType = 'מוצר לא מזוהה';
+            overallScore = Math.floor(Math.random() * (80 - 60 + 1)) + 60;
+            image = defaultImage;
         }
-        let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
-        let image = productImages[imageKey] || '';
 
-        let featuresHtml = productFeatures[display] ? `
-            <br><strong>${productFeatures[display].description}</strong><br>
-            <ul style="text-align: right; padding-right: 20px;">
-                ${productFeatures[display].features.map(feature => `<li>${feature}</li>`).join('')}
-            </ul>
-        ` : '';
+        countryFlag = countryFlags[countryCode] || '';
 
-        return `<div class="card">
-                    טלוויזיה סמסונג - דגם: ${model}<br>
-                    סוג תצוגה: ${display}<br>
-                    אזור שוק: ${market}<br>
-                    גודל מסך: ${size} אינץ'<br>
-                    שנת ייצור: ${year}<br>
-                    סדרת דגם: ${series}<br>
-                    מקלט שידור: ${broadcast}<br>
-                    מערכת הפעלה: ${os}<br>
-                    מדינה: ${country}${countryNote}<br>
-                    ${image ? `<img src="${image}" alt="${display}">` : ''}
-                    ${featuresHtml}
-                    <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                </div>`;
-    } catch (e) {
-        console.error("שגיאה ב-getTVDetails:", e);
-        return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
-    }
-}
-   function getDramaticModelDetails(model) {
-    if (!model || model.length < 5) {
-        return `<div class="dramatic-card">שגיאה: קוד דגם לא תקין (${model.length} תווים, נדרש לפחות 5).</div>`;
-    }
+        if (overallScore >= 90) stars = '★★★★★';
+        else if (overallScore >= 80) stars = '★★★★☆';
+        else if (overallScore >= 70) stars = '★★★☆☆';
+        else if (overallScore >= 60) stars = '★★☆☆☆';
+        else stars = '★☆☆☆☆';
 
-    const username = localStorage.getItem("currentUser");
-    let teamData = initTeamData();
+        if (overallScore >= 88) {
+            celebrationEffect = ' celebration';
+            setTimeout(() => triggerConfetti(), 2000);
+        }
 
-    if (teamData && teamData.searchesLeft <= 0) {
-        return `<div class="dramatic-card">שגיאה: נגמרו לך החיפושים להיום!</div>`;
-    }
+        let flagHtml = countryFlag ? `<img src="${countryFlag}" alt="דגל המדינה" class="country-flag">` : '';
 
-    let displayType = '';
-    let image = '';
-    let size = parseInt(model[2] + model[3]) || 0;
-    let yearCode = '';
-    for (let i = 4; i < model.length; i++) {
-        if (modelYearCodes[model[i]]) {  // שינוי מ-yearCodes ל-modelYearCodes
-            yearCode = model[i];
-            break;
+        if (teamData) {
+            teamData.searchesLeft--;
+            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+            const roles = ['שוער', 'מגן', 'קשר', 'חלוץ'];
+            const randomRole = roles[Math.floor(Math.random() * roles.length)];
+            return `<div class="dramatic-card hollywood${celebrationEffect}">
+                        <img src="${image}" alt="${displayType}">
+                        <div class="tv-name">${model} - ${displayType}</div>
+                        ${flagHtml}
+                        <div class="stars">${stars}</div>
+                        <div class="overall">${overallScore}</div>
+                        <button onclick="saveCard('${model}', '${randomRole}', ${overallScore})" ${teamData.savesLeft <= 0 ? 'disabled' : ''}>שמור לקבוצה (${teamData.savesLeft} נותרו)</button>
+                    </div>`;
+        } else {
+            return `<div class="dramatic-card hollywood${celebrationEffect}">
+                        <img src="${image}" alt="${displayType}">
+                        <div class="tv-name">${model} - ${displayType}</div>
+                        ${flagHtml}
+                        <div class="stars">${stars}</div>
+                        <div class="overall">${overallScore}</div>
+                    </div>`;
         }
     }
-    let year = modelYearCodes[yearCode] || 'לא ידוע';  // שינוי מ-yearCodes ל-modelYearCodes
-    let overallScore = 0;
-    let stars = '';
-    let celebrationEffect = '';
-    let countryCode = model.length >= 13 ? model.slice(-2) : 'לא ידוע';
-    let countryFlag = '';
-
-    const countryFlags = {
-        'IL': 'https://flagcdn.com/w80/il.png',
-        'SQ': 'https://flagcdn.com/w80/il.png',
-        'ZA': 'https://flagcdn.com/w80/za.png',
-        'RU': 'https://flagcdn.com/w80/ru.png',
-        'UA': 'https://flagcdn.com/w80/ua.png',
-        '2C': 'https://flagcdn.com/w80/cn.png',
-        'XU': 'https://flagcdn.com/w80/gb.png',
-        'XY': 'https://flagcdn.com/w80/au.png',
-        'AA': 'https://flagcdn.com/w80/us.png',
-        'WT': 'https://flagcdn.com/w80/hk.png',
-        'EC': 'https://flagcdn.com/w80/kr.png',
-        'TL': 'https://flagcdn.com/w80/in.png',
-        'EM': 'https://flagcdn.com/w80/mx.png',
-        'US': 'https://flagcdn.com/w80/us.png',
-        'LP': 'https://flagcdn.com/w80/hk.png',
-        'AH': 'https://flagcdn.com/w80/kr.png',
-        'T1': 'https://flagcdn.com/w80/in.png',
-        'AX': 'https://flagcdn.com/w80/mx.png',
-        'KJ': 'https://flagcdn.com/w80/il.png'
-    };
-
-    const defaultImage = 'https://via.placeholder.com/300x200?text=מוצר+סמסונג';
-
-    if (/^R[FSBTL]/.test(model)) {
-        displayType = fridgeConfig[model[1]] || 'מקרר לא ידוע';
-        overallScore = Math.floor(Math.random() * (85 - 70 + 1)) + 70;
-        if (size >= 60 && year >= '2023') overallScore += 5;
-        image = productImages[displayType] || defaultImage;
-    } else if (/^W[WD]|^DV/.test(model)) {
-        displayType = washerTech[model.slice(0, 2)] || 'מכונת כביסה לא ידועה';
-        overallScore = Math.floor(Math.random() * (80 - 65 + 1)) + 65;
-        image = productImages['מכונת כביסה'] || defaultImage;
-    } else if (/^[QULPK][NEA]/.test(model)) {
-        let isFrame = model.includes('LS03');
-        let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
-        let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
-
-        if (isFrame) displayType = 'The Frame';
-        else if (isOLED) displayType = 'OLED';
-        else if (isNseries) displayType = 'N4000-N5500 Series';
-        else if (model[0] === 'U' && year >= '2018') displayType = 'CRYSTAL UHD';
-        else if (model[0] === 'U' && year < '2018') displayType = 'LED';
-        else displayType = tvDisplay[model[0]] || 'טלוויזיה לא ידועה';
-
-        if (isFrame && size >= 85 && year === '2024') overallScore = 94;
-        else if (model[0] === 'Q' && size >= 85 && year === '2024') overallScore = 94;
-        else if (isFrame) overallScore = Math.min(88 + Math.floor((size - 43) / 10), 93);
-        else if (isOLED) overallScore = Math.min(82 + Math.floor((size - 55) / 10), 91);
-        else if (model[0] === 'Q') overallScore = Math.min(85 + Math.floor((size - 55) / 10), 93);
-        else overallScore = Math.min(75 + Math.floor((size - 43) / 10), 88);
-        image = productImages[displayType] || defaultImage;
-    } else {
-        displayType = 'מוצר לא מזוהה';
-        overallScore = Math.floor(Math.random() * (80 - 60 + 1)) + 60;
-        image = defaultImage;
-    }
-
-    countryFlag = countryFlags[countryCode] || '';
-
-    if (overallScore >= 90) stars = '★★★★★';
-    else if (overallScore >= 80) stars = '★★★★☆';
-    else if (overallScore >= 70) stars = '★★★☆☆';
-    else if (overallScore >= 60) stars = '★★☆☆☆';
-    else stars = '★☆☆☆☆';
-
-    if (overallScore >= 88) {
-        celebrationEffect = ' celebration';
-        setTimeout(() => triggerConfetti(), 2000);
-    }
-
-    let flagHtml = countryFlag ? `<img src="${countryFlag}" alt="דגל המדינה" class="country-flag">` : '';
-
-    if (teamData) {
-        teamData.searchesLeft--;
-        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
-        const roles = ['שוער', 'מגן', 'קשר', 'חלוץ'];
-        const randomRole = roles[Math.floor(Math.random() * roles.length)];
-        return `<div class="dramatic-card hollywood${celebrationEffect}">
-                    <img src="${image}" alt="${displayType}">
-                    <div class="tv-name">${model} - ${displayType}</div>
-                    ${flagHtml}
-                    <div class="stars">${stars}</div>
-                    <div class="overall">${overallScore}</div>
-                    <button onclick="saveCard('${model}', '${randomRole}', ${overallScore})" ${teamData.savesLeft <= 0 ? 'disabled' : ''}>שמור לקבוצה (${teamData.savesLeft} נותרו)</button>
-                </div>`;
-    } else {
-        return `<div class="dramatic-card hollywood${celebrationEffect}">
-                    <img src="${image}" alt="${displayType}">
-                    <div class="tv-name">${model} - ${displayType}</div>
-                    ${flagHtml}
-                    <div class="stars">${stars}</div>
-                    <div class="overall">${overallScore}</div>
-                </div>`;
-    }
-}
 
     function triggerConfetti() {
         const confettiContainer = document.createElement('div');
@@ -1399,64 +1370,65 @@ const teamLocations = {
         setTimeout(() => confettiContainer.remove(), 5000);
     }
 
-   function lookupSerial() {
-    try {
-        var serial = document.getElementById("serialInput").value.trim().toUpperCase();
-        var resultDiv = document.getElementById("serial-result");
-        var loader = document.getElementById("loader-serial");
+    function lookupSerial() {
+        try {
+            var serial = document.getElementById("serialInput").value.trim().toUpperCase();
+            var resultDiv = document.getElementById("serial-result");
+            var loader = document.getElementById("loader-serial");
 
-        if (!serial || (serial.length !== 11 && serial.length !== 15)) {
-            resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי (11 או 15 תווים).</div>';
-            resultDiv.style.display = "block";
-            return;
-        }
-
-        loader.style.display = "block";
-        resultDiv.style.display = "none";
-
-        setTimeout(() => {
-            let year, month, productionDate, warrantyStatus;
-
-            if (serial.length === 15) {
-                year = serialYearCodes[serial[7]] || 'לא ידוע';
-                month = monthCodes[serial[8]] || 'לא ידוע';
-                productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
-            } else if (serial.length === 11) {
-                year = serialYearCodes[serial[3]] || 'לא ידוע';
-                month = monthCodes[serial[4]] || 'לא ידוע';
-                productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
+            if (!serial || (serial.length !== 11 && serial.length !== 15)) {
+                resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי (11 או 15 תווים).</div>';
+                resultDiv.style.display = "block";
+                return;
             }
 
-            const monthIndex = Object.keys(monthCodes).indexOf(serial[serial.length === 15 ? 8 : 4]);
-            const productionYear = parseInt(year) || 0;
-            const productionDateObj = productionYear ? new Date(productionYear, monthIndex) : null;
-            const currentDate = new Date('2025-03-14');
+            loader.style.display = "block";
+            resultDiv.style.display = "none";
 
-            if (!productionDateObj || productionDateObj <= new Date('2024-03-31')) {
-                warrantyStatus = 'לא באחריות';
-            } else if (productionDateObj <= new Date('2024-11-30')) {
-                warrantyStatus = 'באחריות סמליין';
-            } else {
-                warrantyStatus = 'באחריות סמסונג ישראל';
-            }
+            setTimeout(() => {
+                let year, month, productionDate, warrantyStatus;
 
-            resultDiv.innerHTML = `<div class="card">
-                                    מספר סיריאלי: ${serial}<br>
-                                    תאריך ייצור: ${productionDate}<br>
-                                    סטטוס אחריות: ${warrantyStatus}<br>
-                                    הערה: למידע נוסף יש לבדוק לפי קוד דגם.
-                                  </div>`;
+                if (serial.length === 15) {
+                    year = serialYearCodes[serial[7]] || 'לא ידוע';
+                    month = monthCodes[serial[8]] || 'לא ידוע';
+                    productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
+                } else if (serial.length === 11) {
+                    year = serialYearCodes[serial[3]] || 'לא ידוע';
+                    month = monthCodes[serial[4]] || 'לא ידוע';
+                    productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
+                }
+
+                const monthIndex = Object.keys(monthCodes).indexOf(serial[serial.length === 15 ? 8 : 4]);
+                const productionYear = parseInt(year) || 0;
+                const productionDateObj = productionYear ? new Date(productionYear, monthIndex) : null;
+                const currentDate = new Date('2025-03-14');
+
+                if (!productionDateObj || productionDateObj <= new Date('2024-03-31')) {
+                    warrantyStatus = 'לא באחריות';
+                } else if (productionDateObj <= new Date('2024-11-30')) {
+                    warrantyStatus = 'באחריות סמליין';
+                } else {
+                    warrantyStatus = 'באחריות סמסונג ישראל';
+                }
+
+                resultDiv.innerHTML = `<div class="card">
+                                        מספר סיריאלי: ${serial}<br>
+                                        תאריך ייצור: ${productionDate}<br>
+                                        סטטוס אחריות: ${warrantyStatus}<br>
+                                        הערה: למידע נוסף יש לבדוק לפי קוד דגם.
+                                      </div>`;
+                resultDiv.style.display = "block";
+                loader.style.display = "none";
+                showPopup();
+            }, 1000);
+        } catch (e) {
+            console.error("שגיאה ב-lookupSerial:", e);
+            resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד המספר הסיריאלי: ${e.message}</div>`;
             resultDiv.style.display = "block";
             loader.style.display = "none";
-            showPopup();
-        }, 1000);
-    } catch (e) {
-        console.error("שגיאה ב-lookupSerial:", e);
-        resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד המספר הסיריאלי: ${e.message}</div>`;
-        resultDiv.style.display = "block";
-        loader.style.display = "none";
+        }
     }
-}
+
     // פונקציות ממשק משתמש
     function showPopup() {
         document.getElementById("popup").style.display = "block";
@@ -1531,37 +1503,36 @@ const teamLocations = {
     }
 
     function initTeamData() {
-    const username = localStorage.getItem("currentUser");
-    if (!username) return null;
+        const username = localStorage.getItem("currentUser");
+        if (!username) return null;
 
-    let teamData = JSON.parse(localStorage.getItem(`team_${username}`));
-    if (!teamData) {
-        teamData = {
-            teamName: '',
-            coachName: '',
-            stadiumName: '',
-            stadiumLevel: 1, // רמה 1: 1000 מקומות
-            country: '',
-            city: '',
-            cards: [],
-            searchesLeft: 10,
-            savesLeft: 11,
-            coins: 30, // מתחילים עם 30 מטבעות
-            lastCoinUpdate: new Date().toISOString().split('T')[0] // תאריך אחרון לעדכון מטבעות
-        };
-        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+        let teamData = JSON.parse(localStorage.getItem(`team_${username}`));
+        if (!teamData) {
+            teamData = {
+                teamName: '',
+                coachName: '',
+                stadiumName: '',
+                stadiumLevel: 1,
+                country: '',
+                city: '',
+                cards: [],
+                searchesLeft: 10,
+                savesLeft: 11,
+                coins: 30,
+                lastCoinUpdate: new Date().toISOString().split('T')[0]
+            };
+            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+        if (teamData.lastCoinUpdate !== today) {
+            teamData.coins += 30;
+            teamData.lastCoinUpdate = today;
+            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+        }
+
+        return teamData;
     }
-
-    // עדכון מטבעות יומי
-    const today = new Date().toISOString().split('T')[0];
-    if (teamData.lastCoinUpdate !== today) {
-        teamData.coins += 30;
-        teamData.lastCoinUpdate = today;
-        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
-    }
-
-    return teamData;
-}
 
     function saveCard(model, role, rating) {
         const username = localStorage.getItem("currentUser");
@@ -1583,239 +1554,185 @@ const teamLocations = {
         alert(`נוסף לקבוצה: ${model} כ${role} עם דירוג ${rating}`);
         document.querySelector('.dramatic-card button').disabled = true;
     }
-   function openTeamPopup() {
-    const username = localStorage.getItem("currentUser");
-    let teamData = initTeamData();
-    if (!username) {
-        openLoginPopup();
-        return;
-    }
-    if (!teamData) return;
 
-    let cardsHtml = '<ul>';
-    teamData.cards.forEach((card, index) => {
-        cardsHtml += `<li>${card.model} - ${card.role} (${card.rating}) <button class="remove-btn" data-index="${index}">הסר</button></li>`;
-    });
-    cardsHtml += '</ul>';
+    function openTeamPopup() {
+        const username = localStorage.getItem("currentUser");
+        let teamData = initTeamData();
+        if (!username) {
+            openLoginPopup();
+            return;
+        }
+        if (!teamData) return;
 
-    let countryOptions = '<option value="">בחר מדינה</option>';
-    for (let country in teamLocations) {
-        countryOptions += `<option value="${country}" ${teamData.country === country ? 'selected' : ''}>${country}</option>`;
-    }
-
-    let cityOptions = '<option value="">בחר עיר</option>';
-    if (teamData.country && teamLocations[teamData.country]) {
-        teamLocations[teamData.country].cities.forEach(city => {
-            cityOptions += `<option value="${city}" ${teamData.city === city ? 'selected' : ''}>${city}</option>`;
+        let cardsHtml = '<ul>';
+        teamData.cards.forEach((card, index) => {
+            cardsHtml += `<li>${card.model} - ${card.role} (${card.rating}) <button class="remove-btn" data-index="${index}">הסר</button></li>`;
         });
+        cardsHtml += '</ul>';
+
+        let countryOptions = '<option value="">בחר מדינה</option>';
+        for (let country in teamLocations) {
+            countryOptions += `<option value="${country}" ${teamData.country === country ? 'selected' : ''}>${country}</option>`;
+        }
+
+        let cityOptions = '<option value="">בחר עיר</option>';
+        if (teamData.country && teamLocations[teamData.country]) {
+            teamLocations[teamData.country].cities.forEach(city => {
+                cityOptions += `<option value="${city}" ${teamData.city === city ? 'selected' : ''}>${city}</option>`;
+            });
+        }
+
+        const stadiumLevels = {
+            1: { capacity: 1000, image: 'https://thumbs.dreamstime.com/b/amateur-soccer-field-illuminated-night-small-football-lit-lanterns-evening-green-spotlight-image252808480.jpg' },
+            2: { capacity: 5000, image: 'https://integralspor.com/uploads/facility/detail/5000-seats-stadium-10631.jpg' },
+            3: { capacity: 10000, image: 'https://javiergarciaalda.com/wp-content/uploads/2021/11/JavierGAlda_Libia_3-escorzo-pepon.jpg' },
+            4: { capacity: 20000, image: 'https://stadiumdb.com/img/news/2022/02/09Ord2.jpg' }
+        };
+        const currentStadium = stadiumLevels[teamData.stadiumLevel];
+        const nextLevel = teamData.stadiumLevel < 4 ? teamData.stadiumLevel + 1 : null;
+        const upgradeCost = nextLevel ? (nextLevel - 1) * 50 : null;
+
+        const popup = document.getElementById("team-popup");
+        popup.innerHTML = `
+            <h3>ניהול קבוצה</h3>
+            <div class="team-field">
+                <input type="text" id="teamNameInput" value="${teamData.teamName}" readonly style="background-color: #e9ecef;">
+                <button id="editTeamNameBtn" class="active">ערוך</button>
+            </div>
+            <div class="team-field">
+                <input type="text" id="coachNameInput" value="${teamData.coachName}" readonly style="background-color: #e9ecef;">
+                <button id="editCoachNameBtn" class="active">ערוך</button>
+            </div>
+            <div class="team-field">
+                <input type="text" id="stadiumNameInput" value="${teamData.stadiumName}" readonly style="background-color: #e9ecef;">
+                <button id="editStadiumNameBtn" class="active">ערוך</button>
+            </div>
+            <div class="team-field">
+                <select id="countrySelect">
+                    ${countryOptions}
+                </select>
+                <select id="citySelect">
+                    ${cityOptions}
+                </select>
+                ${teamData.country && teamLocations[teamData.country] ? `<img src="${teamLocations[teamData.country].flag}" alt="דגל ${teamData.country}" class="country-flag">` : ''}
+            </div>
+            <button id="saveTeamBtn" style="margin-top: 15px;">שמור פרטי קבוצה</button>
+            <h4 style="margin-top: 20px;">אצטדיון: ${teamData.stadiumName || 'ללא שם'} (${currentStadium.capacity} מקומות)</h4>
+            <img src="${currentStadium.image}" alt="אצטדיון" style="width: 200px; height: auto; border-radius: 10px; margin: 10px auto; display: block;">
+            ${nextLevel ? `<button id="upgradeStadiumBtn" ${teamData.coins < upgradeCost ? 'disabled' : ''}>שדרג ל-${stadiumLevels[nextLevel].capacity} מקומות (${upgradeCost} מטבעות)</button>` : '<p>אצטדיון ברמה מקסימלית!</p>'}
+            <h4 style="margin-top: 20px;">שחקנים (${teamData.cards.length}/11)</h4>
+            <div id="teamCards">${cardsHtml}</div>
+            <div class="popup-buttons">
+                <button id="fieldViewBtn">תצוגת מגרש</button>
+                <button id="closeTeamBtn">סגור</button>
+            </div>
+            <p style="margin-top: 10px;">חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרו: ${teamData.savesLeft} | מטבעות: ${teamData.coins}</p>
+        `;
+
+        const toggleEditButton = (btnId, inputId) => {
+            const btn = document.getElementById(btnId);
+            const input = document.getElementById(inputId);
+            btn.addEventListener("click", () => {
+                if (input.hasAttribute("readonly")) {
+                    input.removeAttribute("readonly");
+                    input.style.backgroundColor = "#fff";
+                    btn.textContent = "שמור";
+                    btn.classList.remove("active");
+                } else {
+                    input.setAttribute("readonly", true);
+                    input.style.backgroundColor = "#e9ecef";
+                    btn.textContent = "ערוך";
+                    btn.classList.add("active");
+                    saveTeamDetails();
+                }
+            });
+        };
+        toggleEditButton("editTeamNameBtn", "teamNameInput");
+        toggleEditButton("editCoachNameBtn", "coachNameInput");
+        toggleEditButton("editStadiumNameBtn", "stadiumNameInput");
+
+        document.getElementById("countrySelect").addEventListener("change", updateCities);
+        document.getElementById("saveTeamBtn").addEventListener("click", saveTeamDetails);
+        document.getElementById("fieldViewBtn").addEventListener("click", openFieldPopup);
+        document.getElementById("closeTeamBtn").addEventListener("click", closeTeamPopup);
+        if (nextLevel) {
+            document.getElementById("upgradeStadiumBtn").addEventListener("click", () => upgradeStadium(teamData, nextLevel, upgradeCost));
+        }
+        document.querySelectorAll(".remove-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const index = parseInt(btn.getAttribute("data-index"));
+                removeCard(index);
+            });
+        });
+
+        popup.style.display = "block";
+        document.getElementById("team-overlay").style.display = "block";
     }
 
-    const stadiumLevels = {
-        1: { capacity: 1000, image: 'https://thumbs.dreamstime.com/b/amateur-soccer-field-illuminated-night-small-football-lit-lanterns-evening-green-spotlight-image252808480.jpg' },
-        2: { capacity: 5000, image: 'https://integralspor.com/uploads/facility/detail/5000-seats-stadium-10631.jpg' },
-        3: { capacity: 10000, image: 'https://javiergarciaalda.com/wp-content/uploads/2021/11/JavierGAlda_Libia_3-escorzo-pepon.jpg' },
-        4: { capacity: 20000, image: 'https://stadiumdb.com/img/news/2022/02/09Ord2.jpg' }
-    };
-    const currentStadium = stadiumLevels[teamData.stadiumLevel];
-    const nextLevel = teamData.stadiumLevel < 4 ? teamData.stadiumLevel + 1 : null;
-    const upgradeCost = nextLevel ? (nextLevel - 1) * 50 : null;
+    function updateCities() {
+        const countrySelect = document.getElementById("countrySelect");
+        const citySelect = document.getElementById("citySelect");
+        const selectedCountry = countrySelect.value;
+        citySelect.innerHTML = '<option value="">בחר עיר</option>';
 
-    const popup = document.getElementById("team-popup");
-    popup.innerHTML = `
-        <h3>ניהול קבוצה</h3>
-        <div class="team-field">
-            <input type="text" id="teamNameInput" value="${teamData.teamName}" readonly style="background-color: #e9ecef;">
-            <button id="editTeamNameBtn" class="active">ערוך</button>
-        </div>
-        <div class="team-field">
-            <input type="text" id="coachNameInput" value="${teamData.coachName}" readonly style="background-color: #e9ecef;">
-            <button id="editCoachNameBtn" class="active">ערוך</button>
-        </div>
-        <div class="team-field">
-            <input type="text" id="stadiumNameInput" value="${teamData.stadiumName}" readonly style="background-color: #e9ecef;">
-            <button id="editStadiumNameBtn" class="active">ערוך</button>
-        </div>
-        <div class="team-field">
-            <select id="countrySelect">
-                ${countryOptions}
-            </select>
-            <select id="citySelect">
-                ${cityOptions}
-            </select>
-            ${teamData.country && teamLocations[teamData.country] ? `<img src="${teamLocations[teamData.country].flag}" alt="דגל ${teamData.country}" class="country-flag">` : ''}
-        </div>
-        <button id="saveTeamBtn" style="margin-top: 15px;">שמור פרטי קבוצה</button>
-        <h4 style="margin-top: 20px;">אצטדיון: ${teamData.stadiumName || 'ללא שם'} (${currentStadium.capacity} מקומות)</h4>
-        <img src="${currentStadium.image}" alt="אצטדיון" style="width: 200px; height: auto; border-radius: 10px; margin: 10px auto; display: block;">
-        ${nextLevel ? `<button id="upgradeStadiumBtn" ${teamData.coins < upgradeCost ? 'disabled' : ''}>שדרג ל-${stadiumLevels[nextLevel].capacity} מקומות (${upgradeCost} מטבעות)</button>` : '<p>אצטדיון ברמה מקסימלית!</p>'}
-        <h4 style="margin-top: 20px;">שחקנים (${teamData.cards.length}/11)</h4>
-        <div id="teamCards">${cardsHtml}</div>
-        <div class="popup-buttons">
-            <button id="fieldViewBtn">תצוגת מגרש</button>
-            <button id="closeTeamBtn">סגור</button>
-        </div>
-        <p style="margin-top: 10px;">חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרו: ${teamData.savesLeft} | מטבעות: ${teamData.coins}</p>
-    `;
+        if (selectedCountry && teamLocations[selectedCountry]) {
+            teamLocations[selectedCountry].cities.forEach(city => {
+                citySelect.innerHTML += `<option value="${city}">${city}</option>`;
+            });
+            const flagImg = document.querySelector(".country-flag");
+            if (flagImg) flagImg.remove();
+            const newFlag = document.createElement("img");
+            newFlag.src = teamLocations[selectedCountry].flag;
+            newFlag.alt = `דגל ${selectedCountry}`;
+            newFlag.className = "country-flag";
+            countrySelect.parentElement.appendChild(newFlag);
+        }
+    }
 
-    // מאזיני אירועים לכפתורי עריכה/שמירה
-    const toggleEditButton = (btnId, inputId) => {
-        const btn = document.getElementById(btnId);
+    function saveTeamDetails() {
+        const username = localStorage.getItem("currentUser");
+        let teamData = initTeamData();
+
+        teamData.teamName = document.getElementById("teamNameInput").value.trim();
+        teamData.coachName = document.getElementById("coachNameInput").value.trim();
+        teamData.stadiumName = document.getElementById("stadiumNameInput").value.trim();
+        teamData.country = document.getElementById("countrySelect").value;
+        teamData.city = document.getElementById("citySelect").value;
+
+        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+
+        const stadiumLevels = {
+            1: { image: 'https://thumbs.dreamstime.com/b/amateur-soccer-field-illuminated-night-small-football-lit-lanterns-evening-green-spotlight-image252808480.jpg' },
+            2: { image: 'https://integralspor.com/uploads/facility/detail/5000-seats-stadium-10631.jpg' },
+            3: { image: 'https://javiergarciaalda.com/wp-content/uploads/2021/11/JavierGAlda_Libia_3-escorzo-pepon.jpg' },
+            4: { image: 'https://stadiumdb.com/img/news/2022/02/09Ord2.jpg' }
+        };
+        const stadiumImage = stadiumLevels[teamData.stadiumLevel].image;
+
+        const popup = document.getElementById("team-save-popup");
+        popup.innerHTML = `
+            <div class="team-save-item"><h3>${teamData.teamName || 'קבוצה ללא שם'}</h3></div>
+            <div class="team-save-item"><p>${teamData.city || 'ללא עיר'}, ${teamData.country || 'ללא מדינה'} ${teamData.country && teamLocations[teamData.country] ? `<img src="${teamLocations[teamData.country].flag}" alt="דגל ${teamData.country}" class="country-flag">` : ''}</p></div>
+            <div class="team-save-item"><p>מאמן: ${teamData.coachName || 'ללא מאמן'}</p></div>
+            <div class="team-save-item"><img src="${stadiumImage}" alt="אצטדיון ${teamData.stadiumName || 'ללא שם'}"></div>
+        `;
+        popup.style.display = "block";
+        document.getElementById("team-save-overlay").style.display = "block";
+
+        setTimeout(closeTeamSavePopup, 5000);
+    }
+
+    function toggleEdit(inputId) {
         const input = document.getElementById(inputId);
-        btn.addEventListener("click", () => {
-            if (input.hasAttribute("readonly")) {
-                input.removeAttribute("readonly");
-                input.style.backgroundColor = "#fff";
-                btn.textContent = "שמור";
-                btn.classList.remove("active");
-            } else {
-                input.setAttribute("readonly", true);
-                input.style.backgroundColor = "#e9ecef";
-                btn.textContent = "ערוך";
-                btn.classList.add("active");
-                saveTeamDetails(); // שמירה אוטומטית כשלוחצים "שמור"
-            }
-        });
-    };
-    toggleEditButton("editTeamNameBtn", "teamNameInput");
-    toggleEditButton("editCoachNameBtn", "coachNameInput");
-    toggleEditButton("editStadiumNameBtn", "stadiumNameInput");
-
-    // מאזיני אירועים נוספים
-    document.getElementById("countrySelect").addEventListener("change", updateCities);
-    document.getElementById("saveTeamBtn").addEventListener("click", saveTeamDetails);
-    document.getElementById("fieldViewBtn").addEventListener("click", openFieldPopup);
-    document.getElementById("closeTeamBtn").addEventListener("click", closeTeamPopup);
-    if (nextLevel) {
-        document.getElementById("upgradeStadiumBtn").addEventListener("click", () => upgradeStadium(teamData, nextLevel, upgradeCost));
+        if (input.hasAttribute("readonly")) {
+            input.removeAttribute("readonly");
+            input.style.backgroundColor = "#fff";
+        } else {
+            input.setAttribute("readonly", true);
+            input.style.backgroundColor = "#e9ecef";
+        }
     }
-    document.querySelectorAll(".remove-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const index = parseInt(btn.getAttribute("data-index"));
-            removeCard(index);
-        });
-    });
 
-    popup.style.display = "block";
-    document.getElementById("team-overlay").style.display = "block";
-}
-
-    const popup = document.getElementById("team-popup");
-    popup.innerHTML = `
-        <h3>ניהול קבוצה</h3>
-        <div class="team-field">
-            <input type="text" id="teamNameInput" value="${teamData.teamName}" readonly style="background-color: #e9ecef;">
-            <button id="editTeamNameBtn">ערוך</button>
-        </div>
-        <div class="team-field">
-            <input type="text" id="coachNameInput" value="${teamData.coachName}" readonly style="background-color: #e9ecef;">
-            <button id="editCoachNameBtn">ערוך</button>
-        </div>
-        <div class="team-field">
-            <input type="text" id="stadiumNameInput" value="${teamData.stadiumName}" readonly style="background-color: #e9ecef;">
-            <button id="editStadiumNameBtn">ערוך</button>
-        </div>
-        <div class="team-field">
-            <select id="countrySelect">
-                ${countryOptions}
-            </select>
-            <select id="citySelect">
-                ${cityOptions}
-            </select>
-            ${teamData.country && teamLocations[teamData.country] ? `<img src="${teamLocations[teamData.country].flag}" alt="דגל ${teamData.country}" class="country-flag">` : ''}
-        </div>
-        <button id="saveTeamBtn" style="margin-top: 15px;">שמור פרטי קבוצה</button>
-        <h4 style="margin-top: 20px;">שחקנים (${teamData.cards.length}/11)</h4>
-        <div id="teamCards">${cardsHtml}</div>
-        <div class="popup-buttons">
-            <button id="fieldViewBtn">תצוגת מגרש</button>
-            <button id="closeTeamBtn">סגור</button>
-        </div>
-        <p style="margin-top: 10px;">חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרו: ${teamData.savesLeft}</p>
-    `;
-
-    // הוספת מאזיני אירועים לכפתורים
-    document.getElementById("editTeamNameBtn").addEventListener("click", () => toggleEdit("teamNameInput"));
-    document.getElementById("editCoachNameBtn").addEventListener("click", () => toggleEdit("coachNameInput"));
-    document.getElementById("editStadiumNameBtn").addEventListener("click", () => toggleEdit("stadiumNameInput"));
-    document.getElementById("countrySelect").addEventListener("change", updateCities);
-    document.getElementById("saveTeamBtn").addEventListener("click", saveTeamDetails);
-    document.getElementById("fieldViewBtn").addEventListener("click", openFieldPopup);
-    document.getElementById("closeTeamBtn").addEventListener("click", closeTeamPopup);
-
-    // הוספת מאזיני אירועים לכפתורי "הסר"
-    document.querySelectorAll(".remove-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const index = parseInt(btn.getAttribute("data-index"));
-            removeCard(index);
-        });
-    });
-
-    popup.style.display = "block";
-    document.getElementById("team-overlay").style.display = "block";
-}
-// פונקציה חדשה לעדכון ערים
-function updateCities() {
-    const countrySelect = document.getElementById("countrySelect");
-    const citySelect = document.getElementById("citySelect");
-    const selectedCountry = countrySelect.value;
-    citySelect.innerHTML = '<option value="">בחר עיר</option>';
-
-    if (selectedCountry && teamLocations[selectedCountry]) {
-        teamLocations[selectedCountry].cities.forEach(city => {
-            citySelect.innerHTML += `<option value="${city}">${city}</option>`;
-        });
-        const flagImg = document.querySelector(".country-flag");
-        if (flagImg) flagImg.remove();
-        const newFlag = document.createElement("img");
-        newFlag.src = teamLocations[selectedCountry].flag;
-        newFlag.alt = `דגל ${selectedCountry}`;
-        newFlag.className = "country-flag";
-        countrySelect.parentElement.appendChild(newFlag);
-    }
-}
-function saveTeamDetails() {
-    const username = localStorage.getItem("currentUser");
-    let teamData = initTeamData();
-
-    teamData.teamName = document.getElementById("teamNameInput").value.trim();
-    teamData.coachName = document.getElementById("coachNameInput").value.trim();
-    teamData.stadiumName = document.getElementById("stadiumNameInput").value.trim();
-    teamData.country = document.getElementById("countrySelect").value;
-    teamData.city = document.getElementById("citySelect").value;
-
-    localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
-
-    const stadiumLevels = {
-        1: { image: 'https://thumbs.dreamstime.com/b/amateur-soccer-field-illuminated-night-small-football-lit-lanterns-evening-green-spotlight-image252808480.jpg' },
-        2: { image: 'https://integralspor.com/uploads/facility/detail/5000-seats-stadium-10631.jpg' },
-        3: { image: 'https://javiergarciaalda.com/wp-content/uploads/2021/11/JavierGAlda_Libia_3-escorzo-pepon.jpg' },
-        4: { image: 'https://stadiumdb.com/img/news/2022/02/09Ord2.jpg' }
-    };
-    const stadiumImage = stadiumLevels[teamData.stadiumLevel].image;
-
-    const popup = document.getElementById("team-save-popup");
-    popup.innerHTML = `
-        <div class="team-save-item"><h3>${teamData.teamName || 'קבוצה ללא שם'}</h3></div>
-        <div class="team-save-item"><p>${teamData.city || 'ללא עיר'}, ${teamData.country || 'ללא מדינה'} ${teamData.country && teamLocations[teamData.country] ? `<img src="${teamLocations[teamData.country].flag}" alt="דגל ${teamData.country}" class="country-flag">` : ''}</p></div>
-        <div class="team-save-item"><p>מאמן: ${teamData.coachName || 'ללא מאמן'}</p></div>
-        <div class="team-save-item"><img src="${stadiumImage}" alt="אצטדיון ${teamData.stadiumName || 'ללא שם'}"></div>
-    `;
-    popup.style.display = "block";
-    document.getElementById("team-save-overlay").style.display = "block";
-
-    setTimeout(closeTeamSavePopup, 5000); // סגירה אוטומטית אחרי 5 שניות
-}
-// פונקציה חדשה לעריכה
-function toggleEdit(inputId) {
-    const input = document.getElementById(inputId);
-    if (input.hasAttribute("readonly")) {
-        input.removeAttribute("readonly");
-        input.style.backgroundColor = "#fff";
-    } else {
-        input.setAttribute("readonly", true);
-        input.style.backgroundColor = "#e9ecef";
-    }
-}
     function removeCard(index) {
         const username = localStorage.getItem("currentUser");
         let teamData = initTeamData();
@@ -1830,41 +1747,41 @@ function toggleEdit(inputId) {
         document.getElementById("team-overlay").style.display = "none";
     }
 
-   function openFieldPopup() {
-    const username = localStorage.getItem("currentUser");
-    let teamData = initTeamData();
-    if (!teamData) return;
+    function openFieldPopup() {
+        const username = localStorage.getItem("currentUser");
+        let teamData = initTeamData();
+        if (!teamData) return;
 
-    const field = document.getElementById("field");
-    field.innerHTML = '';
+        const field = document.getElementById("field");
+        field.innerHTML = '';
 
-    const positions = [
-        { role: 'שוער', top: '45%', left: '5%' },    // שוער קרוב לשער שלנו
-        { role: 'מגן', top: '20%', left: '20%' },     // מגן שמאלי עליון
-        { role: 'מגן', top: '70%', left: '20%' },     // מגן שמאלי תחתון
-        { role: 'מגן', top: '35%', left: '30%' },     // מגן מרכזי שמאלי
-        { role: 'מגן', top: '55%', left: '30%' },     // מגן מרכזי ימני
-        { role: 'קשר', top: '25%', left: '50%' },     // קשר שמאלי
-        { role: 'קשר', top: '45%', left: '55%' },     // קשר מרכזי
-        { role: 'קשר', top: '65%', left: '50%' },     // קשר ימני
-        { role: 'חלוץ', top: '20%', left: '75%' },    // חלוץ שמאלי
-        { role: 'חלוץ', top: '45%', left: '85%' },    // חלוץ מרכזי
-        { role: 'חלוץ', top: '70%', left: '75%' }     // חלוץ ימני
-    ];
+        const positions = [
+            { role: 'שוער', top: '45%', left: '5%' },
+            { role: 'מגן', top: '20%', left: '20%' },
+            { role: 'מגן', top: '70%', left: '20%' },
+            { role: 'מגן', top: '35%', left: '30%' },
+            { role: 'מגן', top: '55%', left: '30%' },
+            { role: 'קשר', top: '25%', left: '50%' },
+            { role: 'קשר', top: '45%', left: '55%' },
+            { role: 'קשר', top: '65%', left: '50%' },
+            { role: 'חלוץ', top: '20%', left: '75%' },
+            { role: 'חלוץ', top: '45%', left: '85%' },
+            { role: 'חלוץ', top: '70%', left: '75%' }
+        ];
 
-    teamData.cards.forEach((card, index) => {
-        const pos = positions[index];
-        const playerDiv = document.createElement('div');
-        playerDiv.className = 'player';
-        playerDiv.style.top = pos.top;
-        playerDiv.style.left = pos.left;
-        playerDiv.textContent = `${card.model}\n${card.role} (${card.rating})`;
-        field.appendChild(playerDiv);
-    });
+        teamData.cards.forEach((card, index) => {
+            const pos = positions[index];
+            const playerDiv = document.createElement('div');
+            playerDiv.className = 'player';
+            playerDiv.style.top = pos.top;
+            playerDiv.style.left = pos.left;
+            playerDiv.textContent = `${card.model}\n${card.role} (${card.rating})`;
+            field.appendChild(playerDiv);
+        });
 
-    document.getElementById("field-popup").style.display = "block";
-    document.getElementById("field-overlay").style.display = "block";
-}
+        document.getElementById("field-popup").style.display = "block";
+        document.getElementById("field-overlay").style.display = "block";
+    }
 
     function closeFieldPopup() {
         document.getElementById("field-popup").style.display = "none";
@@ -1886,25 +1803,27 @@ function toggleEdit(inputId) {
         openTeamPopup();
     }
 
+    function closeTeamSavePopup() {
+        document.getElementById("team-save-popup").style.display = "none";
+        document.getElementById("team-save-overlay").style.display = "none";
+    }
+
+    function upgradeStadium(teamData, nextLevel, cost) {
+        if (teamData.coins < cost) {
+            alert("אין לך מספיק מטבעות לשדרוג!");
+            return;
+        }
+
+        teamData.coins -= cost;
+        teamData.stadiumLevel = nextLevel;
+        localStorage.setItem(`team_${localStorage.getItem("currentUser")}`, JSON.stringify(teamData));
+        alert(`האצטדיון שודרג ל-${nextLevel * 5000 || 1000} מקומות!`);
+        openTeamPopup();
+    }
+
     window.onload = () => {
         updateUltimateButtonState();
     };
-    function closeTeamSavePopup() {
-    document.getElementById("team-save-popup").style.display = "none";
-    document.getElementById("team-save-overlay").style.display = "none";
-}
-    function upgradeStadium(teamData, nextLevel, cost) {
-    if (teamData.coins < cost) {
-        alert("אין לך מספיק מטבעות לשדרוג!");
-        return;
-    }
-
-    teamData.coins -= cost;
-    teamData.stadiumLevel = nextLevel;
-    localStorage.setItem(`team_${localStorage.getItem("currentUser")}`, JSON.stringify(teamData));
-    alert(`האצטדיון שודרג ל-${nextLevel * 5000 || 1000} מקומות!`);
-    openTeamPopup(); // עדכון התצוגה
-}
 </script>
 </body>
 </html>
