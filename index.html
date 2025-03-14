@@ -4,581 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>הזן קוד דגם</title>
-    <style>
-        body {
-            font-family: 'Rubik', Arial, sans-serif;
-            text-align: center;
-            background: linear-gradient(135deg, #0d1b2a, #1b263b);
-            padding: 40px;
-            margin: 0;
-            min-height: 100vh;
-            overflow-x: hidden;
-            color: #e0e1dd;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.98);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-            max-width: 650px;
-            margin: 0 auto 20px;
-            text-align: center;
-            border: 1px solid rgba(69, 123, 157, 0.5);
-            backdrop-filter: blur(8px);
-        }
-        h2 {
-            color: #1b263b;
-            margin-bottom: 25px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-size: 24px;
-        }
-        input {
-            width: calc(100% - 24px);
-            padding: 14px;
-            margin-top: 15px;
-            border: 2px solid #457b9d;
-            border-radius: 8px;
-            font-size: 16px;
-            text-align: center;
-            background: #f7f9fb;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            font-family: 'Rubik', sans-serif;
-        }
-        input:focus {
-            outline: none;
-            border-color: #1d3557;
-            box-shadow: 0 0 12px rgba(29, 53, 87, 0.5);
-        }
-        input[type="password"] {
-            width: calc(100% - 24px);
-            padding: 14px;
-            margin-top: 15px;
-            border: 2px solid #457b9d;
-            border-radius: 8px;
-            font-size: 16px;
-            text-align: center;
-            background: #f7f9fb;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            font-family: 'Rubik', sans-serif;
-        }
-        input[type="password"]:focus {
-            outline: none;
-            border-color: #1d3557;
-            box-shadow: 0 0 12px rgba(29, 53, 87, 0.5);
-        }
-        button {
-            width: 100%;
-            padding: 14px;
-            margin-top: 20px;
-            background: linear-gradient(90deg, #457b9d, #a8dadc);
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.3s;
-            font-family: 'Rubik', sans-serif;
-        }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(69, 123, 157, 0.6);
-        }
-        #result, #serial-result {
-            margin-top: 30px;
-            display: none;
-            text-align: center;
-            direction: rtl;
-            max-width: 650px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .card {
-            background: linear-gradient(135deg, #ffffff, #edf2f4);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
-            animation: slideIn 0.5s ease-in-out;
-            overflow: hidden;
-            text-align: right;
-            color: #1b263b;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-        .card img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-            margin-top: 20px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        .card a {
-            display: block;
-            margin: 20px auto 0;
-            padding: 10px 25px;
-            background: #1d3557;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 8px;
-            width: fit-content;
-            transition: background 0.3s;
-            font-weight: 500;
-        }
-        .card a:hover {
-            background: #457b9d;
-        }
-        #loader, #loader-serial {
-            display: none;
-            margin: 20px auto;
-            position: relative;
-            width: 80px;
-            height: 80px;
-        }
-        .loader-circle {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border: 4px solid transparent;
-            border-top: 4px solid #457b9d;
-            border-radius: 50%;
-            animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-        }
-        .loader-circle:nth-child(2) {
-            border-top-color: #a8dadc;
-            animation-delay: -0.4s;
-            transform: scale(0.85);
-        }
-        .loader-circle:nth-child(3) {
-            border-top-color: #1d3557;
-            animation-delay: -0.8s;
-            transform: scale(0.7);
-        }
-        .loader-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 14px;
-            color: #457b9d;
-            animation: pulseText 1.5s infinite;
-            font-weight: 500;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes pulseText {
-            0% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
-            100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .suggestions {
-            position: absolute;
-            background: #ffffff;
-            border: 1px solid #457b9d;
-            border-radius: 5px;
-            max-height: 150px;
-            overflow-y: auto;
-            width: calc(100% - 24px);
-            margin-top: 5px;
-            z-index: 1000;
-            display: none;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        .suggestion-item {
-            padding: 12px;
-            cursor: pointer;
-            transition: background 0.2s;
-            color: #1d3557;
-            font-weight: 500;
-        }
-        .suggestion-item:hover {
-            background: #edf2f4;
-        }
-        .navbar {
-            background: rgba(29, 53, 87, 0.95);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-        .navbar a {
-            color: #e0e1dd;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 5px;
-            transition: background 0.3s, color 0.3s;
-        }
-        .navbar a:hover, .navbar a.active {
-            background: #457b9d;
-            color: #ffffff;
-        }
-        .content {
-            display: none;
-        }
-        .content.active {
-            display: block;
-        }
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #1d3557, #457b9d);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            color: #ffffff;
-            max-width: 400px;
-            text-align: center;
-            z-index: 2000;
-            animation: popIn 0.4s ease-out;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .popup h3 {
-            margin: 0 0 15px;
-            font-size: 22px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .popup p {
-            margin: 0 0 20px;
-            font-size: 16px;
-            line-height: 1.5;
-        }
-        .popup button {
-            background: #a8dadc;
-            color: #1d3557;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s, transform 0.2s;
-            display: inline-block;
-            margin: 10px 15px;
-            min-width: 140px;
-        }
-        .popup button:hover {
-            background: #ffffff;
-            transform: scale(1.05);
-        }
-        .popup-buttons {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        @keyframes popIn {
-            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-        .popup-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 1500;
-        }
-        .dramatic-card {
-            position: relative;
-            background: linear-gradient(135deg, #1d3557, #457b9d);
-            color: #ffffff;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-            max-width: 400px;
-            margin: 0 auto;
-            text-align: center;
-            animation: cardReveal 1s ease-out;
-        }
-        .dramatic-card img {
-            max-width: 80%;
-            opacity: 0;
-            transform: scale(0.8);
-            animation: imageReveal 1s ease-out 0.5s forwards;
-            border: 3px solid #a8dadc;
-            border-radius: 10px;
-        }
-        .dramatic-card .tv-name {
-            font-size: 28px;
-            font-weight: 600;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: textReveal 1s ease-out 1.5s forwards;
-            margin: 20px 0;
-        }
-        .dramatic-card .overall {
-            font-size: 48px;
-            font-weight: 700;
-            color: #f4a261;
-            opacity: 0;
-            transform: scale(0.5);
-            animation: overallReveal 1s ease-out 2.5s forwards;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px 20px;
-            border-radius: 10px;
-            display: inline-block;
-        }
-        @keyframes cardReveal {
-            0% { opacity: 0; transform: scale(0.9); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        @keyframes imageReveal {
-            0% { opacity: 0; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        @keyframes textReveal {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes overallReveal {
-            0% { opacity: 0; transform: scale(0.5); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        #dramaticModeBtn, #teamManagementBtn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: none;
-            border: none;
-            font-size: 20px;
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            color: #e0e1dd;
-            opacity: 1;
-            transition: transform 0.2s, color 0.3s;
-            padding: 0;
-        }
-        #teamManagementBtn {
-            right: 60px;
-            display: none;
-        }
-        #dramaticModeBtn:hover, #teamManagementBtn:hover {
-            transform: scale(1.2);
-            color: #f4a261;
-        }
-        #dramaticModeBtn.active {
-            color: #f4a261;
-        }
-        .stars {
-            font-size: 24px;
-            color: #f4a261;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: starsReveal 1s ease-out 2s forwards;
-            margin: 15px 0;
-        }
-        @keyframes starsReveal {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        .celebration {
-            position: relative;
-            overflow: hidden;
-        }
-        .celebration::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.3), transparent 70%);
-            opacity: 0;
-            animation: glowPulse 2s ease-in-out infinite;
-            z-index: -1;
-        }
-        @keyframes glowPulse {
-            0% { opacity: 0; transform: scale(0.8); }
-            50% { opacity: 0.7; transform: scale(1); }
-            100% { opacity: 0; transform: scale(0.8); }
-        }
-        .confetti {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 3000;
-        }
-        .confetti-piece {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: #f4a261;
-            opacity: 0.8;
-            animation: fall 3s linear infinite;
-        }
-        .confetti-piece:nth-child(odd) { background: #a8dadc; }
-        .confetti-piece:nth-child(even) { background: #457b9d; }
-        .confetti-piece:nth-child(3n) { background: #ffffff; }
-        @keyframes fall {
-            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-        }
-        .dramatic-card.hollywood {
-            background: linear-gradient(135deg, #1a1a1a, #4a4a4a);
-            border: 2px solid gold;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-            position: relative;
-            overflow: hidden;
-        }
-        .dramatic-card.hollywood::before {
-            content: '';
-            position: absolute;
-            top: -100%;
-            left: -100%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 70%);
-            animation: spotlight 6s infinite linear;
-            z-index: 0;
-        }
-        @keyframes spotlight {
-            0% { transform: translate(0, 0) rotate(45deg); }
-            25% { transform: translate(50%, 50%) rotate(45deg); }
-            50% { transform: translate(100%, 0) rotate(45deg); }
-            75% { transform: translate(50%, -50%) rotate(45deg); }
-            100% { transform: translate(0, 0) rotate(45deg); }
-        }
-        .dramatic-card.hollywood .tv-name {
-            font-family: 'Impact', sans-serif;
-            font-size: 32px;
-            color: gold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-            animation: titleReveal 1.5s ease-out 1.5s forwards;
-        }
-        @keyframes titleReveal {
-            0% { opacity: 0; transform: translateY(-30px) scale(0.8); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        .country-flag {
-            width: 60px;
-            height: 40px;
-            margin: 10px auto;
-            opacity: 0;
-            transform: scale(0.8);
-            animation: flagReveal 1s ease-out 2s forwards;
-            border-radius: 5px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-        @keyframes flagReveal {
-            0% { opacity: 0; transform: scale(0.8) rotate(10deg); }
-            50% { transform: scale(1.1) rotate(-5deg); }
-            100% { opacity: 1; transform: scale(1) rotate(0deg); }
-        }
-        #field {
-            position: relative;
-            width: 100%;
-            height: 500px;
-            background: url('https://thumbs.dreamstime.com/b/football-pitch-above-aerial-view-showing-empty-219676443.jpg') no-repeat center;
-            background-size: cover;
-        }
-        .player {
-            position: absolute;
-            width: 80px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid #1d3557;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 500;
-            color: #1d3557;
-            text-align: center;
-            padding: 5px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s;
-        }
-        .player:hover {
-            transform: scale(1.1);
-        }
-        #teamCards ul {
-            list-style: none;
-            padding: 0;
-            margin: 10px 0;
-        }
-        #teamCards li {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            margin-bottom: 10px;
-            color: #ffffff;
-        }
-        #teamCards li button {
-            background: #f4a261;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 5px;
-            color: #1d3557;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        #teamCards li button:hover {
-            background: #ffffff;
-        }
-        .popup-buttons {
-            gap: 15px;
-        }
-        #leagueTable table {
-            width: 100%;
-            border-collapse: collapse;
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        #leagueTable th, #leagueTable td {
-            padding: 12px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        #leagueTable th {
-            background: #1d3557;
-            font-weight: 600;
-        }
-        #leagueTable tr:nth-child(even) {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        #leagueTable tr:hover {
-            background: rgba(69, 123, 157, 0.3);
-        }
-    </style>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -644,455 +69,947 @@
     <div id="team-overlay" class="popup-overlay" onclick="closeTeamPopup()"></div>
     <div id="team-popup" class="popup" style="max-width: 600px;"></div>
 
-    <div id="league-overlay" class="popup-overlay" onclick="closeLeaguePopup()"></div>
-    <div id="league-popup" class="popup" style="max-width: 800px; padding: 40px;">
-        <h3>ליגת Ultimate</h3>
-        <div id="leagueTable" style="margin-top: 20px;"></div>
-        <div class="popup-buttons">
-            <button onclick="closeLeaguePopup()">סגור</button>
-        </div>
-    </div>
-
     <div id="ultimate-menu-overlay" class="popup-overlay" onclick="closeUltimateMenu()"></div>
-    <div id="ultimate-menu" class="popup" style="max-width: 300px;">
+    <div id="ultimate-menu" class="popup futuristic-popup" style="max-width: 350px;">
         <h3>תפריט Ultimate</h3>
-        <div class="popup-buttons" style="flex-direction: column; gap: 10px;">
-            <button onclick="toggleUltimateMode()">חזרה למצב רגיל</button>
-            <button onclick="openTeamManagement()">ניהול קבוצה</button>
-            <button onclick="closeUltimateMenu()">סגור</button>
+        <div class="popup-buttons" style="flex-direction: column; gap: 15px;">
+            <button class="futuristic-btn" onclick="openTeamManagement()">ניהול קבוצה</button>
+            <button class="futuristic-btn" onclick="toggleUltimateMode()">חזרה למצב רגיל</button>
+            <button class="futuristic-btn" onclick="closeUltimateMenu()">סגור</button>
         </div>
     </div>
 
     <div id="field-overlay" class="popup-overlay" onclick="closeFieldPopup()"></div>
     <div id="field-popup" class="popup" style="max-width: 800px; padding: 20px;">
         <h3>ניהול קבוצה - תצוגת מגרש</h3>
-        <div id="field" style="position: relative; width: 100%; height: 500px; background: url('https://thumbs.dreamstime.com/b/football-pitch-above-aerial-view-showing-empty-219676443.jpg') no-repeat center; background-size: cover;"></div>
+        <div id="field"></div>
         <div class="popup-buttons">
             <button onclick="closeFieldPopup()">סגור</button>
         </div>
     </div>
 
-    <script>
-        console.log("הדף נטען בהצלחה");
+    <div id="ultimate-notif-overlay" class="popup-overlay"></div>
+    <div id="ultimate-notif" class="popup futuristic-popup"></div>
 
-        let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
+<style>
+    body {
+        font-family: 'Rubik', Arial, sans-serif;
+        text-align: center;
+        background: linear-gradient(135deg, #0d1b2a, #1b263b);
+        padding: 40px;
+        margin: 0;
+        min-height: 100vh;
+        overflow-x: hidden;
+        color: #e0e1dd;
+    }
+    .container {
+        background: rgba(255, 255, 255, 0.98);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        max-width: 650px;
+        margin: 0 auto 20px;
+        text-align: center;
+        border: 1px solid rgba(69, 123, 157, 0.5);
+        backdrop-filter: blur(8px);
+    }
+    h2 {
+        color: #1b263b;
+        margin-bottom: 25px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-size: 24px;
+    }
+    input {
+        width: calc(100% - 24px);
+        padding: 14px;
+        margin-top: 15px;
+        border: 2px solid #457b9d;
+        border-radius: 8px;
+        font-size: 16px;
+        text-align: center;
+        background: #f7f9fb;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        font-family: 'Rubik', sans-serif;
+    }
+    input:focus {
+        outline: none;
+        border-color: #1d3557;
+        box-shadow: 0 0 12px rgba(29, 53, 87, 0.5);
+    }
+    button {
+        width: 100%;
+        padding: 14px;
+        margin-top: 20px;
+        background: linear-gradient(90deg, #457b9d, #a8dadc);
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.3s;
+        font-family: 'Rubik', sans-serif;
+    }
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(69, 123, 157, 0.6);
+    }
+    #result, #serial-result {
+        margin-top: 30px;
+        display: none;
+        text-align: center;
+        direction: rtl;
+        max-width: 650px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .card {
+        background: linear-gradient(135deg, #ffffff, #edf2f4);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+        animation: slideIn 0.5s ease-in-out;
+        overflow: hidden;
+        text-align: right;
+        color: #1b263b;
+        font-size: 16px;
+        line-height: 1.6;
+    }
+    .card img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        margin-top: 20px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .card a {
+        display: block;
+        margin: 20px auto 0;
+        padding: 10px 25px;
+        background: #1d3557;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 8px;
+        width: fit-content;
+        transition: background 0.3s;
+        font-weight: 500;
+    }
+    .card a:hover {
+        background: #457b9d;
+    }
+    #loader, #loader-serial {
+        display: none;
+        margin: 20px auto;
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+    .loader-circle {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 4px solid transparent;
+        border-top: 4px solid #457b9d;
+        border-radius: 50%;
+        animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    }
+    .loader-circle:nth-child(2) {
+        border-top-color: #a8dadc;
+        animation-delay: -0.4s;
+        transform: scale(0.85);
+    }
+    .loader-circle:nth-child(3) {
+        border-top-color: #1d3557;
+        animation-delay: -0.8s;
+        transform: scale(0.7);
+    }
+    .loader-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 14px;
+        color: #457b9d;
+        animation: pulseText 1.5s infinite;
+        font-weight: 500;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    @keyframes pulseText {
+        0% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+        50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+        100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    }
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .suggestions {
+        position: absolute;
+        background: #ffffff;
+        border: 1px solid #457b9d;
+        border-radius: 5px;
+        max-height: 150px;
+        overflow-y: auto;
+        width: calc(100% - 24px);
+        margin-top: 5px;
+        z-index: 1000;
+        display: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .suggestion-item {
+        padding: 12px;
+        cursor: pointer;
+        transition: background 0.2s;
+        color: #1d3557;
+        font-weight: 500;
+    }
+    .suggestion-item:hover {
+        background: #edf2f4;
+    }
+    .navbar {
+        background: rgba(29, 53, 87, 0.95);
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+    .navbar a {
+        color: #e0e1dd;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        padding: 8px 16px;
+        border-radius: 5px;
+        transition: background 0.3s, color 0.3s;
+    }
+    .navbar a:hover, .navbar a.active {
+        background: #457b9d;
+        color: #ffffff;
+    }
+    .content {
+        display: none;
+    }
+    .content.active {
+        display: block;
+    }
+    .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #1d3557, #457b9d);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        color: #ffffff;
+        max-width: 400px;
+        text-align: center;
+        z-index: 2000;
+        animation: popIn 0.4s ease-out;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .futuristic-popup {
+        background: linear-gradient(135deg, #0d1b2a, #1b263b);
+        border: 2px solid #00d4ff;
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.8), 0 0 40px rgba(0, 212, 255, 0.4);
+        padding: 30px;
+        animation: futuristicGlow 1.5s infinite alternate;
+    }
+    .futuristic-popup h3 {
+        color: #00d4ff;
+        text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    .futuristic-btn {
+        background: linear-gradient(90deg, #00d4ff, #00ffcc);
+        color: #0d1b2a;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: uppercase;
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.6);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .futuristic-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 25px rgba(0, 212, 255, 1);
+    }
+    @keyframes futuristicGlow {
+        0% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.8); }
+        100% { box-shadow: 0 0 30px rgba(0, 212, 255, 1); }
+    }
+    .popup h3 {
+        margin: 0 0 15px;
+        font-size: 22px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .popup p {
+        margin: 0 0 20px;
+        font-size: 16px;
+        line-height: 1.5;
+    }
+    .popup button {
+        background: #a8dadc;
+        color: #1d3557;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.2s;
+        display: inline-block;
+        margin: 10px 15px;
+        min-width: 140px;
+    }
+    .popup button:hover {
+        background: #ffffff;
+        transform: scale(1.05);
+    }
+    .popup-buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 20px;
+    }
+    @keyframes popIn {
+        0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+        100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+    .popup-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1500;
+    }
+    .dramatic-card {
+        position: relative;
+        background: linear-gradient(135deg, #1d3557, #457b9d);
+        color: #ffffff;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+        max-width: 400px;
+        margin: 0 auto;
+        text-align: center;
+        animation: cardReveal 1s ease-out;
+    }
+    .dramatic-card img {
+        max-width: 80%;
+        opacity: 0;
+        transform: scale(0.8);
+        animation: imageReveal 1s ease-out 0.5s forwards;
+        border: 3px solid #a8dadc;
+        border-radius: 10px;
+    }
+    .dramatic-card .tv-name {
+        font-size: 28px;
+        font-weight: 600;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: textReveal 1s ease-out 1.5s forwards;
+        margin: 20px 0;
+    }
+    .dramatic-card .overall {
+        font-size: 48px;
+        font-weight: 700;
+        color: #f4a261;
+        opacity: 0;
+        transform: scale(0.5);
+        animation: overallReveal 1s ease-out 2.5s forwards;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 10px 20px;
+        border-radius: 10px;
+        display: inline-block;
+    }
+    @keyframes cardReveal {
+        0% { opacity: 0; transform: scale(0.9); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes imageReveal {
+        0% { opacity: 0; transform: scale(0.8); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes textReveal {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes overallReveal {
+        0% { opacity: 0; transform: scale(0.5); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+    #dramaticModeBtn, #teamManagementBtn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        background: none;
+        border: none;
+        font-size: 20px;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        color: #e0e1dd;
+        opacity: 1;
+        transition: transform 0.2s, color 0.3s;
+        padding: 0;
+    }
+    #teamManagementBtn {
+        right: 60px;
+        display: none;
+    }
+    #dramaticModeBtn:hover, #teamManagementBtn:hover {
+        transform: scale(1.2);
+        color: #f4a261;
+    }
+    #dramaticModeBtn.active {
+        color: #f4a261;
+    }
+    .stars {
+        font-size: 24px;
+        color: #f4a261;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: starsReveal 1s ease-out 2s forwards;
+        margin: 15px 0;
+    }
+    @keyframes starsReveal {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    .celebration {
+        position: relative;
+        overflow: hidden;
+    }
+    .celebration::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 215, 0, 0.3), transparent 70%);
+        opacity: 0;
+        animation: glowPulse 2s ease-in-out infinite;
+        z-index: -1;
+    }
+    @keyframes glowPulse {
+        0% { opacity: 0; transform: scale(0.8); }
+        50% { opacity: 0.7; transform: scale(1); }
+        100% { opacity: 0; transform: scale(0.8); }
+    }
+    .confetti {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 3000;
+    }
+    .confetti-piece {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #f4a261;
+        opacity: 0.8;
+        animation: fall 3s linear infinite;
+    }
+    .confetti-piece:nth-child(odd) { background: #a8dadc; }
+    .confetti-piece:nth-child(even) { background: #457b9d; }
+    .confetti-piece:nth-child(3n) { background: #ffffff; }
+    @keyframes fall {
+        0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+    .dramatic-card.hollywood {
+        background: linear-gradient(135deg, #1a1a1a, #4a4a4a);
+        border: 2px solid gold;
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        position: relative;
+        overflow: hidden;
+    }
+    .dramatic-card.hollywood::before {
+        content: '';
+        position: absolute;
+        top: -100%;
+        left: -100%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 70%);
+        animation: spotlight 6s infinite linear;
+        z-index: 0;
+    }
+    @keyframes spotlight {
+        0% { transform: translate(0, 0) rotate(45deg); }
+        25% { transform: translate(50%, 50%) rotate(45deg); }
+        50% { transform: translate(100%, 0) rotate(45deg); }
+        75% { transform: translate(50%, -50%) rotate(45deg); }
+        100% { transform: translate(0, 0) rotate(45deg); }
+    }
+    .dramatic-card.hollywood .tv-name {
+        font-family: 'Impact', sans-serif;
+        font-size: 32px;
+        color: gold;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+        animation: titleReveal 1.5s ease-out 1.5s forwards;
+    }
+    @keyframes titleReveal {
+        0% { opacity: 0; transform: translateY(-30px) scale(0.8); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .country-flag {
+        width: 60px;
+        height: 40px;
+        margin: 10px auto;
+        opacity: 0;
+        transform: scale(0.8);
+        animation: flagReveal 1s ease-out 2s forwards;
+        border-radius: 5px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    @keyframes flagReveal {
+        0% { opacity: 0; transform: scale(0.8) rotate(10deg); }
+        50% { transform: scale(1.1) rotate(-5deg); }
+        100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+    #field {
+        position: relative;
+        width: 100%;
+        height: 500px;
+        background: url('https://thumbs.dreamstime.com/b/football-pitch-above-aerial-view-showing-empty-219676443.jpg') no-repeat center;
+        background-size: cover;
+    }
+    .player {
+        position: absolute;
+        width: 80px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid #1d3557;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 500;
+        color: #1d3557;
+        text-align: center;
+        padding: 5px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s;
+    }
+    .player:hover {
+        transform: scale(1.1);
+    }
+    #teamCards ul {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0;
+    }
+    #teamCards li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        margin-bottom: 10px;
+        color: #ffffff;
+    }
+    #teamCards li button {
+        background: #f4a261;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        color: #1d3557;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    #teamCards li button:hover {
+        background: #ffffff;
+    }
+    .popup-buttons {
+        gap: 15px;
+    }
+</style>
+<script>
+    console.log("הדף נטען בהצלחה");
 
-        function getUsers() {
-            return JSON.parse(localStorage.getItem("users")) || {};
+    let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
+
+    function getUsers() {
+        return JSON.parse(localStorage.getItem("users")) || {};
+    }
+
+    function saveUsers(users) {
+        localStorage.setItem("users", JSON.stringify(users));
+    }
+
+    function toggleUltimateMode() {
+        const username = localStorage.getItem("currentUser");
+        const btn = document.getElementById("dramaticModeBtn");
+        const teamBtn = document.getElementById("teamManagementBtn");
+
+        if (!username) {
+            openLoginPopup();
+            return;
         }
 
-        function saveUsers(users) {
-            localStorage.setItem("users", JSON.stringify(users));
+        ultimateMode = !ultimateMode;
+        localStorage.setItem("ultimateMode", ultimateMode);
+        btn.classList.toggle("active", ultimateMode);
+        teamBtn.style.display = ultimateMode ? "block" : "none";
+
+        const notif = document.getElementById("ultimate-notif");
+        const overlay = document.getElementById("ultimate-notif-overlay");
+        if (ultimateMode) {
+            notif.innerHTML = `<h3>Ultimate Mode הופעל!</h3><p>ברוכים הבאים לעולם העתידני של ניהול קבוצות!</p>`;
+            notif.style.display = "block";
+            overlay.style.display = "block";
+            setTimeout(() => {
+                notif.style.display = "none";
+                overlay.style.display = "none";
+                openUltimateMenu();
+            }, 2000);
+        } else {
+            notif.innerHTML = `<h3>Ultimate Mode כובה</h3><p>חזרת למצב הרגיל. נתראה שוב!</p>`;
+            notif.style.display = "block";
+            overlay.style.display = "block";
+            setTimeout(() => {
+                notif.style.display = "none";
+                overlay.style.display = "none";
+            }, 2000);
         }
 
-        function toggleUltimateMode() {
-            const username = localStorage.getItem("currentUser");
-            const btn = document.getElementById("dramaticModeBtn");
-            const teamBtn = document.getElementById("teamManagementBtn");
+        if (document.getElementById("result").style.display === "block") {
+            lookupModel();
+        }
+    }
 
-            if (!username) {
-                openLoginPopup();
+    function showPage(pageId) {
+        try {
+            document.querySelectorAll('.content').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.navbar a').forEach(link => link.classList.remove('active'));
+            document.getElementById(pageId + '-page').classList.add('active');
+            document.querySelector(`a[onclick="showPage('${pageId}')"]`).classList.add('active');
+        } catch (e) {
+            console.error("שגיאה ב-showPage:", e);
+        }
+    }
+
+    const fridgeConfig = {
+        'F': 'French Door (דלת צרפתית)', 'S': 'Side by Side (דלת ליד דלת)', 'T': 'Top Freezer (מקפיא עליון)',
+        'B': 'Bottom Freezer (מקפיא תחתון)', 'L': 'Bottom Freezer (מקפיא תחתון)'
+    };
+
+    const yearCodes = {
+        'F': '2014', 'G': '2015', 'H': '2016', 'J': '2017', 'K': '2018', 'M': '2019', 'N': '2020',
+        'R': '2021', 'T': '2022', 'W': '2023', 'X': '2024', 'Y': '2025'
+    };
+
+    const monthCodes = {
+        '1': 'ינואר', '2': 'פברואר', '3': 'מרץ', '4': 'אפריל', '5': 'מאי', '6': 'יוני',
+        '7': 'יולי', '8': 'אוגוסט', '9': 'ספטמבר', 'A': 'אוקטובר', 'B': 'נובמבר', 'C': 'דצמבר'
+    };
+
+    const fridgeFinish = {
+        'SP': 'נירוסטה', 'SR': 'נירוסטה', 'SL': 'כסוף', 'UT': 'כחול', 'SA': 'גרפיט', 'WW': 'לבן'
+    };
+
+    const countryCodesFridge = {
+        'AA': 'ארה"ב', 'WT': 'הונג קונג', 'EC': 'קוריאה', 'TL': 'הודו', 'EM': 'מקסיקו', 'ML': 'ישראל'
+    };
+
+    const washerTech = {
+        'WW': 'מכונת כביסה פתח קידמי', 'WD': 'מייבש כביסה עם משאבת חום', 'DV': 'מייבש סטנדרטי'
+    };
+
+    const washerColor = {
+        'G': 'לבן', 'P': 'נירוסטה', 'S': 'כסף', 'V': 'שחור'
+    };
+
+    const countryCodesWasher = {
+        'US': 'ארה"ב', 'LP': 'הונג קונג', 'AH': 'קוריאה', 'T1': 'הודו', 'AX': 'מקסיקו', 'KJ': 'ישראל'
+    };
+
+    const tvDisplay = {
+        'Q': 'QLED', 'U': 'LED', 'P': 'Plasma', 'L': 'LCD', 'K': 'OLED'
+    };
+
+    const tvMarket = {
+        'N': 'צפון אמריקה', 'E': 'אירופה', 'A': 'אסיה'
+    };
+
+    const countryCodesTV = {
+        'ZA': 'אפריקה', 'RU': 'רוסיה', 'UA': 'אוקראינה', '2C': 'סין', 'XU': 'בריטניה', 'XY': 'אוסטרליה',
+        'SQ': 'ישראל', 'IL': 'ישראל'
+    };
+
+    const broadcastStandards = {
+        'F': 'ATSC/QAM', 'U': 'DVB', 'G': 'ISDB-T', 'T': '2xDVB'
+    };
+
+    const productImages = {
+        'QLED': 'https://images.samsung.com/is/image/samsung/p6pim/my/qa65q70dakxxm/gallery/my-qled-tv-qa65q70dakxxm-front-gray-540854235?$684_547_PNG$',
+        'NEO QLED': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBlPyKp_atLUlx5rg7cEpI-XhH9t9MM3-wmg&s',
+        'CRYSTAL UHD': 'https://images.samsung.com/is/image/samsung/p6pim/il/ue75cu7100uxsq/gallery/il-crystal-uhd-cu7000-ue75cu7100uxsq-536351326?$684_547_PNG$',
+        'OLED': 'https://www.electricshop.co.il/images/itempics/QE65S95D_030620241010481.jpg',
+        'The Frame': 'https://www.topmarket.co.il/images/detailed/227/16e8949b60f75b0601296b8fe0b488db.jpg',
+        'French Door (דלת צרפתית)': 'https://www.alm.co.il/media/catalog/product/r/f/rf65dg965eb1ml_001_front_black_1_.jpg?auto=webp&format=pjpg&width=640&height=800&fit=cover',
+        'Side by Side (דלת ליד דלת)': 'https://www.electricshop.co.il/images/itempics/RF27T5001S92_12012023195056.jpg',
+        'Bottom Freezer (מקפיא תחתון)': 'https://res.cloudinary.com/shufersal/image/upload/f_auto,q_auto/v1551800922/prod/product_images/products_zoom/WKW52_Z_P_8806090184161_2.png',
+        'Top Freezer (מקפיא עליון)': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSO7r_kWY7GuXsXmU--f7VKVVBmm40A8FInjQ&s',
+        'מכונת כביסה': 'https://images.samsung.com/is/image/samsung/il_WF1802WPC-YKJ_002_Front_white?$624_624_PNG$',
+        'N4000-N5500 Series': 'https://www.eplus.co.il/images/itempics/UE32T5300_18032022102312_large.jpg'
+    };
+
+    const sampleModels = [
+        'QE85QN85CATXSQ', 'UE65RU8000KXSQ', 'UA43LS03NAU', 'QE50Q7FAAUXIL',
+        'RF65DG965EB1ML', 'WW80TA046AX', 'UA65RU8000KXSQ', 'QE85LS03D',
+        'QE85LS03C', 'QE85LS03B', 'QE65S95D', 'QE65S90A', 'QE65S85T',
+        'UE32N4000UXSQ', 'UE32N4100UXSQ', 'UE32N4200UXSQ', 'UE32N4300UXSQ',
+        'UE32N4400UXSQ', 'UE32N4500UXSQ', 'UE32N5000UXSQ', 'UE32N5100UXSQ',
+        'UE32N5200UXSQ', 'UE32N5300UXSQ', 'UE32N5400UXSQ', 'UE32N5500UXSQ'
+    ];
+
+    const productFeatures = {
+        'QLED': {
+            description: 'טכנולוגיית QLED (Quantum Dot LED) מבית סמסונג מציעה צבעים עשירים וחדים במיוחד עם ניגודיות גבוהה.',
+            features: [
+                '100% נפח צבע עם Quantum Dot - צבעים מדויקים בכל רמת בהירות.',
+                'תאורה אחורית מתקדמת עם Quantum HDR לחוויית צפייה דינמית.',
+                'זווית צפייה רחבה עם טכנולוגיית Anti-Reflection.',
+                'חסכוני בחשמל בהשוואה לטלוויזיות LED רגילות.'
+            ]
+        },
+        'The Frame': {
+            description: 'טלוויזיית The Frame משלבת עיצוב ייחודי שמתאים לקיר כמו תמונה, עם איכות תצוגה מתקדמת.',
+            features: [
+                'מצב אמנות (Art Mode) - הצגת תמונות ויצירות אמנות כשהטלוויזיה כבויה.',
+                'חיישן תנועה ותאורה להתאמה אוטומטית של התצוגה.',
+                'מסגרת הניתנת להתאמה אישית (לבן, חום, שחור ועוד).',
+                'תמיכה ב-QLED לניגודיות וצבעים משופרים.'
+            ]
+        },
+        'OLED': {
+            description: 'טכנולוגיית OLED מספקת שחור מושלם וצבעים עמוקים בזכות פיקסלים שמאירים עצמאית.',
+            features: [
+                'ניגודיות אינסופית עם שחור מוחלט.',
+                'זמן תגובה מהיר במיוחד למשחקים ותנועה חלקה.',
+                'זווית צפייה רחבה ללא איבוד איכות.',
+                'עיצוב דק במיוחד עם גמישות תכנונית.'
+            ]
+        },
+        'CRYSTAL UHD': {
+            description: 'טלוויזיות Crystal UHD מציעות רזולוציה גבוהה עם מעבד Crystal לשיפור התמונה.',
+            features: [
+                'מעבד Crystal 4K לשדרוג תמונה לרזולוציית 4K.',
+                'HDR 10+ לפרטים משופרים באזורים מוארים וכהים.',
+                'צבעים חיים עם טווח דינמי רחב.',
+                'עיצוב AirSlim דק ומודרני.'
+            ]
+        },
+        'LED': {
+            description: 'טלוויזיות LED סטנדרטיות עם איכות תמונה טובה במחיר נגיש.',
+            features: [
+                'תאורת LED חסכונית לאיכות תמונה בסיסית.',
+                'תמיכה ב-HDR לשיפור ניגודיות.',
+                'רזולוציה עד 4K (בדגמים מתקדמים).',
+                'מתאים לשימוש יומיומי פשוט.'
+            ]
+        },
+        'N4000-N5500 Series': {
+            description: 'סדרות N4000 עד N5500 הן טלוויזיות LED Full HD מבית סמסונג, המציעות איכות תמונה טובה לשימוש יומיומי עם עיצוב פשוט ופונקציונלי.',
+            features: [
+                'רזולוציה Full HD (1920x1080) לתמונה חדה וברורה.',
+                'טכנולוגיית PurColor לשיפור צבעים טבעיים.',
+                'תמיכה ב-HDR בסיסי לניגודיות משופרת.',
+                'מערכת הפעלה Tizen פשוטה לשימוש (גרסאות ישנות יותר בהתאם לשנה).',
+                'עיצוב דק וקומפקטי המתאים לכל חלל.'
+            ]
+        }
+    };
+
+    function showSuggestions(input) {
+        try {
+            const suggestionsDiv = document.getElementById('suggestions');
+            suggestionsDiv.innerHTML = '';
+            if (input.length < 2) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+            const filtered = sampleModels.filter(model => model.toUpperCase().startsWith(input.toUpperCase()));
+            if (filtered.length > 0) {
+                filtered.forEach(model => {
+                    const item = document.createElement('div');
+                    item.className = 'suggestion-item';
+                    item.textContent = model;
+                    item.onclick = () => {
+                        document.getElementById('modelInput').value = model;
+                        suggestionsDiv.style.display = 'none';
+                        lookupModel();
+                    };
+                    suggestionsDiv.appendChild(item);
+                });
+                suggestionsDiv.style.display = 'block';
+            } else {
+                suggestionsDiv.style.display = 'none';
+            }
+        } catch (e) {
+            console.error("שגיאה ב-showSuggestions:", e);
+        }
+    }
+
+    function lookupModel() {
+        try {
+            var model = document.getElementById("modelInput").value.trim().toUpperCase();
+            var resultDiv = document.getElementById("result");
+            var loader = document.getElementById("loader");
+
+            if (!model || model.length < 5) {
+                resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין קוד דגם חוקי (מינימום 5 תווים).</div>';
+                resultDiv.style.display = "block";
                 return;
             }
 
-            ultimateMode = !ultimateMode;
-            localStorage.setItem("ultimateMode", ultimateMode);
-            btn.classList.toggle("active", ultimateMode);
-            teamBtn.style.display = ultimateMode ? "block" : "none";
+            loader.style.display = "block";
+            resultDiv.style.display = "none";
+            setTimeout(() => {
+                var details = ultimateMode ? getDramaticModelDetails(model) : getModelDetails(model);
+                resultDiv.innerHTML = details;
+                resultDiv.style.display = "block";
+                loader.style.display = "none";
+            }, 1000);
+        } catch (e) {
+            console.error("שגיאה ב-lookupModel:", e);
+        }
+    }
 
-            if (ultimateMode) {
-                alert("מצב Ultimate הופעל!");
-                openUltimateMenu();
+    function suggestRandomModel() {
+        try {
+            const randomModel = sampleModels[Math.floor(Math.random() * sampleModels.length)];
+            document.getElementById("modelInput").value = randomModel;
+            lookupModel();
+        } catch (e) {
+            console.error("שגיאה ב-suggestRandomModel:", e);
+        }
+    }
+</script>
+<script>
+    function getModelDetails(model) {
+        try {
+            if (/^R[FSBTL]/.test(model)) {
+                return getFridgeDetails(model);
+            } else if (/^W[WD]|^DV/.test(model)) {
+                return getWasherDetails(model);
+            } else if (/^[QULPK][NEA]/.test(model)) {
+                return getTVDetails(model);
             } else {
-                alert("מצב Ultimate כובה.");
-                closeUltimateMenu();
+                return `<div class="card">שגיאה: הדגם שהוזן אינו מזוהה. אנא ודא שהקוד תקין ונסה שוב.</div>`;
             }
-
-            if (document.getElementById("result").style.display === "block") {
-                lookupModel();
-            }
+        } catch (e) {
+            console.error("שגיאה ב-getModelDetails:", e);
+            return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
         }
+    }
 
-        function showPage(pageId) {
-            try {
-                document.querySelectorAll('.content').forEach(page => page.classList.remove('active'));
-                document.querySelectorAll('.navbar a').forEach(link => link.classList.remove('active'));
-                document.getElementById(pageId + '-page').classList.add('active');
-                document.querySelector(`a[onclick="showPage('${pageId}')"]`).classList.add('active');
-            } catch (e) {
-                console.error("שגיאה ב-showPage:", e);
-            }
+    function getFridgeDetails(model) {
+        let config = fridgeConfig[model[1]] || 'לא ידוע';
+        let capacityCode = parseInt(model[2] + model[3]);
+        let capacityLiters = capacityCode * 10 + ' ליטר';
+        let year = yearCodes[model[4]] || 'לא ידוע';
+        let series = model[5] || 'לא ידוע';
+        let finishCode = model.slice(6, 8);
+        let finish = fridgeFinish[finishCode] || 'לא ידוע';
+        let countryCode = model.slice(-2);
+        let country = countryCodesFridge[countryCode] || 'לא ידוע';
+        let image = productImages[config] || '';
+
+        return `<div class="card">
+                    מקרר סמסונג - דגם: ${model}<br>
+                    תצורה: ${config}<br>
+                    נפח: ${capacityLiters}<br>
+                    שנת ייצור: ${year}<br>
+                    סדרת דגם: ${series}<br>
+                    גימור: ${finish}<br>
+                    מדינה: ${country}<br>
+                    ${image ? `<img src="${image}" alt="${config}">` : ''}
+                    <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                </div>`;
+    }
+
+    function getWasherDetails(model) {
+        let tech = washerTech[model.slice(0, 2)] || 'לא ידוע';
+        let capacityCode = model[2];
+        let capacity = '';
+        switch (capacityCode) {
+            case '6': capacity = '6 ק"ג'; break;
+            case '7': capacity = '7 ק"ג'; break;
+            case '8': capacity = '8 ק"ג'; break;
+            case '9': capacity = '9 ק"ג'; break;
+            case '1': capacity = model[3] === '1' ? '11 ק"ג' : '10 ק"ג'; break;
+            case '2': capacity = '12 ק"ג'; break;
+            default: capacity = 'לא ידוע';
         }
+        let year = yearCodes[model[4]] || 'לא ידוע';
+        let month = model[5] || 'לא ידוע';
+        let color = washerColor[model[9]] || 'לא ידוע';
+        let countryCode = model.slice(-2);
+        let country = countryCodesWasher[countryCode] || 'לא ידוע';
+        let image = productImages['מכונת כביסה'] || '';
 
-        const fridgeConfig = {
-            'F': 'French Door (דלת צרפתית)', 'S': 'Side by Side (דלת ליד דלת)', 'T': 'Top Freezer (מקפיא עליון)',
-            'B': 'Bottom Freezer (מקפיא תחתון)', 'L': 'Bottom Freezer (מקפיא תחתון)'
-        };
+        return `<div class="card">
+                    ${tech} סמסונג - דגם: ${model}<br>
+                    קיבולת: ${capacity}<br>
+                    שנת ייצור: ${year}<br>
+                    חודש ייצור: ${month}<br>
+                    צבע: ${color}<br>
+                    מדינה: ${country}<br>
+                    ${image ? `<img src="${image}" alt="מכונת כביסה">` : ''}
+                    <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                </div>`;
+    }
 
-        const yearCodes = {
-            'H': '2014', 'J': '2015', 'K': '2016', 'M': '2017', 'N': '2018', 'R': '2019', 'T': '2020',
-            'A': '2021', 'B': '2022', 'C': '2023', 'D': '2024', 'F': '2025'
-        };
+    function getTVDetails(model) {
+        try {
+            let display = tvDisplay[model[0]] || 'לא ידוע';
+            let isFrame = model.includes('LS03');
+            let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
+            let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
 
-        const fridgeFinish = {
-            'SP': 'נירוסטה', 'SR': 'נירוסטה', 'SL': 'כסוף', 'UT': 'כחול', 'SA': 'גרפיט', 'WW': 'לבן'
-        };
+            if (isFrame) display = 'The Frame';
+            else if (isOLED) display = 'OLED';
+            else if (isNseries) display = 'N4000-N5500 Series';
+            else if (model[0] === 'U' && yearCodes[model[4]] >= '2018') display = 'CRYSTAL UHD';
+            else if (model[0] === 'U' && yearCodes[model[4]] < '2018') display = 'LED';
 
-        const countryCodesFridge = {
-            'AA': 'ארה"ב', 'WT': 'הונג קונג', 'EC': 'קוריאה', 'TL': 'הודו', 'EM': 'מקסיקו', 'ML': 'ישראל'
-        };
-
-        const washerTech = {
-            'WW': 'מכונת כביסה פתח קידמי', 'WD': 'מייבש כביסה עם משאבת חום', 'DV': 'מייבש סטנדרטי'
-        };
-
-        const washerColor = {
-            'G': 'לבן', 'P': 'נירוסטה', 'S': 'כסף', 'V': 'שחור'
-        };
-
-        const countryCodesWasher = {
-            'US': 'ארה"ב', 'LP': 'הונג קונג', 'AH': 'קוריאה', 'T1': 'הודו', 'AX': 'מקסיקו', 'KJ': 'ישראל'
-        };
-
-        const tvDisplay = {
-            'Q': 'QLED', 'U': 'LED', 'P': 'Plasma', 'L': 'LCD', 'K': 'OLED'
-        };
-
-        const tvMarket = {
-            'N': 'צפון אמריקה', 'E': 'אירופה', 'A': 'אסיה'
-        };
-
-        const countryCodesTV = {
-            'ZA': 'אפריקה', 'RU': 'רוסיה', 'UA': 'אוקראינה', '2C': 'סין', 'XU': 'בריטניה', 'XY': 'אוסטרליה',
-            'SQ': 'ישראל', 'IL': 'ישראל'
-        };
-
-        const broadcastStandards = {
-            'F': 'ATSC/QAM', 'U': 'DVB', 'G': 'ISDB-T', 'T': '2xDVB'
-        };
-
-        const productImages = {
-            'QLED': 'https://images.samsung.com/is/image/samsung/p6pim/my/qa65q70dakxxm/gallery/my-qled-tv-qa65q70dakxxm-front-gray-540854235?$684_547_PNG$',
-            'NEO QLED': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBlPyKp_atLUlx5rg7cEpI-XhH9t9MM3-wmg&s',
-            'CRYSTAL UHD': 'https://images.samsung.com/is/image/samsung/p6pim/il/ue75cu7100uxsq/gallery/il-crystal-uhd-cu7000-ue75cu7100uxsq-536351326?$684_547_PNG$',
-            'OLED': 'https://www.electricshop.co.il/images/itempics/QE65S95D_030620241010481.jpg',
-            'The Frame': 'https://www.topmarket.co.il/images/detailed/227/16e8949b60f75b0601296b8fe0b488db.jpg',
-            'French Door (דלת צרפתית)': 'https://www.alm.co.il/media/catalog/product/r/f/rf65dg965eb1ml_001_front_black_1_.jpg?auto=webp&format=pjpg&width=640&height=800&fit=cover',
-            'Side by Side (דלת ליד דלת)': 'https://www.electricshop.co.il/images/itempics/RF27T5001S92_12012023195056.jpg',
-            'Bottom Freezer (מקפיא תחתון)': 'https://res.cloudinary.com/shufersal/image/upload/f_auto,q_auto/v1551800922/prod/product_images/products_zoom/WKW52_Z_P_8806090184161_2.png',
-            'Top Freezer (מקפיא עליון)': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSO7r_kWY7GuXsXmU--f7VKVVBmm40A8FInjQ&s',
-            'מכונת כביסה': 'https://images.samsung.com/is/image/samsung/il_WF1802WPC-YKJ_002_Front_white?$624_624_PNG$',
-            'N4000-N5500 Series': 'https://www.eplus.co.il/images/itempics/UE32T5300_18032022102312_large.jpg'
-        };
-
-        const sampleModels = [
-            'QE85QN85CATXSQ', 'UE65RU8000KXSQ', 'UA43LS03NAU', 'QE50Q7FAAUXIL',
-            'RF65DG965EB1ML', 'WW80TA046AX', 'UA65RU8000KXSQ', 'QE85LS03D',
-            'QE85LS03C', 'QE85LS03B', 'QE65S95D', 'QE65S90A', 'QE65S85T',
-            'UE32N4000UXSQ', 'UE32N4100UXSQ', 'UE32N4200UXSQ', 'UE32N4300UXSQ',
-            'UE32N4400UXSQ', 'UE32N4500UXSQ', 'UE32N5000UXSQ', 'UE32N5100UXSQ',
-            'UE32N5200UXSQ', 'UE32N5300UXSQ', 'UE32N5400UXSQ', 'UE32N5500UXSQ'
-        ];
-
-        const productFeatures = {
-            'QLED': {
-                description: 'טכנולוגיית QLED (Quantum Dot LED) מבית סמסונג מציעה צבעים עשירים וחדים במיוחד עם ניגודיות גבוהה.',
-                features: [
-                    '100% נפח צבע עם Quantum Dot - צבעים מדויקים בכל רמת בהירות.',
-                    'תאורה אחורית מתקדמת עם Quantum HDR לחוויית צפייה דינמית.',
-                    'זווית צפייה רחבה עם טכנולוגיית Anti-Reflection.',
-                    'חסכוני בחשמל בהשוואה לטלוויזיות LED רגילות.'
-                ]
-            },
-            'The Frame': {
-                description: 'טלוויזיית The Frame משלבת עיצוב ייחודי שמתאים לקיר כמו תמונה, עם איכות תצוגה מתקדמת.',
-                features: [
-                    'מצב אמנות (Art Mode) - הצגת תמונות ויצירות אמנות כשהטלוויזיה כבויה.',
-                    'חיישן תנועה ותאורה להתאמה אוטומטית של התצוגה.',
-                    'מסגרת הניתנת להתאמה אישית (לבן, חום, שחור ועוד).',
-                    'תמיכה ב-QLED לניגודיות וצבעים משופרים.'
-                ]
-            },
-            'OLED': {
-                description: 'טכנולוגיית OLED מספקת שחור מושלם וצבעים עמוקים בזכות פיקסלים שמאירים עצמאית.',
-                features: [
-                    'ניגודיות אינסופית עם שחור מוחלט.',
-                    'זמן תגובה מהיר במיוחד למשחקים ותנועה חלקה.',
-                    'זווית צפייה רחבה ללא איבוד איכות.',
-                    'עיצוב דק במיוחד עם גמישות תכנונית.'
-                ]
-            },
-            'CRYSTAL UHD': {
-                description: 'טלוויזיות Crystal UHD מציעות רזולוציה גבוהה עם מעבד Crystal לשיפור התמונה.',
-                features: [
-                    'מעבד Crystal 4K לשדרוג תמונה לרזולוציית 4K.',
-                    'HDR 10+ לפרטים משופרים באזורים מוארים וכהים.',
-                    'צבעים חיים עם טווח דינמי רחב.',
-                    'עיצוב AirSlim דק ומודרני.'
-                ]
-            },
-            'LED': {
-                description: 'טלוויזיות LED סטנדרטיות עם איכות תמונה טובה במחיר נגיש.',
-                features: [
-                    'תאורת LED חסכונית לאיכות תמונה בסיסית.',
-                    'תמיכה ב-HDR לשיפור ניגודיות.',
-                    'רזולוציה עד 4K (בדגמים מתקדמים).',
-                    'מתאים לשימוש יומיומי פשוט.'
-                ]
-            },
-            'N4000-N5500 Series': {
-                description: 'סדרות N4000 עד N5500 הן טלוויזיות LED Full HD מבית סמסונג, המציעות איכות תמונה טובה לשימוש יומיומי עם עיצוב פשוט ופונקציונלי.',
-                features: [
-                    'רזולוציה Full HD (1920x1080) לתמונה חדה וברורה.',
-                    'טכנולוגיית PurColor לשיפור צבעים טבעיים.',
-                    'תמיכה ב-HDR בסיסי לניגודיות משופרת.',
-                    'מערכת הפעלה Tizen פשוטה לשימוש (גרסאות ישנות יותר בהתאם לשנה).',
-                    'עיצוב דק וקומפקטי המתאים לכל חלל.'
-                ]
-            }
-        };
-
-        function showSuggestions(input) {
-            try {
-                const suggestionsDiv = document.getElementById('suggestions');
-                suggestionsDiv.innerHTML = '';
-                if (input.length < 2) {
-                    suggestionsDiv.style.display = 'none';
-                    return;
-                }
-                const filtered = sampleModels.filter(model => model.toUpperCase().startsWith(input.toUpperCase()));
-                if (filtered.length > 0) {
-                    filtered.forEach(model => {
-                        const item = document.createElement('div');
-                        item.className = 'suggestion-item';
-                        item.textContent = model;
-                        item.onclick = () => {
-                            document.getElementById('modelInput').value = model;
-                            suggestionsDiv.style.display = 'none';
-                            lookupModel();
-                        };
-                        suggestionsDiv.appendChild(item);
-                    });
-                    suggestionsDiv.style.display = 'block';
-                } else {
-                    suggestionsDiv.style.display = 'none';
-                }
-            } catch (e) {
-                console.error("שגיאה ב-showSuggestions:", e);
-            }
-        }
-        function lookupModel() {
-            try {
-                var model = document.getElementById("modelInput").value.trim().toUpperCase();
-                var resultDiv = document.getElementById("result");
-                var loader = document.getElementById("loader");
-
-                if (!model || model.length < 5) {
-                    resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין קוד דגם חוקי (מינימום 5 תווים).</div>';
-                    resultDiv.style.display = "block";
-                    return;
-                }
-
-                loader.style.display = "block";
-                resultDiv.style.display = "none";
-                setTimeout(() => {
-                    var details = ultimateMode ? getDramaticModelDetails(model) : getModelDetails(model);
-                    resultDiv.innerHTML = details;
-                    resultDiv.style.display = "block";
-                    loader.style.display = "none";
-                }, 1000);
-            } catch (e) {
-                console.error("שגיאה ב-lookupModel:", e);
-            }
-        }
-
-        function suggestRandomModel() {
-            try {
-                const randomModel = sampleModels[Math.floor(Math.random() * sampleModels.length)];
-                document.getElementById("modelInput").value = randomModel;
-                lookupModel();
-            } catch (e) {
-                console.error("שגיאה ב-suggestRandomModel:", e);
-            }
-        }
-
-        function getModelDetails(model) {
-            try {
-                if (/^R[FSBTL]/.test(model)) {
-                    return getFridgeDetails(model);
-                } else if (/^W[WD]|^DV/.test(model)) {
-                    return getWasherDetails(model);
-                } else if (/^[QULPK][NEA]/.test(model)) {
-                    return getTVDetails(model);
-                } else {
-                    return `<div class="card">שגיאה: הדגם שהוזן אינו מזוהה. אנא ודא שהקוד תקין ונסה שוב.</div>`;
-                }
-            } catch (e) {
-                console.error("שגיאה ב-getModelDetails:", e);
-                return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
-            }
-        }
-
-        function getFridgeDetails(model) {
-            let config = fridgeConfig[model[1]] || 'לא ידוע';
-            let capacityCode = parseInt(model[2] + model[3]);
-            let capacityLiters = capacityCode * 10 + ' ליטר';
-            let year = yearCodes[model[4]] || 'לא ידוע';
-            let series = model[5] || 'לא ידוע';
-            let finishCode = model.slice(6, 8);
-            let finish = fridgeFinish[finishCode] || 'לא ידוע';
-            let countryCode = model.slice(-2);
-            let country = countryCodesFridge[countryCode] || 'לא ידוע';
-            let image = productImages[config] || '';
-
-            return `<div class="card">
-                        מקרר סמסונג - דגם: ${model}<br>
-                        תצורה: ${config}<br>
-                        נפח: ${capacityLiters}<br>
-                        שנת ייצור: ${year}<br>
-                        סדרת דגם: ${series}<br>
-                        גימור: ${finish}<br>
-                        מדינה: ${country}<br>
-                        ${image ? `<img src="${image}" alt="${config}">` : ''}
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                    </div>`;
-        }
-
-        function getWasherDetails(model) {
-            let tech = washerTech[model.slice(0, 2)] || 'לא ידוע';
-            let capacityCode = model[2];
-            let capacity = '';
-            switch (capacityCode) {
-                case '6': capacity = '6 ק"ג'; break;
-                case '7': capacity = '7 ק"ג'; break;
-                case '8': capacity = '8 ק"ג'; break;
-                case '9': capacity = '9 ק"ג'; break;
-                case '1': capacity = model[3] === '1' ? '11 ק"ג' : '10 ק"ג'; break;
-                case '2': capacity = '12 ק"ג'; break;
-                default: capacity = 'לא ידוע';
-            }
-            let year = yearCodes[model[4]] || 'לא ידוע';
-            let month = model[5] || 'לא ידוע';
-            let color = washerColor[model[9]] || 'לא ידוע';
-            let countryCode = model.slice(-2);
-            let country = countryCodesWasher[countryCode] || 'לא ידוע';
-            let image = productImages['מכונת כביסה'] || '';
-
-            return `<div class="card">
-                        ${tech} סמסונג - דגם: ${model}<br>
-                        קיבולת: ${capacity}<br>
-                        שנת ייצור: ${year}<br>
-                        חודש ייצור: ${month}<br>
-                        צבע: ${color}<br>
-                        מדינה: ${country}<br>
-                        ${image ? `<img src="${image}" alt="מכונת כביסה">` : ''}
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                    </div>`;
-        }
-
-        function getTVDetails(model) {
-            try {
-                let display = tvDisplay[model[0]] || 'לא ידוע';
-                let isFrame = model.includes('LS03');
-                let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
-                let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
-
-                if (isFrame) display = 'The Frame';
-                else if (isOLED) display = 'OLED';
-                else if (isNseries) display = 'N4000-N5500 Series';
-                else if (model[0] === 'U' && yearCodes[model[4]] >= 2018) display = 'CRYSTAL UHD';
-                else if (model[0] === 'U' && yearCodes[model[4]] < 2018) display = 'LED';
-
-                let yearCode = '';
-                for (let i = 4; i < model.length; i++) {
-                    if (yearCodes[model[i]]) {
-                        yearCode = model[i];
-                        break;
-                    }
-                }
-                let year = yearCodes[yearCode] || 'לא ידוע';
-
-                let market = tvMarket[model[1]] || 'לא ידוע';
-                let size = model[2] + model[3];
-
-                let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
-                let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
-                let series = isFrame ? 'LS03' : (isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd));
-                if (isNseries) series = model.slice(4, 9);
-
-                let broadcast = (year >= 2018 && year !== 'לא ידוע') ? 'DVB-T2' : 'DVB-T1';
-
-                let os = 'לא צוינה';
-                if (year === '2023' || year === '2024' || year === '2025') os = 'Tizen 8.0';
-                else if (year === '2022') os = 'Tizen 7.0';
-                else if (year === '2021') os = 'Tizen 6.5';
-                else if (year === '2020') os = 'Tizen 6.0';
-                else if (year === '2019') os = 'Tizen 5.0';
-                else if (year === '2017') os = 'Tizen 4.0';
-                else if (year < 2019) os = 'Tizen (גרסה ישנה יותר)';
-
-                let country = 'לא ידוע';
-                let countryNote = '';
-                if (model.length >= 13) {
-                    let countryCode = model.slice(-2);
-                    country = countryCodesTV[countryCode] || 'לא ידוע';
-                    if (year === '2025') {
-                        if (countryCode === 'IL') country = 'ישראל (ניופאן)';
-                        else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
-                    }
-                    if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
-                        countryNote = ' - יבוא מקביל';
-                    }
-                } else if (model.length === 10 || model.length === 12) {
-                    country = 'לא צוין';
-                }
-                if (model[1] === 'A') {
-                    countryNote = ' - יבוא מקביל';
-                }
-                let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
-                let image = productImages[imageKey] || '';
-
-                let featuresHtml = '';
-                if (productFeatures[display]) {
-                    featuresHtml = `
-                        <br><strong>${productFeatures[display].description}</strong><br>
-                        <ul style="text-align: right; padding-right: 20px;">
-                            ${productFeatures[display].features.map(feature => `<li>${feature}</li>`).join('')}
-                        </ul>
-                    `;
-                }
-
-                return `<div class="card">
-                            טלוויזיה סמסונג - דגם: ${model}<br>
-                            סוג תצוגה: ${display}<br>
-                            אזור שוק: ${market}<br>
-                            גודל מסך: ${size} אינץ'<br>
-                            שנת ייצור: ${year}<br>
-                            סדרת דגם: ${series}<br>
-                            מקלט שידור: ${broadcast}<br>
-                            מערכת הפעלה: ${os}<br>
-                            מדינה: ${country}${countryNote}<br>
-                            ${image ? `<img src="${image}" alt="${display}">` : ''}
-                            ${featuresHtml}
-                            <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                        </div>`;
-            } catch (e) {
-                console.error("שגיאה ב-getTVDetails:", e);
-                return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
-            }
-        }
-
-        function getDramaticModelDetails(model) {
-            const username = localStorage.getItem("currentUser");
-            let teamData = initTeamData();
-
-            if (teamData && teamData.searchesLeft <= 0) {
-                return `<div class="card">שגיאה: נגמרו לך החיפושים להיום!</div>`;
-            }
-
-            let displayType = '';
-            let image = '';
-            let size = parseInt(model[2] + model[3]) || 0;
             let yearCode = '';
             for (let i = 4; i < model.length; i++) {
                 if (yearCodes[model[i]]) {
@@ -1101,484 +1018,501 @@
                 }
             }
             let year = yearCodes[yearCode] || 'לא ידוע';
-            let overallScore = 0;
-            let stars = '';
-            let celebrationEffect = '';
-            let countryCode = model.length >= 13 ? model.slice(-2) : 'לא ידוע';
-            let countryFlag = '';
 
-            const countryFlags = {
-                'IL': 'https://flagcdn.com/w80/il.png',
-                'SQ': 'https://flagcdn.com/w80/il.png',
-                'ZA': 'https://flagcdn.com/w80/za.png',
-                'RU': 'https://flagcdn.com/w80/ru.png',
-                'UA': 'https://flagcdn.com/w80/ua.png',
-                '2C': 'https://flagcdn.com/w80/cn.png',
-                'XU': 'https://flagcdn.com/w80/gb.png',
-                'XY': 'https://flagcdn.com/w80/au.png',
-                'AA': 'https://flagcdn.com/w80/us.png',
-                'WT': 'https://flagcdn.com/w80/hk.png',
-                'EC': 'https://flagcdn.com/w80/kr.png',
-                'TL': 'https://flagcdn.com/w80/in.png',
-                'EM': 'https://flagcdn.com/w80/mx.png',
-                'US': 'https://flagcdn.com/w80/us.png',
-                'LP': 'https://flagcdn.com/w80/hk.png',
-                'AH': 'https://flagcdn.com/w80/kr.png',
-                'T1': 'https://flagcdn.com/w80/in.png',
-                'AX': 'https://flagcdn.com/w80/mx.png',
-                'KJ': 'https://flagcdn.com/w80/il.png'
-            };
+            let market = tvMarket[model[1]] || 'לא ידוע';
+            let size = model[2] + model[3];
 
-            const defaultImage = 'https://via.placeholder.com/300x200?text=מוצר+סמסונג';
+            let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
+            let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
+            let series = isFrame ? 'LS03' : (isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd));
+            if (isNseries) series = model.slice(4, 9);
 
-            if (/^R[FSBTL]/.test(model)) {
-                displayType = fridgeConfig[model[1]] || 'מקרר לא ידוע';
-                overallScore = Math.floor(Math.random() * (85 - 70 + 1)) + 70;
-                if (size >= 60 && year >= '2023') overallScore += 5;
-                image = productImages[displayType] || defaultImage;
-            } else if (/^W[WD]|^DV/.test(model)) {
-                displayType = washerTech[model.slice(0, 2)] || 'מכונת כביסה לא ידועה';
-                overallScore = Math.floor(Math.random() * (80 - 65 + 1)) + 65;
-                image = productImages['מכונת כביסה'] || defaultImage;
-            } else if (/^[QULPK][NEA]/.test(model)) {
-                let isFrame = model.includes('LS03');
-                let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
-                let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
+            let broadcast = (year >= 2018 && year !== 'לא ידוע') ? 'DVB-T2' : 'DVB-T1';
 
-                if (isFrame) displayType = 'The Frame';
-                else if (isOLED) displayType = 'OLED';
-                else if (isNseries) displayType = 'N4000-N5500 Series';
-                else if (model[0] === 'U' && year >= '2018') displayType = 'CRYSTAL UHD';
-                else if (model[0] === 'U' && year < '2018') displayType = 'LED';
-                else displayType = tvDisplay[model[0]] || 'טלוויזיה לא ידועה';
+            let os = 'לא צוינה';
+            if (year === '2023' || year === '2024' || year === '2025') os = 'Tizen 8.0';
+            else if (year === '2022') os = 'Tizen 7.0';
+            else if (year === '2021') os = 'Tizen 6.5';
+            else if (year === '2020') os = 'Tizen 6.0';
+            else if (year === '2019') os = 'Tizen 5.0';
+            else if (year === '2017') os = 'Tizen 4.0';
+            else if (year < 2019) os = 'Tizen (גרסה ישנה יותר)';
 
-                if (isFrame && size >= 85 && year === '2024') overallScore = 94;
-                else if (model[0] === 'Q' && size >= 85 && year === '2024') overallScore = 94;
-                else if (isFrame) overallScore = Math.min(88 + Math.floor((size - 43) / 10), 93);
-                else if (isOLED) overallScore = Math.min(82 + Math.floor((size - 55) / 10), 91);
-                else if (model[0] === 'Q') overallScore = Math.min(85 + Math.floor((size - 55) / 10), 93);
-                else overallScore = Math.min(75 + Math.floor((size - 43) / 10), 88);
-                image = productImages[displayType] || defaultImage;
-            } else {
-                displayType = 'מוצר לא מזוהה';
-                overallScore = Math.floor(Math.random() * (80 - 60 + 1)) + 60;
-                image = defaultImage;
+            let country = 'לא ידוע';
+            let countryNote = '';
+            if (model.length >= 13) {
+                let countryCode = model.slice(-2);
+                country = countryCodesTV[countryCode] || 'לא ידוע';
+                if (year === '2025') {
+                    if (countryCode === 'IL') country = 'ישראל (ניופאן)';
+                    else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
+                }
+                if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
+                    countryNote = ' - יבוא מקביל';
+                }
+            } else if (model.length === 10 || model.length === 12) {
+                country = 'לא צוין';
+            }
+            if (model[1] === 'A') {
+                countryNote = ' - יבוא מקביל';
+            }
+            let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
+            let image = productImages[imageKey] || '';
+
+            let featuresHtml = '';
+            if (productFeatures[display]) {
+                featuresHtml = `
+                    <br><strong>${productFeatures[display].description}</strong><br>
+                    <ul style="text-align: right; padding-right: 20px;">
+                        ${productFeatures[display].features.map(feature => `<li>${feature}</li>`).join('')}
+                    </ul>
+                `;
             }
 
-            countryFlag = countryFlags[countryCode] || '';
-
-            if (overallScore >= 90) stars = '★★★★★';
-            else if (overallScore >= 80) stars = '★★★★☆';
-            else if (overallScore >= 70) stars = '★★★☆☆';
-            else if (overallScore >= 60) stars = '★★☆☆☆';
-            else stars = '★☆☆☆☆';
-
-            if (overallScore >= 88) {
-                celebrationEffect = ' celebration';
-                setTimeout(() => triggerConfetti(), 2000);
-            }
-
-            let flagHtml = countryFlag ? `<img src="${countryFlag}" alt="דגל המדינה" class="country-flag">` : '';
-
-            if (teamData) {
-                teamData.searchesLeft--;
-                localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
-                const roles = ['שוער', 'מגן', 'קשר', 'חלוץ'];
-                const randomRole = roles[Math.floor(Math.random() * roles.length)];
-                return `<div class="dramatic-card hollywood${celebrationEffect}">
-                            <img src="${image}" alt="${displayType}">
-                            <div class="tv-name">${model} - ${displayType}</div>
-                            ${flagHtml}
-                            <div class="stars">${stars}</div>
-                            <div class="overall">${overallScore}</div>
-                            <button onclick="saveCard('${model}', '${randomRole}', ${overallScore})" ${teamData.savesLeft <= 0 ? 'disabled' : ''}>שמור לקבוצה (${teamData.savesLeft} נותרו)</button>
-                        </div>`;
-            } else {
-                return `<div class="dramatic-card hollywood${celebrationEffect}">
-                            <img src="${image}" alt="${displayType}">
-                            <div class="tv-name">${model} - ${displayType}</div>
-                            ${flagHtml}
-                            <div class="stars">${stars}</div>
-                            <div class="overall">${overallScore}</div>
-                        </div>`;
-            }
+            return `<div class="card">
+                        טלוויזיה סמסונג - דגם: ${model}<br>
+                        סוג תצוגה: ${display}<br>
+                        אזור שוק: ${market}<br>
+                        גודל מסך: ${size} אינץ'<br>
+                        שנת ייצור: ${year}<br>
+                        סדרת דגם: ${series}<br>
+                        מקלט שידור: ${broadcast}<br>
+                        מערכת הפעלה: ${os}<br>
+                        מדינה: ${country}${countryNote}<br>
+                        ${image ? `<img src="${image}" alt="${display}">` : ''}
+                        ${featuresHtml}
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                    </div>`;
+        } catch (e) {
+            console.error("שגיאה ב-getTVDetails:", e);
+            return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
         }
-        function triggerConfetti() {
-            const confettiContainer = document.createElement('div');
-            confettiContainer.className = 'confetti';
-            document.body.appendChild(confettiContainer);
+    }
 
-            for (let i = 0; i < 50; i++) {
-                const confettiPiece = document.createElement('div');
-                confettiPiece.className = 'confetti-piece';
-                confettiPiece.style.left = Math.random() * 100 + 'vw';
-                confettiPiece.style.animationDelay = Math.random() * 2 + 's';
-                confettiContainer.appendChild(confettiPiece);
-            }
+    function getDramaticModelDetails(model) {
+        const username = localStorage.getItem("currentUser");
+        let teamData = initTeamData();
 
-            setTimeout(() => confettiContainer.remove(), 5000);
+        if (teamData && teamData.searchesLeft <= 0) {
+            return `<div class="card">שגיאה: נגמרו לך החיפושים להיום!</div>`;
         }
 
-        function lookupSerial() {
-            try {
-                var serial = document.getElementById("serialInput").value.trim().toUpperCase();
-                var resultDiv = document.getElementById("serial-result");
-                var loader = document.getElementById("loader-serial");
+        let displayType = '';
+        let image = '';
+        let size = parseInt(model[2] + model[3]) || 0;
+        let yearCode = '';
+        for (let i = 4; i < model.length; i++) {
+            if (yearCodes[model[i]]) {
+                yearCode = model[i];
+                break;
+            }
+        }
+        let year = yearCodes[yearCode] || 'לא ידוע';
+        let overallScore = 0;
+        let stars = '';
+        let celebrationEffect = '';
+        let countryCode = model.length >= 13 ? model.slice(-2) : 'לא ידוע';
+        let countryFlag = '';
 
-                if (!serial || serial.length < 10) {
-                    resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי (מינימום 10 תווים, לדוגמה: S01X5K123456).</div>';
-                    resultDiv.style.display = "block";
-                    return;
+        const countryFlags = {
+            'IL': 'https://flagcdn.com/w80/il.png',
+            'SQ': 'https://flagcdn.com/w80/il.png',
+            'ZA': 'https://flagcdn.com/w80/za.png',
+            'RU': 'https://flagcdn.com/w80/ru.png',
+            'UA': 'https://flagcdn.com/w80/ua.png',
+            '2C': 'https://flagcdn.com/w80/cn.png',
+            'XU': 'https://flagcdn.com/w80/gb.png',
+            'XY': 'https://flagcdn.com/w80/au.png',
+            'AA': 'https://flagcdn.com/w80/us.png',
+            'WT': 'https://flagcdn.com/w80/hk.png',
+            'EC': 'https://flagcdn.com/w80/kr.png',
+            'TL': 'https://flagcdn.com/w80/in.png',
+            'EM': 'https://flagcdn.com/w80/mx.png',
+            'US': 'https://flagcdn.com/w80/us.png',
+            'LP': 'https://flagcdn.com/w80/hk.png',
+            'AH': 'https://flagcdn.com/w80/kr.png',
+            'T1': 'https://flagcdn.com/w80/in.png',
+            'AX': 'https://flagcdn.com/w80/mx.png',
+            'KJ': 'https://flagcdn.com/w80/il.png'
+        };
+
+        const defaultImage = 'https://via.placeholder.com/300x200?text=מוצר+סמסונג';
+
+        if (/^R[FSBTL]/.test(model)) {
+            displayType = fridgeConfig[model[1]] || 'מקרר לא ידוע';
+            overallScore = Math.floor(Math.random() * (85 - 70 + 1)) + 70;
+            if (size >= 60 && year >= '2023') overallScore += 5;
+            image = productImages[displayType] || defaultImage;
+        } else if (/^W[WD]|^DV/.test(model)) {
+            displayType = washerTech[model.slice(0, 2)] || 'מכונת כביסה לא ידועה';
+            overallScore = Math.floor(Math.random() * (80 - 65 + 1)) + 65;
+            image = productImages['מכונת כביסה'] || defaultImage;
+        } else if (/^[QULPK][NEA]/.test(model)) {
+            let isFrame = model.includes('LS03');
+            let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
+            let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
+
+            if (isFrame) displayType = 'The Frame';
+            else if (isOLED) display onType = 'OLED';
+            else if (isNseries) displayType = 'N4000-N5500 Series';
+            else if (model[0] === 'U' && year >= '2018') displayType = 'CRYSTAL UHD';
+            else if (model[0] === 'U' && year < '2018') displayType = 'LED';
+            else displayType = tvDisplay[model[0]] || 'טלוויזיה לא ידועה';
+
+            if (isFrame && size >= 85 && year === '2024') overallScore = 94;
+            else if (model[0] === 'Q' && size >= 85 && year === '2024') overallScore = 94;
+            else if (isFrame) overallScore = Math.min(88 + Math.floor((size - 43) / 10), 93);
+            else if (isOLED) overallScore = Math.min(82 + Math.floor((size - 55) / 10), 91);
+            else if (model[0] === 'Q') overallScore = Math.min(85 + Math.floor((size - 55) / 10), 93);
+            else overallScore = Math.min(75 + Math.floor((size - 43) / 10), 88);
+            image = productImages[displayType] || defaultImage;
+        } else {
+            displayType = 'מוצר לא מזוהה';
+            overallScore = Math.floor(Math.random() * (80 - 60 + 1)) + 60;
+            image = defaultImage;
+        }
+
+        countryFlag = countryFlags[countryCode] || '';
+
+        if (overallScore >= 90) stars = '★★★★★';
+        else if (overallScore >= 80) stars = '★★★★☆';
+        else if (overallScore >= 70) stars = '★★★☆☆';
+        else if (overallScore >= 60) stars = '★★☆☆☆';
+        else stars = '★☆☆☆☆';
+
+        if (overallScore >= 88) {
+            celebrationEffect = ' celebration';
+            setTimeout(() => triggerConfetti(), 2000);
+        }
+
+        let flagHtml = countryFlag ? `<img src="${countryFlag}" alt="דגל המדינה" class="country-flag">` : '';
+
+        if (teamData) {
+            teamData.searchesLeft--;
+            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+            const roles = ['שוער', 'מגן', 'קשר', 'חלוץ'];
+            const randomRole = roles[Math.floor(Math.random() * roles.length)];
+            return `<div class="dramatic-card hollywood${celebrationEffect}">
+                        <img src="${image}" alt="${displayType}">
+                        <div class="tv-name">${model} - ${displayType}</div>
+                        ${flagHtml}
+                        <div class="stars">${stars}</div>
+                        <div class="overall">${overallScore}</div>
+                        <button onclick="saveCard('${model}', '${randomRole}', ${overallScore})" ${teamData.savesLeft <= 0 ? 'disabled' : ''}>שמור לקבוצה (${teamData.savesLeft} נותרו)</button>
+                    </div>`;
+        } else {
+            return `<div class="dramatic-card hollywood${celebrationEffect}">
+                        <img src="${image}" alt="${displayType}">
+                        <div class="tv-name">${model} - ${displayType}</div>
+                        ${flagHtml}
+                        <div class="stars">${stars}</div>
+                        <div class="overall">${overallScore}</div>
+                    </div>`;
+        }
+    }
+
+    function triggerConfetti() {
+        const confettiContainer = document.createElement('div');
+        confettiContainer.className = 'confetti';
+        document.body.appendChild(confettiContainer);
+
+        for (let i = 0; i < 50; i++) {
+            const confettiPiece = document.createElement('div');
+            confettiPiece.className = 'confetti-piece';
+            confettiPiece.style.left = Math.random() * 100 + 'vw';
+            confettiPiece.style.animationDelay = Math.random() * 2 + 's';
+            confettiContainer.appendChild(confettiPiece);
+        }
+
+        setTimeout(() => confettiContainer.remove(), 5000);
+    }
+
+    function lookupSerial() {
+        try {
+            var serial = document.getElementById("serialInput").value.trim().toUpperCase();
+            var resultDiv = document.getElementById("serial-result");
+            var loader = document.getElementById("loader-serial");
+
+            if (!serial || (serial.length !== 11 && serial.length !== 15)) {
+                resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי (11 או 15 תווים).</div>';
+                resultDiv.style.display = "block";
+                return;
+            }
+
+            loader.style.display = "block";
+            resultDiv.style.display = "none";
+
+            setTimeout(() => {
+                let year, month, productionDate, warrantyStatus;
+
+                if (serial.length === 15) {
+                    year = yearCodes[serial[7]] || 'לא ידוע';
+                    month = monthCodes[serial[8]] || 'לא ידוע';
+                    productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
+                } else if (serial.length === 11) {
+                    year = yearCodes[serial[3]] || 'לא ידוע';
+                    month = monthCodes[serial[4]] || 'לא ידוע';
+                    productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
                 }
 
-                loader.style.display = "block";
-                resultDiv.style.display = "none";
-                setTimeout(() => {
-                    var yearCode = serial[4]; // תו 5 במספר הסיריאלי (למשל, K עבור 2016)
-                    var year = yearCodes[yearCode] || 'לא ידוע';
-                    var monthCode = serial[5]; // תו 6 (בדרך כלל הקסדצימלי 1-C עבור ינואר-דצמבר)
-                    var month = parseInt(monthCode, 16);
-                    month = (month >= 1 && month <= 12) ? month : 'לא ידוע';
-                    var warrantyEnd = year !== 'לא ידוע' && month !== 'לא ידוע' ? `${month}/${parseInt(year) + 2}` : 'לא ניתן לחשב';
+                const monthNumber = Object.keys(monthCodes).indexOf(serial[serial.length === 15 ? 8 : 4]) + 1;
+                const productionYear = parseInt(year);
+                const currentDate = new Date('2025-03-14');
+                const productionDateObj = new Date(productionYear, monthNumber - 1);
 
-                    resultDiv.innerHTML = `<div class="card">
-                                            מספר סיריאלי: ${serial}<br>
-                                            שנת ייצור: ${year}<br>
-                                            חודש ייצור: ${month === 'לא ידוע' ? month : month + ' (' + ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'][month - 1] + ')' }<br>
-                                            תום אחריות: ${warrantyEnd}<br>
-                                            הערה: למידע נוסף יש לבדוק לפי קוד דגם.
-                                          </div>`;
-                    resultDiv.style.display = "block";
-                    loader.style.display = "none";
-                    showPopup();
-                }, 1000);
-            } catch (e) {
-                console.error("שגיאה ב-lookupSerial:", e);
-                resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד המספר הסיריאלי: ${e.message}</div>`;
+                if (productionDateObj <= new Date('2024-03-31')) {
+                    warrantyStatus = 'לא באחריות';
+                } else if (productionDateObj <= new Date('2024-12-31')) {
+                    warrantyStatus = 'באחריות סמליין';
+                } else {
+                    warrantyStatus = 'באחריות סמסונג ישראל';
+                }
+
+                resultDiv.innerHTML = `<div class="card">
+                                        מספר סיריאלי: ${serial}<br>
+                                        תאריך ייצור: ${productionDate}<br>
+                                        סטטוס אחריות: ${warrantyStatus}<br>
+                                        הערה: למידע נוסף יש לבדוק לפי קוד דגם.
+                                      </div>`;
                 resultDiv.style.display = "block";
                 loader.style.display = "none";
-            }
+                showPopup();
+            }, 1000);
+        } catch (e) {
+            console.error("שגיאה ב-lookupSerial:", e);
+            resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד המספר הסיריאלי: ${e.message}</div>`;
+            resultDiv.style.display = "block";
+            loader.style.display = "none";
         }
+    }
+</script>
+<script>
+    function showPopup() {
+        document.getElementById("popup").style.display = "block";
+        document.getElementById("popup-overlay").style.display = "block";
+    }
 
-        function showPopup() {
-            document.getElementById("popup").style.display = "block";
-            document.getElementById("popup-overlay").style.display = "block";
-        }
+    function closePopup() {
+        document.getElementById("popup").style.display = "none";
+        document.getElementById("popup-overlay").style.display = "none";
+    }
 
-        function closePopup() {
-            document.getElementById("popup").style.display = "none";
-            document.getElementById("popup-overlay").style.display = "none";
-        }
+    function switchToModelPage() {
+        closePopup();
+        showPage('model');
+    }
 
-        function switchToModelPage() {
-            closePopup();
-            showPage('model');
-        }
+    function openLoginPopup() {
+        document.getElementById("login-popup").style.display = "block";
+        document.getElementById("login-overlay").style.display = "block";
+    }
 
-        function openLoginPopup() {
-            document.getElementById("login-popup").style.display = "block";
-            document.getElementById("login-overlay").style.display = "block";
-        }
+    function closeLoginPopup() {
+        document.getElementById("login-popup").style.display = "none";
+        document.getElementById("login-overlay").style.display = "none";
+    }
 
-        function closeLoginPopup() {
-            document.getElementById("login-popup").style.display = "none";
-            document.getElementById("login-overlay").style.display = "none";
-        }
+    function login() {
+        let username = document.getElementById("usernameInput").value.trim();
+        let password = document.getElementById("passwordInput").value.trim();
+        let users = getUsers();
 
-        function login() {
-            let username = document.getElementById("usernameInput").value.trim();
-            let password = document.getElementById("passwordInput").value.trim();
-            let users = getUsers();
-
-            if (users[username] && users[username].password === password) {
-                localStorage.setItem("currentUser", username);
-                alert("התחברת בהצלחה!");
-                closeLoginPopup();
-                updateUltimateButtonState();
-                if (ultimateMode) openUltimateMenu();
-            } else {
-                alert("שם משתמש או סיסמה שגויים.");
-            }
-        }
-
-        function register() {
-            let username = document.getElementById("usernameInput").value.trim();
-            let password = document.getElementById("passwordInput").value.trim();
-            let users = getUsers();
-
-            if (!username || !password) {
-                alert("יש למלא את כל השדות!");
-                return;
-            }
-
-            if (users[username]) {
-                alert("שם המשתמש כבר קיים!");
-            } else {
-                users[username] = { password: password };
-                saveUsers(users);
-                localStorage.setItem("currentUser", username);
-                alert("נרשמת והתחברת בהצלחה!");
-                closeLoginPopup();
-                initTeamData();
-                updateUltimateButtonState();
-            }
-        }
-
-        function updateUltimateButtonState() {
-            const username = localStorage.getItem("currentUser");
-            const btn = document.getElementById("dramaticModeBtn");
-            const teamBtn = document.getElementById("teamManagementBtn");
-            btn.classList.toggle("active", ultimateMode);
-            teamBtn.style.display = ultimateMode ? "block" : "none";
-        }
-
-        function initTeamData() {
-            const username = localStorage.getItem("currentUser");
-            if (!username) return null;
-
-            let teamData = JSON.parse(localStorage.getItem(`team_${username}`));
-            if (!teamData) {
-                teamData = {
-                    teamName: '',
-                    cards: [],
-                    searchesLeft: 10,
-                    savesLeft: 11
-                };
-                localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
-            }
-            return teamData;
-        }
-
-        function saveCard(model, role, rating) {
-            const username = localStorage.getItem("currentUser");
-            let teamData = initTeamData();
-
-            if (!teamData || teamData.savesLeft <= 0) {
-                alert("לא נותרו שמירות!");
-                return;
-            }
-
-            if (teamData.cards.length >= 11) {
-                alert("הקבוצה מלאה (11 שחקנים)!");
-                return;
-            }
-
-            teamData.cards.push({ model, role, rating });
-            teamData.savesLeft--;
-            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
-            alert(`נוסף לקבוצה: ${model} כ${role} עם דירוג ${rating}`);
-            document.querySelector('.dramatic-card button').disabled = true;
-        }
-
-        function openTeamPopup() {
-            const username = localStorage.getItem("currentUser");
-            let teamData = initTeamData();
-            if (!teamData) return;
-
-            let cardsHtml = '<ul>';
-            teamData.cards.forEach((card, index) => {
-                cardsHtml += `<li>${card.model} - ${card.role} (${card.rating}) <button onclick="removeCard(${index})">הסר</button></li>`;
-            });
-            cardsHtml += '</ul>';
-
-            document.getElementById("team-popup").innerHTML = `
-                <h3>ניהול קבוצה</h3>
-                <input type="text" id="teamNameInput" placeholder="הזן שם קבוצה" value="${teamData.teamName}">
-                <button onclick="saveTeamName()">שמור שם קבוצה</button>
-                <p>חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרות: ${teamData.savesLeft}</p>
-                <div id="teamCards">${cardsHtml}</div>
-                <button onclick="showTeamField()">תצוגת מגרש</button>
-                <button onclick="showLeague()">צפה בליגה</button>
-                <button onclick="exportTeamData()">ייצא נתונים</button>
-                <button onclick="importTeamData()">ייבא נתונים</button>
-                <textarea id="exportData" placeholder="ייצא/ייבא נתונים" style="width: 100%; height: 100px; margin-top: 10px;"></textarea>
-                <div class="popup-buttons">
-                    <button onclick="closeTeamPopup()">סגור</button>
-                </div>
-            `;
-            document.getElementById("team-popup").style.display = "block";
-            document.getElementById("team-overlay").style.display = "block";
-        }
-
-        function closeTeamPopup() {
-            document.getElementById("team-popup").style.display = "none";
-            document.getElementById("team-overlay").style.display = "none";
-        }
-
-        function saveTeamName() {
-            const username = localStorage.getItem("currentUser");
-            let teamData = initTeamData();
-            let teamName = document.getElementById("teamNameInput").value.trim();
-
-            if (!teamName) {
-                alert("יש להזין שם לקבוצה!");
-                return;
-            }
-
-            teamData.teamName = teamName;
-            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
-            alert("שם הקבוצה נשמר!");
-        }
-
-        function removeCard(index) {
-            const username = localStorage.getItem("currentUser");
-            let teamData = initTeamData();
-
-            teamData.cards.splice(index, 1);
-            teamData.savesLeft++;
-            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
-            openTeamPopup();
-        }
-
-        function openUltimateMenu() {
-            const username = localStorage.getItem("currentUser");
-            if (!username) {
-                openLoginPopup();
-            } else if (ultimateMode) {
-                document.getElementById("ultimate-menu").style.display = "block";
-                document.getElementById("ultimate-menu-overlay").style.display = "block";
-            } else {
-                toggleUltimateMode();
-            }
-        }
-
-        function closeUltimateMenu() {
-            document.getElementById("ultimate-menu").style.display = "none";
-            document.getElementById("ultimate-menu-overlay").style.display = "none";
-        }
-
-        function openTeamManagement() {
-            closeUltimateMenu();
-            openTeamPopup();
-        }
-
-        function showTeamField() {
-            const username = localStorage.getItem("currentUser");
-            let teamData = initTeamData();
-            if (!teamData) return;
-
-            const field = document.getElementById("field");
-            field.innerHTML = "";
-
-            const positions = {
-                'שוער': [{ top: '45%', left: '5%' }],
-                'מגן': [
-                    { top: '20%', left: '20%' },
-                    { top: '70%', left: '20%' },
-                    { top: '20%', left: '30%' },
-                    { top: '70%', left: '30%' }
-                ],
-                'קשר': [
-                    { top: '35%', left: '45%' },
-                    { top: '55%', left: '45%' },
-                    { top: '35%', left: '55%' },
-                    { top: '55%', left: '55%' }
-                ],
-                'חלוץ': [
-                    { top: '30%', left: '75%' },
-                    { top: '60%', left: '75%' }
-                ]
-            };
-
-            let roleCounts = { 'שוער': 0, 'מגן': 0, 'קשר': 0, 'חלוץ': 0 };
-
-            teamData.cards.forEach(card => {
-                const role = card.role;
-                const count = roleCounts[role];
-                if (positions[role] && count < positions[role].length) {
-                    const pos = positions[role][count];
-                    const playerDiv = document.createElement("div");
-                    playerDiv.className = "player";
-                    playerDiv.style.top = pos.top;
-                    playerDiv.style.left = pos.left;
-                    playerDiv.textContent = `${card.model} (${card.rating})`;
-                    field.appendChild(playerDiv);
-                    roleCounts[role]++;
-                }
-            });
-
-            document.getElementById("field-popup").style.display = "block";
-            document.getElementById("field-overlay").style.display = "block";
-        }
-
-        function closeFieldPopup() {
-            document.getElementById("field-popup").style.display = "none";
-            document.getElementById("field-overlay").style.display = "none";
-        }
-
-        function showLeague() {
-            const username = localStorage.getItem("currentUser");
-            let teamData = initTeamData();
-            if (!teamData || !teamData.teamName) {
-                alert("יש להזין שם קבוצה לפני צפייה בליגה!");
-                return;
-            }
-
-            let users = getUsers();
-            let leagueData = [];
-            for (let user in users) {
-                let userTeam = JSON.parse(localStorage.getItem(`team_${user}`));
-                if (userTeam && userTeam.teamName && userTeam.cards.length > 0) {
-                    let totalRating = userTeam.cards.reduce((sum, card) => sum + card.rating, 0);
-                    let avgRating = (totalRating / userTeam.cards.length).toFixed(1);
-                    leagueData.push({ teamName: userTeam.teamName, avgRating: avgRating, players: userTeam.cards.length });
-                }
-            }
-
-            leagueData.sort((a, b) => b.avgRating - a.avgRating);
-
-            let tableHtml = '<table><tr><th>מיקום</th><th>שם קבוצה</th><th>דירוג ממוצע</th><th>שחקנים</th></tr>';
-            leagueData.forEach((team, index) => {
-                tableHtml += `<tr><td>${index + 1}</td><td>${team.teamName}</td><td>${team.avgRating}</td><td>${team.players}</td></tr>`;
-            });
-            tableHtml += '</table>';
-
-            document.getElementById("leagueTable").innerHTML = tableHtml;
-            document.getElementById("league-popup").style.display = "block";
-            document.getElementById("league-overlay").style.display = "block";
-        }
-
-        function closeLeaguePopup() {
-            document.getElementById("league-popup").style.display = "none";
-            document.getElementById("league-overlay").style.display = "none";
-        }
-
-        function exportTeamData() {
-            const username = localStorage.getItem("currentUser");
-            let teamData = initTeamData();
-            if (!teamData) return;
-
-            let exportString = JSON.stringify(teamData);
-            document.getElementById("exportData").value = exportString;
-            alert("הנתונים יוצאו בהצלחה! העתק את הטקסט מהשדה כדי לשמור אותו.");
-        }
-
-        function importTeamData() {
-            const username = localStorage.getItem("currentUser");
-            let importString = document.getElementById("exportData").value.trim();
-
-            if (!importString) {
-                alert("אנא הזן נתונים לייבוא!");
-                return;
-            }
-
-            try {
-                let importedData = JSON.parse(importString);
-                if (!importedData.teamName || !Array.isArray(importedData.cards)) {
-                    throw new Error("פורמט נתונים לא תקין!");
-                }
-                localStorage.setItem(`team_${username}`, JSON.stringify(importedData));
-                alert("הנתונים יובאו בהצלחה!");
-                openTeamPopup();
-            } catch (e) {
-                alert(`שגיאה בייבוא הנתונים: ${e.message}`);
-            }
-        }
-
-        window.onload = function() {
+        if (users[username] && users[username].password === password) {
+            localStorage.setItem("currentUser", username);
+            alert("התחברת בהצלחה!");
+            closeLoginPopup();
             updateUltimateButtonState();
-        };
-    </script>
+            if (ultimateMode) openUltimateMenu();
+        } else {
+            alert("שם משתמש או סיסמה שגויים.");
+        }
+    }
+
+    function register() {
+        let username = document.getElementById("usernameInput").value.trim();
+        let password = document.getElementById("passwordInput").value.trim();
+        let users = getUsers();
+
+        if (!username || !password) {
+            alert("יש למלא את כל השדות!");
+            return;
+        }
+
+        if (users[username]) {
+            alert("שם המשתמש כבר קיים!");
+        } else {
+            users[username] = { password: password };
+            saveUsers(users);
+            localStorage.setItem("currentUser", username);
+            alert("נרשמת והתחברת בהצלחה!");
+            closeLoginPopup();
+            initTeamData();
+            updateUltimateButtonState();
+        }
+    }
+
+    function updateUltimateButtonState() {
+        const username = localStorage.getItem("currentUser");
+        const btn = document.getElementById("dramaticModeBtn");
+        const teamBtn = document.getElementById("teamManagementBtn");
+        btn.classList.toggle("active", ultimateMode);
+        teamBtn.style.display = ultimateMode ? "block" : "none";
+    }
+
+    function initTeamData() {
+        const username = localStorage.getItem("currentUser");
+        if (!username) return null;
+
+        let teamData = JSON.parse(localStorage.getItem(`team_${username}`));
+        if (!teamData) {
+            teamData = {
+                teamName: '',
+                coachName: '',
+                stadiumName: '',
+                cards: [],
+                searchesLeft: 10,
+                savesLeft: 11
+            };
+            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+        }
+        return teamData;
+    }
+
+    function saveCard(model, role, rating) {
+        const username = localStorage.getItem("currentUser");
+        let teamData = initTeamData();
+
+        if (!teamData || teamData.savesLeft <= 0) {
+            alert("לא נותרו שמירות!");
+            return;
+        }
+
+        if (teamData.cards.length >= 11) {
+            alert("הקבוצה מלאה (11 שחקנים)!");
+            return;
+        }
+
+        teamData.cards.push({ model, role, rating });
+        teamData.savesLeft--;
+        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+        alert(`נוסף לקבוצה: ${model} כ${role} עם דירוג ${rating}`);
+        document.querySelector('.dramatic-card button').disabled = true;
+    }
+
+    function openTeamPopup() {
+        const username = localStorage.getItem("currentUser");
+        let teamData = initTeamData();
+        if (!teamData) return;
+
+        let cardsHtml = '<ul>';
+        teamData.cards.forEach((card, index) => {
+            cardsHtml += `<li>${card.model} - ${card.role} (${card.rating}) <button onclick="removeCard(${index})">הסר</button></li>`;
+        });
+        cardsHtml += '</ul>';
+
+        document.getElementById("team-popup").innerHTML = `
+            <h3>ניהול קבוצה</h3>
+            <input type="text" id="teamNameInput" placeholder="הזן שם קבוצה" value="${teamData.teamName}">
+            <input type="text" id="coachNameInput" placeholder="הזן שם מאמן" value="${teamData.coachName}" style="margin-top: 10px;">
+            <input type="text" id="stadiumNameInput" placeholder="הזן שם אצטדיון" value="${teamData.stadiumName}" style="margin-top: 10px;">
+            <button onclick="saveTeamDetails()" style="margin-top: 15px;">שמור פרטי קבוצה</button>
+            <h4 style="margin-top: 20px;">שחקנים (${teamData.cards.length}/11)</h4>
+            <div id="teamCards">${cardsHtml}</div>
+            <div class="popup-buttons">
+                <button onclick="openFieldPopup()">תצוגת מגרש</button>
+                <button onclick="closeTeamPopup()">סגור</button>
+            </div>
+            <p style="margin-top: 10px;">חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרו: ${teamData.savesLeft}</p>
+        `;
+        document.getElementById("team-popup").style.display = "block";
+        document.getElementById("team-overlay").style.display = "block";
+    }
+
+    function saveTeamDetails() {
+        const username = localStorage.getItem("currentUser");
+        let teamData = initTeamData();
+
+        teamData.teamName = document.getElementById("teamNameInput").value.trim();
+        teamData.coachName = document.getElementById("coachNameInput").value.trim();
+        teamData.stadiumName = document.getElementById("stadiumNameInput").value.trim();
+        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+        alert("פרטי הקבוצה נשמרו בהצלחה!");
+    }
+
+    function removeCard(index) {
+        const username = localStorage.getItem("currentUser");
+        let teamData = initTeamData();
+
+        teamData.cards.splice(index, 1);
+        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+        openTeamPopup();
+    }
+
+    function closeTeamPopup() {
+        document.getElementById("team-popup").style.display = "none";
+        document.getElementById("team-overlay").style.display = "none";
+    }
+
+    function openFieldPopup() {
+        const username = localStorage.getItem("currentUser");
+        let teamData = initTeamData();
+        if (!teamData) return;
+
+        const field = document.getElementById("field");
+        field.innerHTML = '';
+
+        const positions = [
+            { role: 'שוער', top: '45%', left: '5%' },
+            { role: 'מגן', top: '20%', left: '20%' },
+            { role: 'מגן', top: '70%', left: '20%' },
+            { role: 'מגן', top: '10%', left: '35%' },
+            { role: 'מגן', top: '80%', left: '35%' },
+            { role: 'קשר', top: '35%', left: '50%' },
+            { role: 'קשר', top: '55%', left: '50%' },
+            { role: 'קשר', top: '45%', left: '65%' },
+            { role: 'חלוץ', top: '20%', left: '80%' },
+            { role: 'חלוץ', top: '45%', left: '85%' },
+            { role: 'חלוץ', top: '70%', left: '80%' }
+        ];
+
+        teamData.cards.forEach((card, index) => {
+            const pos = positions[index];
+            const playerDiv = document.createElement('div');
+            playerDiv.className = 'player';
+            playerDiv.style.top = pos.top;
+            playerDiv.style.left = pos.left;
+            playerDiv.textContent = `${card.model}\n${card.role} (${card.rating})`;
+            field.appendChild(playerDiv);
+        });
+
+        document.getElementById("field-popup").style.display = "block";
+        document.getElementById("field-overlay").style.display = "block";
+    }
+
+    function closeFieldPopup() {
+        document.getElementById("field-popup").style.display = "none";
+        document.getElementById("field-overlay").style.display = "none";
+    }
+
+    function openUltimateMenu() {
+        document.getElementById("ultimate-menu").style.display = "block";
+        document.getElementById("ultimate-menu-overlay").style.display = "block";
+    }
+
+    function closeUltimateMenu() {
+        document.getElementById("ultimate-menu").style.display = "none";
+        document.getElementById("ultimate-menu-overlay").style.display = "none";
+    }
+
+    function openTeamManagement() {
+        closeUltimateMenu();
+        openTeamPopup();
+    }
+
+    window.onload = () => {
+        updateUltimateButtonState();
+    };
+</script>
 </body>
 </html>
 
