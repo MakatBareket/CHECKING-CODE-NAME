@@ -658,6 +658,21 @@
     .popup-buttons {
         gap: 15px;
     }
+    .team-field {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+.team-field input {
+    flex-grow: 1;
+    padding: 5px;
+}
+    .country-flag {
+    width: 30px;
+    height: 20px;
+    vertical-align: middle;
+    margin-left: 10px;
+}
 </style>
 <script>
     console.log("הדף נטען בהצלחה");
@@ -863,7 +878,48 @@ const modelYearCodes = {
             ]
         }
     };
-
+const teamLocations = {
+    'ישראל': {
+        cities: ['תל אביב', 'ירושלים', 'חיפה', 'באר שבע', 'אילת'],
+        flag: 'https://flagcdn.com/w80/il.png'
+    },
+    'בריטניה': {
+        cities: ['לונדון', 'מנצ\'סטר', 'ליברפול', 'בירמינגהם', 'גלזגו'],
+        flag: 'https://flagcdn.com/w80/gb.png'
+    },
+    'צרפת': {
+        cities: ['פריז', 'מרסיי', 'ליון', 'טולוז', 'ניס'],
+        flag: 'https://flagcdn.com/w80/fr.png'
+    },
+    'ספרד': {
+        cities: ['מדריד', 'ברצלונה', 'ולנסיה', 'סביליה', 'בילבאו'],
+        flag: 'https://flagcdn.com/w80/es.png'
+    },
+    'ברזיל': {
+        cities: ['ריו דה ז\'ניירו', 'סאו פאולו', 'ברזיליה', 'סלבדור', 'מנאוס'],
+        flag: 'https://flagcdn.com/w80/br.png'
+    },
+    'ערב הסעודית': {
+        cities: ['ריאד', 'ג\'דה', 'מכה'],
+        flag: 'https://flagcdn.com/w80/sa.png'
+    },
+    'ארגנטינה': {
+        cities: ['בואנוס איירס', 'קורדובה'],
+        flag: 'https://flagcdn.com/w80/ar.png'
+    },
+    'פורטוגל': {
+        cities: ['ליסבון', 'פורטו'],
+        flag: 'https://flagcdn.com/w80/pt.png'
+    },
+    'גרמניה': {
+        cities: ['ברלין', 'מינכן', 'המבורג'],
+        flag: 'https://flagcdn.com/w80/de.png'
+    },
+    'בלגיה': {
+        cities: ['בריסל', 'אנטוורפן'],
+        flag: 'https://flagcdn.com/w80/be.png'
+    }
+};
     // פונקציות חיפוש ועיבוד דגמים
     function showSuggestions(input) {
         try {
@@ -1376,23 +1432,25 @@ const modelYearCodes = {
     }
 
     function initTeamData() {
-        const username = localStorage.getItem("currentUser");
-        if (!username) return null;
+    const username = localStorage.getItem("currentUser");
+    if (!username) return null;
 
-        let teamData = JSON.parse(localStorage.getItem(`team_${username}`));
-        if (!teamData) {
-            teamData = {
-                teamName: '',
-                coachName: '',
-                stadiumName: '',
-                cards: [],
-                searchesLeft: 10,
-                savesLeft: 11
-            };
-            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
-        }
-        return teamData;
+    let teamData = JSON.parse(localStorage.getItem(`team_${username}`));
+    if (!teamData) {
+        teamData = {
+            teamName: '',
+            coachName: '',
+            stadiumName: '',
+            country: '',
+            city: '',
+            cards: [],
+            searchesLeft: 10,
+            savesLeft: 11
+        };
+        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
     }
+    return teamData;
+}
 
     function saveCard(model, role, rating) {
         const username = localStorage.getItem("currentUser");
@@ -1415,46 +1473,118 @@ const modelYearCodes = {
         document.querySelector('.dramatic-card button').disabled = true;
     }
 
-    function openTeamPopup() {
-        const username = localStorage.getItem("currentUser");
-        let teamData = initTeamData();
-        if (!teamData) return;
+   function openTeamPopup() {
+    const username = localStorage.getItem("currentUser");
+    let teamData = initTeamData();
+    if (!teamData) return;
 
-        let cardsHtml = '<ul>';
-        teamData.cards.forEach((card, index) => {
-            cardsHtml += `<li>${card.model} - ${card.role} (${card.rating}) <button onclick="removeCard(${index})">הסר</button></li>`;
+    let cardsHtml = '<ul>';
+    teamData.cards.forEach((card, index) => {
+        cardsHtml += `<li>${card.model} - ${card.role} (${card.rating}) <button onclick="removeCard(${index})">הסר</button></li>`;
+    });
+    cardsHtml += '</ul>';
+
+    let countryOptions = '<option value="">בחר מדינה</option>';
+    for (let country in teamLocations) {
+        countryOptions += `<option value="${country}" ${teamData.country === country ? 'selected' : ''}>${country}</option>`;
+    }
+
+    let cityOptions = '<option value="">בחר עיר</option>';
+    if (teamData.country && teamLocations[teamData.country]) {
+        teamLocations[teamData.country].cities.forEach(city => {
+            cityOptions += `<option value="${city}" ${teamData.city === city ? 'selected' : ''}>${city}</option>`;
         });
-        cardsHtml += '</ul>';
-
-        document.getElementById("team-popup").innerHTML = `
-            <h3>ניהול קבוצה</h3>
-            <input type="text" id="teamNameInput" placeholder="הזן שם קבוצה" value="${teamData.teamName}">
-            <input type="text" id="coachNameInput" placeholder="הזן שם מאמן" value="${teamData.coachName}" style="margin-top: 10px;">
-            <input type="text" id="stadiumNameInput" placeholder="הזן שם אצטדיון" value="${teamData.stadiumName}" style="margin-top: 10px;">
-            <button onclick="saveTeamDetails()" style="margin-top: 15px;">שמור פרטי קבוצה</button>
-            <h4 style="margin-top: 20px;">שחקנים (${teamData.cards.length}/11)</h4>
-            <div id="teamCards">${cardsHtml}</div>
-            <div class="popup-buttons">
-                <button onclick="openFieldPopup()">תצוגת מגרש</button>
-                <button onclick="closeTeamPopup()">סגור</button>
-            </div>
-            <p style="margin-top: 10px;">חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרו: ${teamData.savesLeft}</p>
-        `;
-        document.getElementById("team-popup").style.display = "block";
-        document.getElementById("team-overlay").style.display = "block";
     }
 
-    function saveTeamDetails() {
-        const username = localStorage.getItem("currentUser");
-        let teamData = initTeamData();
+    document.getElementById("team-popup").innerHTML = `
+        <h3>ניהול קבוצה</h3>
+        <div class="team-field">
+            <input type="text" id="teamNameInput" value="${teamData.teamName}" readonly style="background-color: #e9ecef;">
+            <button onclick="toggleEdit('teamNameInput')">ערוך</button>
+        </div>
+        <div class="team-field">
+            <input type="text" id="coachNameInput" value="${teamData.coachName}" readonly style="background-color: #e9ecef;">
+            <button onclick="toggleEdit('coachNameInput')">ערוך</button>
+        </div>
+        <div class="team-field">
+            <input type="text" id="stadiumNameInput" value="${teamData.stadiumName}" readonly style="background-color: #e9ecef;">
+            <button onclick="toggleEdit('stadiumNameInput')">ערוך</button>
+        </div>
+        <div class="team-field">
+            <select id="countrySelect" onchange="updateCities()">
+                ${countryOptions}
+            </select>
+            <select id="citySelect">
+                ${cityOptions}
+            </select>
+            ${teamData.country ? `<img src="${teamLocations[teamData.country].flag}" alt="דגל ${teamData.country}" class="country-flag">` : ''}
+        </div>
+        <button onclick="saveTeamDetails()" style="margin-top: 15px;">שמור פרטי קבוצה</button>
+        <h4 style="margin-top: 20px;">שחקנים (${teamData.cards.length}/11)</h4>
+        <div id="teamCards">${cardsHtml}</div>
+        <div class="popup-buttons">
+            <button onclick="openFieldPopup()">תצוגת מגרש</button>
+            <button onclick="closeTeamPopup()">סגור</button>
+        </div>
+        <p style="margin-top: 10px;">חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרו: ${teamData.savesLeft}</p>
+    `;
+    document.getElementById("team-popup").style.display = "block";
+    document.getElementById("team-overlay").style.display = "block";
+}
 
-        teamData.teamName = document.getElementById("teamNameInput").value.trim();
-        teamData.coachName = document.getElementById("coachNameInput").value.trim();
-        teamData.stadiumName = document.getElementById("stadiumNameInput").value.trim();
-        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
-        alert("פרטי הקבוצה נשמרו בהצלחה!");
+// פונקציה חדשה לעדכון ערים
+function updateCities() {
+    const countrySelect = document.getElementById("countrySelect");
+    const citySelect = document.getElementById("citySelect");
+    const selectedCountry = countrySelect.value;
+    citySelect.innerHTML = '<option value="">בחר עיר</option>';
+
+    if (selectedCountry && teamLocations[selectedCountry]) {
+        teamLocations[selectedCountry].cities.forEach(city => {
+            citySelect.innerHTML += `<option value="${city}">${city}</option>`;
+        });
+        const flagImg = document.querySelector(".country-flag");
+        if (flagImg) flagImg.remove();
+        const newFlag = document.createElement("img");
+        newFlag.src = teamLocations[selectedCountry].flag;
+        newFlag.alt = `דגל ${selectedCountry}`;
+        newFlag.className = "country-flag";
+        countrySelect.parentElement.appendChild(newFlag);
     }
+}
+function saveTeamDetails() {
+    const username = localStorage.getItem("currentUser");
+    let teamData = initTeamData();
 
+    teamData.teamName = document.getElementById("teamNameInput").value.trim();
+    teamData.coachName = document.getElementById("coachNameInput").value.trim();
+    teamData.stadiumName = document.getElementById("stadiumNameInput").value.trim();
+    teamData.country = document.getElementById("countrySelect").value;
+    teamData.city = document.getElementById("citySelect").value;
+
+    localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+
+    document.getElementById("teamNameInput").setAttribute("readonly", true);
+    document.getElementById("teamNameInput").style.backgroundColor = "#e9ecef";
+    document.getElementById("coachNameInput").setAttribute("readonly", true);
+    document.getElementById("coachNameInput").style.backgroundColor = "#e9ecef";
+    document.getElementById("stadiumNameInput").setAttribute("readonly", true);
+    document.getElementById("stadiumNameInput").style.backgroundColor = "#e9ecef";
+
+    alert("פרטי הקבוצה נשמרו בהצלחה!");
+}
+
+// פונקציה חדשה לעריכה
+function toggleEdit(inputId) {
+    const input = document.getElementById(inputId);
+    if (input.hasAttribute("readonly")) {
+        input.removeAttribute("readonly");
+        input.style.backgroundColor = "#fff";
+    } else {
+        input.setAttribute("readonly", true);
+        input.style.backgroundColor = "#e9ecef";
+    }
+}
     function removeCard(index) {
         const username = localStorage.getItem("currentUser");
         let teamData = initTeamData();
@@ -1469,41 +1599,41 @@ const modelYearCodes = {
         document.getElementById("team-overlay").style.display = "none";
     }
 
-    function openFieldPopup() {
-        const username = localStorage.getItem("currentUser");
-        let teamData = initTeamData();
-        if (!teamData) return;
+   function openFieldPopup() {
+    const username = localStorage.getItem("currentUser");
+    let teamData = initTeamData();
+    if (!teamData) return;
 
-        const field = document.getElementById("field");
-        field.innerHTML = '';
+    const field = document.getElementById("field");
+    field.innerHTML = '';
 
-        const positions = [
-            { role: 'שוער', top: '45%', left: '5%' },
-            { role: 'מגן', top: '20%', left: '20%' },
-            { role: 'מגן', top: '70%', left: '20%' },
-            { role: 'מגן', top: '10%', left: '35%' },
-            { role: 'מגן', top: '80%', left: '35%' },
-            { role: 'קשר', top: '35%', left: '50%' },
-            { role: 'קשר', top: '55%', left: '50%' },
-            { role: 'קשר', top: '45%', left: '65%' },
-            { role: 'חלוץ', top: '20%', left: '80%' },
-            { role: 'חלוץ', top: '45%', left: '85%' },
-            { role: 'חלוץ', top: '70%', left: '80%' }
-        ];
+    const positions = [
+        { role: 'שוער', top: '45%', left: '5%' },    // שוער קרוב לשער שלנו
+        { role: 'מגן', top: '20%', left: '20%' },     // מגן שמאלי עליון
+        { role: 'מגן', top: '70%', left: '20%' },     // מגן שמאלי תחתון
+        { role: 'מגן', top: '35%', left: '30%' },     // מגן מרכזי שמאלי
+        { role: 'מגן', top: '55%', left: '30%' },     // מגן מרכזי ימני
+        { role: 'קשר', top: '25%', left: '50%' },     // קשר שמאלי
+        { role: 'קשר', top: '45%', left: '55%' },     // קשר מרכזי
+        { role: 'קשר', top: '65%', left: '50%' },     // קשר ימני
+        { role: 'חלוץ', top: '20%', left: '75%' },    // חלוץ שמאלי
+        { role: 'חלוץ', top: '45%', left: '85%' },    // חלוץ מרכזי
+        { role: 'חלוץ', top: '70%', left: '75%' }     // חלוץ ימני
+    ];
 
-        teamData.cards.forEach((card, index) => {
-            const pos = positions[index];
-            const playerDiv = document.createElement('div');
-            playerDiv.className = 'player';
-            playerDiv.style.top = pos.top;
-            playerDiv.style.left = pos.left;
-            playerDiv.textContent = `${card.model}\n${card.role} (${card.rating})`;
-            field.appendChild(playerDiv);
-        });
+    teamData.cards.forEach((card, index) => {
+        const pos = positions[index];
+        const playerDiv = document.createElement('div');
+        playerDiv.className = 'player';
+        playerDiv.style.top = pos.top;
+        playerDiv.style.left = pos.left;
+        playerDiv.textContent = `${card.model}\n${card.role} (${card.rating})`;
+        field.appendChild(playerDiv);
+    });
 
-        document.getElementById("field-popup").style.display = "block";
-        document.getElementById("field-overlay").style.display = "block";
-    }
+    document.getElementById("field-popup").style.display = "block";
+    document.getElementById("field-overlay").style.display = "block";
+}
 
     function closeFieldPopup() {
         document.getElementById("field-popup").style.display = "none";
