@@ -673,45 +673,45 @@
     }
 
     function toggleUltimateMode() {
-        const username = localStorage.getItem("currentUser");
-        const btn = document.getElementById("dramaticModeBtn");
-        const teamBtn = document.getElementById("teamManagementBtn");
+    const username = localStorage.getItem("currentUser");
+    const btn = document.getElementById("dramaticModeBtn");
+    const teamBtn = document.getElementById("teamManagementBtn");
 
-        if (!username) {
-            openLoginPopup();
-            return;
-        }
-
-        ultimateMode = !ultimateMode;
-        localStorage.setItem("ultimateMode", ultimateMode);
-        btn.classList.toggle("active", ultimateMode);
-        teamBtn.style.display = ultimateMode ? "block" : "none";
-
-        const notif = document.getElementById("ultimate-notif");
-        const overlay = document.getElementById("ultimate-notif-overlay");
-        if (ultimateMode) {
-            notif.innerHTML = `<h3>Ultimate Mode הופעל!</h3><p>ברוכים הבאים לעולם העתידני של ניהול קבוצות!</p>`;
-            notif.style.display = "block";
-            overlay.style.display = "block";
-            setTimeout(() => {
-                notif.style.display = "none";
-                overlay.style.display = "none";
-                openUltimateMenu();
-            }, 2000);
-        } else {
-            notif.innerHTML = `<h3>Ultimate Mode כובה</h3><p>חזרת למצב הרגיל. נתראה שוב!</p>`;
-            notif.style.display = "block";
-            overlay.style.display = "block";
-            setTimeout(() => {
-                notif.style.display = "none";
-                overlay.style.display = "none";
-            }, 2000);
-        }
-
-        if (document.getElementById("result").style.display === "block") {
-            lookupModel();
-        }
+    if (!username) {
+        openLoginPopup();
+        return;
     }
+
+    ultimateMode = !ultimateMode;
+    localStorage.setItem("ultimateMode", ultimateMode);
+    btn.classList.toggle("active", ultimateMode);
+    teamBtn.style.display = ultimateMode ? "block" : "none";
+
+    const notif = document.getElementById("ultimate-notif");
+    const overlay = document.getElementById("ultimate-notif-overlay");
+    if (ultimateMode) {
+        notif.innerHTML = `<h3>Ultimate Mode הופעל!</h3><p>ברוכים הבאים לעולם העתידני של ניהול קבוצות!</p>`;
+        notif.style.display = "block";
+        overlay.style.display = "block";
+        setTimeout(() => {
+            notif.style.display = "none";
+            overlay.style.display = "none";
+            openUltimateMenu();
+        }, 2000);
+    } else {
+        notif.innerHTML = `<h3>Ultimate Mode כובה</h3><p>חזרת למצב הרגיל. נתראה שוב!</p>`;
+        notif.style.display = "block";
+        overlay.style.display = "block";
+        setTimeout(() => {
+            notif.style.display = "none";
+            overlay.style.display = "none";
+        }, 2000);
+    }
+
+    if (document.getElementById("result").style.display === "block") {
+        lookupModel();
+    }
+}
 
     function showPage(pageId) {
         try {
@@ -887,30 +887,41 @@
         }
     }
 
-    function lookupModel() {
-        try {
-            var model = document.getElementById("modelInput").value.trim().toUpperCase();
-            var resultDiv = document.getElementById("result");
-            var loader = document.getElementById("loader");
+   function lookupModel() {
+    try {
+        var model = document.getElementById("modelInput").value.trim().toUpperCase();
+        var resultDiv = document.getElementById("result");
+        var loader = document.getElementById("loader");
 
-            if (!model || model.length < 5) {
-                resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין קוד דגם חוקי (מינימום 5 תווים).</div>';
-                resultDiv.style.display = "block";
-                return;
-            }
+        if (!model || model.length < 5) {
+            resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין קוד דגם חוקי (מינימום 5 תווים).</div>';
+            resultDiv.style.display = "block";
+            return;
+        }
 
-            loader.style.display = "block";
-            resultDiv.style.display = "none";
-            setTimeout(() => {
+        loader.style.display = "block";
+        resultDiv.style.display = "none";
+
+        setTimeout(() => {
+            try {
                 var details = ultimateMode ? getDramaticModelDetails(model) : getModelDetails(model);
                 resultDiv.innerHTML = details;
                 resultDiv.style.display = "block";
                 loader.style.display = "none";
-            }, 1000);
-        } catch (e) {
-            console.error("שגיאה ב-lookupModel:", e);
-        }
+            } catch (e) {
+                console.error("שגיאה בתוך setTimeout של lookupModel:", e);
+                resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
+                resultDiv.style.display = "block";
+                loader.style.display = "none";
+            }
+        }, 1000);
+    } catch (e) {
+        console.error("שגיאה ב-lookupModel:", e);
+        resultDiv.innerHTML = `<div class="card">שגיאה כללית: ${e.message}</div>`;
+        resultDiv.style.display = "block";
+        loader.style.display = "none";
     }
+}
 
     function suggestRandomModel() {
         try {
@@ -997,105 +1008,108 @@
                 </div>`;
     }
 
-    function getTVDetails(model) {
-        try {
-            let display = tvDisplay[model[0]] || 'לא ידוע';
-            let isFrame = model.includes('LS03');
-            let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
-            let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
+   function getTVDetails(model) {
+    try {
+        if (model.length < 10) {
+            return `<div class="card">שגיאה: קוד דגם קצר מדי (${model.length} תווים, נדרש לפחות 10).</div>`;
+        }
 
-            if (isFrame) display = 'The Frame';
-            else if (isOLED) display = 'OLED';
-            else if (isNseries) display = 'N4000-N5500 Series';
-            else if (model[0] === 'U' && yearCodes[model[4]] >= '2018') display = 'CRYSTAL UHD';
-            else if (model[0] === 'U' && yearCodes[model[4]] < '2018') display = 'LED';
+        let display = tvDisplay[model[0]] || 'לא ידוע';
+        let isFrame = model.includes('LS03');
+        let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
+        let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
 
-            let yearCode = '';
-            for (let i = 4; i < model.length; i++) {
-                if (yearCodes[model[i]]) {
-                    yearCode = model[i];
-                    break;
-                }
+        if (isFrame) display = 'The Frame';
+        else if (isOLED) display = 'OLED';
+        else if (isNseries) display = 'N4000-N5500 Series';
+        else if (model[0] === 'U' && yearCodes[model[4]] >= '2018') display = 'CRYSTAL UHD';
+        else if (model[0] === 'U' && yearCodes[model[4]] < '2018') display = 'LED';
+
+        let yearCode = '';
+        for (let i = 4; i < model.length; i++) {
+            if (yearCodes[model[i]]) {
+                yearCode = model[i];
+                break;
             }
-            let year = yearCodes[yearCode] || 'לא ידוע';
+        }
+        let year = yearCodes[yearCode] || 'לא ידוע';
 
-            let market = tvMarket[model[1]] || 'לא ידוע';
-            let size = model[2] + model[3];
+        let market = tvMarket[model[1]] || 'לא ידוע';
+        let size = model[2] + model[3];
 
-            let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
-            let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
-            let series = isFrame ? 'LS03' : (isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd));
-            if (isNseries) series = model.slice(4, 9);
+        let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
+        let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
+        let series = isFrame ? 'LS03' : (isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd));
+        if (isNseries) series = model.slice(4, 9);
+        if (!series) series = 'לא ידוע';
 
-            let broadcast = (year >= 2018 && year !== 'לא ידוע') ? 'DVB-T2' : 'DVB-T1';
+        let broadcast = (year >= '2018' && year !== 'לא ידוע') ? 'DVB-T2' : 'DVB-T1';
 
-            let os = 'לא צוינה';
-            if (year === '2023' || year === '2024' || year === '2025') os = 'Tizen 8.0';
-            else if (year === '2022') os = 'Tizen 7.0';
-            else if (year === '2021') os = 'Tizen 6.5';
-            else if (year === '2020') os = 'Tizen 6.0';
-            else if (year === '2019') os = 'Tizen 5.0';
-            else if (year === '2017') os = 'Tizen 4.0';
-            else if (year < 2019) os = 'Tizen (גרסה ישנה יותר)';
+        let os = 'לא צוינה';
+        if (year === '2023' || year === '2024' || year === '2025') os = 'Tizen 8.0';
+        else if (year === '2022') os = 'Tizen 7.0';
+        else if (year === '2021') os = 'Tizen 6.5';
+        else if (year === '2020') os = 'Tizen 6.0';
+        else if (year === '2019') os = 'Tizen 5.0';
+        else if (year === '2017') os = 'Tizen 4.0';
+        else if (year < '2019') os = 'Tizen (גרסה ישנה יותר)';
 
-            let country = 'לא ידוע';
-            let countryNote = '';
-            if (model.length >= 13) {
-                let countryCode = model.slice(-2);
-                country = countryCodesTV[countryCode] || 'לא ידוע';
-                if (year === '2025') {
-                    if (countryCode === 'IL') country = 'ישראל (ניופאן)';
-                    else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
-                }
-                if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
-                    countryNote = ' - יבוא מקביל';
-                }
-            } else if (model.length === 10 || model.length === 12) {
-                country = 'לא צוין';
+        let country = 'לא ידוע';
+        let countryNote = '';
+        if (model.length >= 13) {
+            let countryCode = model.slice(-2);
+            country = countryCodesTV[countryCode] || 'לא ידוע';
+            if (year === '2025') {
+                if (countryCode === 'IL') country = 'ישראל (ניופאן)';
+                else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
             }
-            if (model[1] === 'A') {
+            if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
                 countryNote = ' - יבוא מקביל';
             }
-            let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
-            let image = productImages[imageKey] || '';
-
-            let featuresHtml = '';
-            if (productFeatures[display]) {
-                featuresHtml = `
-                    <br><strong>${productFeatures[display].description}</strong><br>
-                    <ul style="text-align: right; padding-right: 20px;">
-                        ${productFeatures[display].features.map(feature => `<li>${feature}</li>`).join('')}
-                    </ul>
-                `;
-            }
-
-            return `<div class="card">
-                        טלוויזיה סמסונג - דגם: ${model}<br>
-                        סוג תצוגה: ${display}<br>
-                        אזור שוק: ${market}<br>
-                        גודל מסך: ${size} אינץ'<br>
-                        שנת ייצור: ${year}<br>
-                        סדרת דגם: ${series}<br>
-                        מקלט שידור: ${broadcast}<br>
-                        מערכת הפעלה: ${os}<br>
-                        מדינה: ${country}${countryNote}<br>
-                        ${image ? `<img src="${image}" alt="${display}">` : ''}
-                        ${featuresHtml}
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                    </div>`;
-        } catch (e) {
-            console.error("שגיאה ב-getTVDetails:", e);
-            return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
         }
+        let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
+        let image = productImages[imageKey] || '';
+
+        let featuresHtml = productFeatures[display] ? `
+            <br><strong>${productFeatures[display].description}</strong><br>
+            <ul style="text-align: right; padding-right: 20px;">
+                ${productFeatures[display].features.map(feature => `<li>${feature}</li>`).join('')}
+            </ul>
+        ` : '';
+
+        return `<div class="card">
+                    טלוויזיה סמסונג - דגם: ${model}<br>
+                    סוג תצוגה: ${display}<br>
+                    אזור שוק: ${market}<br>
+                    גודל מסך: ${size} אינץ'<br>
+                    שנת ייצור: ${year}<br>
+                    סדרת דגם: ${series}<br>
+                    מקלט שידור: ${broadcast}<br>
+                    מערכת הפעלה: ${os}<br>
+                    מדינה: ${country}${countryNote}<br>
+                    ${image ? `<img src="${image}" alt="${display}">` : ''}
+                    ${featuresHtml}
+                    <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                </div>`;
+    } catch (e) {
+        console.error("שגיאה ב-getTVDetails:", e);
+        return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
+    }
+}
+   function getDramaticModelDetails(model) {
+    if (!model || model.length < 5) {
+        return `<div class="dramatic-card">שגיאה: קוד דגם לא תקין (${model.length} תווים, נדרש לפחות 5).</div>`;
     }
 
-    function getDramaticModelDetails(model) {
-        const username = localStorage.getItem("currentUser");
-        let teamData = initTeamData();
+    const username = localStorage.getItem("currentUser");
+    let teamData = initTeamData();
 
-        if (teamData && teamData.searchesLeft <= 0) {
-            return `<div class="card">שגיאה: נגמרו לך החיפושים להיום!</div>`;
-        }
+    if (teamData && teamData.searchesLeft <= 0) {
+        return `<div class="dramatic-card">שגיאה: נגמרו לך החיפושים להיום!</div>`;
+    }
+
+    // המשך הקוד כרגיל...
+}
 
         let displayType = '';
         let image = '';
