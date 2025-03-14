@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
     <title>הזן קוד דגם</title>
     <style>
         body {
@@ -673,6 +676,21 @@
     </div>
 
     <script>
+        // Firebase Config and Initialization
+const firebaseConfig = {
+    apiKey: "AIzaSyBv9HT58L3iai5NBj4sAwXBnvr7ni52cI0",
+    authDomain: "model-code-league.firebaseapp.com",
+    databaseURL: "https://model-code-league-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "model-code-league",
+    storageBucket: "model-code-league.firebasestorage.app",
+    messagingSenderId: "341001867383",
+    appId: "1:341001867383:web:9b39865210e8512c9d3672",
+    measurementId: "G-HBK62VJY08"
+};
+
+// אתחול Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
         console.log("הדף נטען בהצלחה");
 
         let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
@@ -1395,14 +1413,14 @@
             document.querySelector('.dramatic-card button').disabled = true;
         }
 
-       function openTeamPopup() {
+      function openTeamPopup() {
     const username = localStorage.getItem("currentUser");
     let teamData = initTeamData();
     if (!teamData) return;
 
     let cardsHtml = '<ul>';
     teamData.cards.forEach((card, index) => {
-        cardsHtml += `<li>${card.model} - ${card.role} (${card.rating}) <button onclick="removeCard(${index})">הסר</button></li>`;
+        cardsHtml += `<li>${card.name} - ${card.role} (${card.rating}) <button onclick="removeCard(${index})">הסר</button></li>`;
     });
     cardsHtml += '</ul>';
 
@@ -1451,9 +1469,6 @@
         <div id="teamCards">${cardsHtml}</div>
         <button onclick="showTeamField()">תצוגת מגרש</button>
         <button onclick="showLeague()">צפה בליגה</button>
-        <button onclick="exportTeamData()">ייצא נתונים</button>
-        <button onclick="importTeamData()">ייבא נתונים</button>
-        <textarea id="exportData" placeholder="ייצא/ייבא נתונים" style="width: 100%; height: 100px; margin-top: 10px;"></textarea>
         <div class="popup-buttons">
             <button onclick="closeTeamPopup()">סגור</button>
         </div>
@@ -1461,7 +1476,6 @@
     document.getElementById("team-popup").style.display = "block";
     document.getElementById("team-overlay").style.display = "block";
 }
-
 function updateCities() {
     const countrySelect = document.getElementById("countrySelect");
     const citySelect = document.getElementById("citySelect");
