@@ -286,7 +286,7 @@
             background: rgba(0, 0, 0, 0.6);
             z-index: 1500;
         }
-        /* עיצוב מצב דרמטי */
+        /* עיצוב מצב Ultimate */
         .dramatic-card {
             position: relative;
             background: linear-gradient(135deg, #1d3557, #457b9d);
@@ -345,224 +345,198 @@
             100% { opacity: 1; transform: scale(1); }
         }
         /* עיצוב מחודש לאייקון ההגדרות */
-#dramaticModeBtn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    background: transparent; /* הסרת הרקע המוזר */
-    border: none;
-    font-size: 24px;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    color: #e0e1dd;
-    opacity: 0; /* חבוי כברירת מחדל */
-    transition: opacity 0.3s, transform 0.2s;
-}
-
-#dramaticModeBtn:hover {
-    opacity: 1; /* מופיע בהעברת עכבר */
-    transform: scale(1.1);
-}
-
-/* סגנון הכוכבים */
-.stars {
-    font-size: 24px;
-    color: #f4a261;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: starsReveal 1s ease-out 2s forwards;
-    margin: 15px 0;
-}
-
-@keyframes starsReveal {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
+        #dramaticModeBtn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            color: #e0e1dd;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.2s;
+        }
+        #dramaticModeBtn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        /* סגנון הכוכבים */
+        .stars {
+            font-size: 24px;
+            color: #f4a261;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: starsReveal 1s ease-out 2s forwards;
+            margin: 15px 0;
+        }
+        @keyframes starsReveal {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
         /* אפקט חגיגה לדירוג גבוה */
-.celebration {
-    position: relative;
-    overflow: hidden;
-}
-
-.celebration::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255, 215, 0, 0.3), transparent 70%);
-    opacity: 0;
-    animation: glowPulse 2s ease-in-out infinite;
-    z-index: -1;
-}
-
-@keyframes glowPulse {
-    0% { opacity: 0; transform: scale(0.8); }
-    50% { opacity: 0.7; transform: scale(1); }
-    100% { opacity: 0; transform: scale(0.8); }
-}
-
-/* קונפטי */
-.confetti {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 3000;
-}
-
-.confetti-piece {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background: #f4a261;
-    opacity: 0.8;
-    animation: fall 3s linear infinite;
-}
-
-.confetti-piece:nth-child(odd) { background: #a8dadc; }
-.confetti-piece:nth-child(even) { background: #457b9d; }
-.confetti-piece:nth-child(3n) { background: #ffffff; }
-
-@keyframes fall {
-    0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-}
-        /* עיצוב הוליוודי למצב דרמטי */
-.dramatic-card.hollywood {
-    background: linear-gradient(135deg, #1a1a1a, #4a4a4a);
-    border: 2px solid gold;
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-    position: relative;
-    overflow: hidden;
-}
-
-/* זרקורים נעים */
-.dramatic-card.hollywood::before {
-    content: '';
-    position: absolute;
-    top: -100%;
-    left: -100%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 70%);
-    animation: spotlight 6s infinite linear;
-    z-index: 0;
-}
-
-@keyframes spotlight {
-    0% { transform: translate(0, 0) rotate(45deg); }
-    25% { transform: translate(50%, 50%) rotate(45deg); }
-    50% { transform: translate(100%, 0) rotate(45deg); }
-    75% { transform: translate(50%, -50%) rotate(45deg); }
-    100% { transform: translate(0, 0) rotate(45deg); }
-}
-
-/* גופן קולנועי לשם המוצר */
-.dramatic-card.hollywood .tv-name {
-    font-family: 'Impact', sans-serif; /* גופן דרמטי */
-    font-size: 32px;
-    color: gold;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-    animation: titleReveal 1.5s ease-out 1.5s forwards;
-}
-
-@keyframes titleReveal {
-    0% { opacity: 0; transform: translateY(-30px) scale(0.8); }
-    100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* דגל המדינה */
-.country-flag {
-    width: 60px;
-    height: 40px;
-    margin: 10px auto;
-    opacity: 0;
-    transform: scale(0.8);
-    animation: flagReveal 1s ease-out 2s forwards;
-    border-radius: 5px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-@keyframes flagReveal {
-    0% { opacity: 0; transform: scale(0.8) rotate(10deg); }
-    50% { transform: scale(1.1) rotate(-5deg); }
-    100% { opacity: 1; transform: scale(1) rotate(0deg); }
-}
+        .celebration {
+            position: relative;
+            overflow: hidden;
+        }
+        .celebration::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.3), transparent 70%);
+            opacity: 0;
+            animation: glowPulse 2s ease-in-out infinite;
+            z-index: -1;
+        }
+        @keyframes glowPulse {
+            0% { opacity: 0; transform: scale(0.8); }
+            50% { opacity: 0.7; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.8); }
+        }
+        /* קונפטי */
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3000;
+        }
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #f4a261;
+            opacity: 0.8;
+            animation: fall 3s linear infinite;
+        }
+        .confetti-piece:nth-child(odd) { background: #a8dadc; }
+        .confetti-piece:nth-child(even) { background: #457b9d; }
+        .confetti-piece:nth-child(3n) { background: #ffffff; }
+        @keyframes fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        /* עיצוב הוליוודי */
+        .dramatic-card.hollywood {
+            background: linear-gradient(135deg, #1a1a1a, #4a4a4a);
+            border: 2px solid gold;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        .dramatic-card.hollywood::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 70%);
+            animation: spotlight 6s infinite linear;
+            z-index: 0;
+        }
+        @keyframes spotlight {
+            0% { transform: translate(0, 0) rotate(45deg); }
+            25% { transform: translate(50%, 50%) rotate(45deg); }
+            50% { transform: translate(100%, 0) rotate(45deg); }
+            75% { transform: translate(50%, -50%) rotate(45deg); }
+            100% { transform: translate(0, 0) rotate(45deg); }
+        }
+        .dramatic-card.hollywood .tv-name {
+            font-family: 'Impact', sans-serif;
+            font-size: 32px;
+            color: gold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            animation: titleReveal 1.5s ease-out 1.5s forwards;
+        }
+        @keyframes titleReveal {
+            0% { opacity: 0; transform: translateY(-30px) scale(0.8); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .country-flag {
+            width: 60px;
+            height: 40px;
+            margin: 10px auto;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: flagReveal 1s ease-out 2s forwards;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        @keyframes flagReveal {
+            0% { opacity: 0; transform: scale(0.8) rotate(10deg); }
+            50% { transform: scale(1.1) rotate(-5deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
         #teamCards ul {
-    list-style: none;
-    padding: 0;
-    margin: 10px 0;
-}
-
-#teamCards li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    margin-bottom: 10px;
-    color: #ffffff;
-}
-
-#teamCards li button {
-    background: #f4a261;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    color: #1d3557;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-#teamCards li button:hover {
-    background: #ffffff;
-}
-
-.popup-buttons {
-    gap: 15px; /* מרווח אחיד בין הלחצנים */
-}
-#leagueTable table {
-    width: 100%;
-    border-collapse: collapse;
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-#leagueTable th, #leagueTable td {
-    padding: 12px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-#leagueTable th {
-    background: #1d3557;
-    font-weight: 600;
-}
-
-#leagueTable tr:nth-child(even) {
-    background: rgba(255, 255, 255, 0.05);
-}
-
-#leagueTable tr:hover {
-    background: rgba(69, 123, 157, 0.3);
-}        
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        #teamCards li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+        #teamCards li button {
+            background: #f4a261;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            color: #1d3557;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        #teamCards li button:hover {
+            background: #ffffff;
+        }
+        .popup-buttons {
+            gap: 15px;
+        }
+        #leagueTable table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        #leagueTable th, #leagueTable td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        #leagueTable th {
+            background: #1d3557;
+            font-weight: 600;
+        }
+        #leagueTable tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        #leagueTable tr:hover {
+            background: rgba(69, 123, 157, 0.3);
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
- <button id="dramaticModeBtn" onclick="showTeamOptions()" title="מצב Ultimate וניהול קבוצה">⚙️</button>
+    <button id="dramaticModeBtn" onclick="showTeamOptions()" title="מצב Ultimate וניהול קבוצה">⚙️</button>
     <div class="navbar">
         <a href="#" onclick="showPage('model')" class="active">חיפוש לפי קוד דגם</a>
         <a href="#" onclick="showPage('serial')">בדיקה לפי מספר סיריאלי</a>
@@ -607,75 +581,56 @@
             <button onclick="closePopup()">סגור</button>
         </div>
     </div>
-<div id="login-overlay" class="popup-overlay" onclick="closeLoginPopup()"></div>
-<div id="login-popup" class="popup">
-    <h3>התחבר למצב Ultimate</h3>
-    <input type="text" id="usernameInput" placeholder="הזן שם משתמש" style="color: #1d3557;">
-    <div class="popup-buttons">
-        <button onclick="login()">התחבר</button>
-        <button onclick="closeLoginPopup()">סגור</button>
-    </div>
-</div>
-  <div id="team-overlay" class="popup-overlay" onclick="closeTeamPopup()"></div>
-<div id="team-popup" class="popup" style="max-width: 600px;">
-    <h3>ניהול קבוצה</h3>
-    <input type="text" id="teamNameInput" placeholder="הזן שם לקבוצה" style="color: #1d3557;">
-    <button onclick="saveTeamName()">שמור שם קבוצה</button>
-    <div id="teamCards" style="margin-top: 20px; text-align: right;"></div>
-    <div class="popup-buttons">
-        <button onclick="toggleUltimateMode(); closeTeamPopup()">חזור למצב רגיל</button>
-        <button onclick="closeTeamPopup()">סגור</button>
-    </div>
-</div>
 
-<!-- חלון הליגה החדש שהוספתי -->
-<div id="league-overlay" class="popup-overlay" onclick="closeLeaguePopup()"></div>
-<div id="league-popup" class="popup" style="max-width: 800px; padding: 40px;">
-    <h3>ליגת Ultimate</h3>
-    <div id="leagueTable" style="margin-top: 20px;"></div>
-    <div class="popup-buttons">
-        <button onclick="closeLeaguePopup()">סגור</button>
+    <div id="login-overlay" class="popup-overlay" onclick="closeLoginPopup()"></div>
+    <div id="login-popup" class="popup">
+        <h3>התחבר למצב Ultimate</h3>
+        <input type="text" id="usernameInput" placeholder="הזן שם משתמש" style="color: #1d3557;">
+        <div class="popup-buttons">
+            <button onclick="login()">התחבר</button>
+            <button onclick="closeLoginPopup()">סגור</button>
+        </div>
     </div>
-</div>
 
-<script>
-    // בדיקת טעינה של הדף
-    console.log("הדף נטען בהצלחה");
+    <div id="team-overlay" class="popup-overlay" onclick="closeTeamPopup()"></div>
+    <div id="team-popup" class="popup" style="max-width: 600px;">
+        <h3>ניהול קבוצה</h3>
+        <input type="text" id="teamNameInput" placeholder="הזן שם לקבוצה" style="color: #1d3557;">
+        <button onclick="saveTeamName()">שמור שם קבוצה</button>
+        <div id="teamCards" style="margin-top: 20px; text-align: right;"></div>
+        <div class="popup-buttons">
+            <button onclick="toggleUltimateMode(); closeTeamPopup()">חזור למצב רגיל</button>
+            <button onclick="closeTeamPopup()">סגור</button>
+        </div>
+    </div>
 
-    let ultimateMode = false;
-    function toggleUltimateMode() {
-        const username = localStorage.getItem("username");
-        if (!username) {
-            openLoginPopup();
-        } else {
-            ultimateMode = !ultimateMode;
-            const btn = document.getElementById('dramaticModeBtn');
-            btn.style.background = ultimateMode ? 'rgba(69, 123, 157, 0.5)' : 'rgba(255, 255, 255, 0.1)';
-            if (document.getElementById('result').style.display === 'block') {
-                lookupModel();
-            }
-        }
-    }
-    <!-- שאר הקוד שלך ממשיך כאן -->
-</script>
+    <div id="league-overlay" class="popup-overlay" onclick="closeLeaguePopup()"></div>
+    <div id="league-popup" class="popup" style="max-width: 800px; padding: 40px;">
+        <h3>ליגת Ultimate</h3>
+        <div id="leagueTable" style="margin-top: 20px;"></div>
+        <div class="popup-buttons">
+            <button onclick="closeLeaguePopup()">סגור</button>
+        </div>
+    </div>
+
     <script>
-        // בדיקת טעינה של הדף
         console.log("הדף נטען בהצלחה");
 
         let ultimateMode = false;
-       function toggleUltimateMode() {
-    const username = localStorage.getItem("username");
-    if (!username) {
-        openLoginPopup();
-    } else {
-        ultimateMode = !ultimateMode;
-        const btn = document.getElementById('dramaticModeBtn');
-        btn.style.background = ultimateMode ? 'rgba(69, 123, 157, 0.5)' : 'rgba(255, 255, 255, 0.1)';
-        if (document.getElementById('result').style.display === 'block') {
-            lookupModel();
+
+        function toggleUltimateMode() {
+            const username = localStorage.getItem("username");
+            if (!username) {
+                openLoginPopup();
+            } else {
+                ultimateMode = !ultimateMode;
+                const btn = document.getElementById('dramaticModeBtn');
+                btn.style.background = ultimateMode ? 'rgba(69, 123, 157, 0.5)' : 'rgba(255, 255, 255, 0.1)';
+                if (document.getElementById('result').style.display === 'block') {
+                    lookupModel();
+                }
+            }
         }
-    }
-}
 
         function showPage(pageId) {
             try {
@@ -861,7 +816,7 @@
                 loader.style.display = "block";
                 resultDiv.style.display = "none";
                 setTimeout(() => {
-                    var details = dramaticMode ? getDramaticModelDetails(model) : getModelDetails(model);
+                    var details = ultimateMode ? getDramaticModelDetails(model) : getModelDetails(model);
                     resultDiv.innerHTML = details;
                     resultDiv.style.display = "block";
                     loader.style.display = "none";
@@ -1046,146 +1001,133 @@
                 return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
             }
         }
-function getDramaticModelDetails(model) {
-    try {
-        let displayType = '';
-        let image = '';
-        let size = parseInt(model[2] + model[3]) || 0; // גודל המסך באינצ'ים
-        let yearCode = '';
-        for (let i = 4; i < model.length; i++) {
-            if (yearCodes[model[i]]) {
-                yearCode = model[i];
-                break;
+
+        function getDramaticModelDetails(model) {
+            const username = localStorage.getItem("username");
+            let teamData = initTeamData();
+
+            if (teamData && teamData.searchesLeft <= 0) {
+                return `<div class="card">שגיאה: נגמרו לך החיפושים להיום!</div>`;
             }
-        }
-        let year = yearCodes[yearCode] || 'לא ידוע';
-        let overallScore = 0;
-        let stars = '';
-        let celebrationEffect = '';
-        let countryCode = model.length >= 13 ? model.slice(-2) : 'לא ידוע';
-        let countryFlag = '';
 
-        // מיפוי דגלי מדינות (באמצעות URL של דגלים פשוטים)
-        const countryFlags = {
-            'IL': 'https://flagcdn.com/w80/il.png', // ישראל
-            'SQ': 'https://flagcdn.com/w80/il.png', // ישראל (מחסני חשמל)
-            'ZA': 'https://flagcdn.com/w80/za.png', // אפריקה
-            'RU': 'https://flagcdn.com/w80/ru.png', // רוסיה
-            'UA': 'https://flagcdn.com/w80/ua.png', // אוקראינה
-            '2C': 'https://flagcdn.com/w80/cn.png', // סין
-            'XU': 'https://flagcdn.com/w80/gb.png', // בריטניה
-            'XY': 'https://flagcdn.com/w80/au.png', // אוסטרליה
-            'AA': 'https://flagcdn.com/w80/us.png', // ארה"ב
-            'WT': 'https://flagcdn.com/w80/hk.png', // הונג קונג
-            'EC': 'https://flagcdn.com/w80/kr.png', // קוריאה
-            'TL': 'https://flagcdn.com/w80/in.png', // הודו
-            'EM': 'https://flagcdn.com/w80/mx.png', // מקסיקו
-            'US': 'https://flagcdn.com/w80/us.png', // ארה"ב (מכונות כביסה)
-            'LP': 'https://flagcdn.com/w80/hk.png', // הונג קונג (מכונות כביסה)
-            'AH': 'https://flagcdn.com/w80/kr.png', // קוריאה (מכונות כביסה)
-            'T1': 'https://flagcdn.com/w80/in.png', // הודו (מכונות כביסה)
-            'AX': 'https://flagcdn.com/w80/mx.png', // מקסיקו (מכונות כביסה)
-            'KJ': 'https://flagcdn.com/w80/il.png'  // ישראל (מכונות כביסה)
-        };
+            let displayType = '';
+            let image = '';
+            let size = parseInt(model[2] + model[3]) || 0;
+            let yearCode = '';
+            for (let i = 4; i < model.length; i++) {
+                if (yearCodes[model[i]]) {
+                    yearCode = model[i];
+                    break;
+                }
+            }
+            let year = yearCodes[yearCode] || 'לא ידוע';
+            let overallScore = 0;
+            let stars = '';
+            let celebrationEffect = '';
+            let countryCode = model.length >= 13 ? model.slice(-2) : 'לא ידוע';
+            let countryFlag = '';
 
-        if (/^R[FSBTL]/.test(model)) {
-            displayType = fridgeConfig[model[1]] || 'לא ידוע';
-            overallScore = Math.floor(Math.random() * (85 - 70 + 1)) + 70;
-            if (size >= 60 && year >= '2023') overallScore += 5;
-            image = productImages[displayType] || '';
-            countryFlag = countryFlags[countryCode] || '';
-        } else if (/^W[WD]|^DV/.test(model)) {
-            displayType = washerTech[model.slice(0, 2)] || 'לא ידוע';
-            overallScore = Math.floor(Math.random() * (80 - 65 + 1)) + 65;
-            image = productImages['מכונת כביסה'] || '';
-            countryFlag = countryFlags[countryCode] || '';
-        } else if (/^[QULPK][NEA]/.test(model)) {
-            displayType = tvDisplay[model[0]] || 'לא ידוע';
-            let isFrame = model.includes('LS03');
-            let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
-            let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
+            const countryFlags = {
+                'IL': 'https://flagcdn.com/w80/il.png',
+                'SQ': 'https://flagcdn.com/w80/il.png',
+                'ZA': 'https://flagcdn.com/w80/za.png',
+                'RU': 'https://flagcdn.com/w80/ru.png',
+                'UA': 'https://flagcdn.com/w80/ua.png',
+                '2C': 'https://flagcdn.com/w80/cn.png',
+                'XU': 'https://flagcdn.com/w80/gb.png',
+                'XY': 'https://flagcdn.com/w80/au.png',
+                'AA': 'https://flagcdn.com/w80/us.png',
+                'WT': 'https://flagcdn.com/w80/hk.png',
+                'EC': 'https://flagcdn.com/w80/kr.png',
+                'TL': 'https://flagcdn.com/w80/in.png',
+                'EM': 'https://flagcdn.com/w80/mx.png',
+                'US': 'https://flagcdn.com/w80/us.png',
+                'LP': 'https://flagcdn.com/w80/hk.png',
+                'AH': 'https://flagcdn.com/w80/kr.png',
+                'T1': 'https://flagcdn.com/w80/in.png',
+                'AX': 'https://flagcdn.com/w80/mx.png',
+                'KJ': 'https://flagcdn.com/w80/il.png'
+            };
 
-            if (isFrame) {
-                displayType = 'The Frame';
-                overallScore = Math.min(88 + Math.floor((size - 43) / 10), 93);
-            } else if (isOLED) {
-                displayType = 'OLED';
-                overallScore = Math.min(82 + Math.floor((size - 55) / 10), 91);
-            } else if (isNseries) {
-                displayType = 'N4000-N5500 Series';
-                overallScore = Math.min(63 + Math.floor((size - 32) / 10), 71);
-            } else if (model[0] === 'Q') {
-                displayType = 'QLED';
-                overallScore = Math.min(85 + Math.floor((size - 55) / 10), 93);
-            } else if (model[0] === 'U' && year >= '2018') {
-                displayType = 'CRYSTAL UHD';
-                overallScore = Math.min(75 + Math.floor((size - 43) / 10) + (year >= '2023' ? 3 : 0), 88);
+            if (/^R[FSBTL]/.test(model)) {
+                displayType = fridgeConfig[model[1]] || 'לא ידוע';
+                overallScore = Math.floor(Math.random() * (85 - 70 + 1)) + 70;
+                if (size >= 60 && year >= '2023') overallScore += 5;
+                image = productImages[displayType] || '';
+                countryFlag = countryFlags[countryCode] || '';
+            } else if (/^W[WD]|^DV/.test(model)) {
+                displayType = washerTech[model.slice(0, 2)] || 'לא ידוע';
+                overallScore = Math.floor(Math.random() * (80 - 65 + 1)) + 65;
+                image = productImages['מכונת כביסה'] || '';
+                countryFlag = countryFlags[countryCode] || '';
+            } else if (/^[QULPK][NEA]/.test(model)) {
+                displayType = tvDisplay[model[0]] || 'לא ידוע';
+                let isFrame = model.includes('LS03');
+                let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
+                if (isFrame && size >= 85 && year === '2024') overallScore = 94;
+                else if (model[0] === 'Q' && size >= 85 && year === '2024') overallScore = 94;
+                else if (isFrame) overallScore = Math.min(88 + Math.floor((size - 43) / 10), 93);
+                else if (isOLED) overallScore = Math.min(82 + Math.floor((size - 55) / 10), 91);
+                else if (model[0] === 'Q') overallScore = Math.min(85 + Math.floor((size - 55) / 10), 93);
+                else overallScore = Math.min(75 + Math.floor((size - 43) / 10), 88);
+                image = productImages[displayType] || '';
+                countryFlag = countryFlags[countryCode] || '';
+            }
+
+            if (!image) {
+                return `<div class="card">שגיאה: לא נמצאה תמונה עבור הדגם הזה במצב Ultimate.</div>`;
+            }
+
+            if (overallScore >= 90) stars = '★★★★★';
+            else if (overallScore >= 80) stars = '★★★★☆';
+            else if (overallScore >= 70) stars = '★★★☆☆';
+            else if (overallScore >= 60) stars = '★★☆☆☆';
+            else stars = '★☆☆☆☆';
+
+            if (overallScore >= 88) {
+                celebrationEffect = ' celebration';
+                setTimeout(() => triggerConfetti(), 2000);
+            }
+
+            let flagHtml = countryFlag ? `<img src="${countryFlag}" alt="דגל המדינה" class="country-flag">` : '';
+
+            if (teamData) {
+                teamData.searchesLeft--;
+                localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+                const roles = ['שוער', 'מגן', 'קשר', 'חלוץ'];
+                const randomRole = roles[Math.floor(Math.random() * roles.length)];
+                return `<div class="dramatic-card hollywood${celebrationEffect}">
+                            <img src="${image}" alt="${displayType}">
+                            <div class="tv-name">${model} - ${displayType}</div>
+                            ${flagHtml}
+                            <div class="stars">${stars}</div>
+                            <div class="overall">${overallScore}</div>
+                            <button onclick="saveCard('${model}', '${randomRole}', ${overallScore})" ${teamData.savesLeft <= 0 ? 'disabled' : ''}>שמור לקבוצה (${teamData.savesLeft} נותרו)</button>
+                        </div>`;
             } else {
-                displayType = 'LED';
-                overallScore = Math.min(63 + Math.floor((size - 32) / 10), 71);
+                return `<div class="dramatic-card hollywood${celebrationEffect}">
+                            <img src="${image}" alt="${displayType}">
+                            <div class="tv-name">${model} - ${displayType}</div>
+                            ${flagHtml}
+                            <div class="stars">${stars}</div>
+                            <div class="overall">${overallScore}</div>
+                        </div>`;
             }
-            image = productImages[displayType === 'LED' ? 'CRYSTAL UHD' : displayType] || '';
-            countryFlag = countryFlags[countryCode] || '';
         }
-
-        if (!image) {
-            return `<div class="card">שגיאה: לא נמצאה תמונה עבור הדגם הזה במצב דרמטי.</div>`;
-        }
-
-        // חישוב כוכבים לפי הציון
-        if (overallScore >= 90) stars = '★★★★★';
-        else if (overallScore >= 80) stars = '★★★★☆';
-        else if (overallScore >= 70) stars = '★★★☆☆';
-        else if (overallScore >= 60) stars = '★★☆☆☆';
-        else stars = '★☆☆☆☆';
-
-        // אפקט חגיגה לציון מעל 88
-        if (overallScore >= 88) {
-            celebrationEffect = ' celebration'; // מוסיף מחלקה לאפקט
-            setTimeout(() => triggerConfetti(), 2000); // מפעיל קונפטי אחרי 2 שניות
-        }
-
-        // הוספת דגל אם קיים
-        let flagHtml = countryFlag ? `<img src="${countryFlag}" alt="דגל המדינה" class="country-flag">` : '';
-
-        return `<div class="dramatic-card hollywood${celebrationEffect}">
-                    <img src="${image}" alt="${displayType}">
-                    <div class="tv-name">${model} - ${displayType}</div>
-                    ${flagHtml}
-                    <div class="stars">${stars}</div>
-                    <div class="overall">${overallScore}</div>
-                </div>`;
-    } catch (e) {
-        console.error("שגיאה ב-getDramaticModelDetails:", e);
-        return `<div class="card">שגיאה בעיבוד הדגם הדרמטי: ${e.message}</div>`;
-    }
-}
 
         function openPopup() {
-            try {
-                document.getElementById("popup").style.display = "block";
-                document.getElementById("popup-overlay").style.display = "block";
-            } catch (e) {
-                console.error("שגיאה ב-openPopup:", e);
-            }
+            document.getElementById("popup").style.display = "block";
+            document.getElementById("popup-overlay").style.display = "block";
         }
 
         function closePopup() {
-            try {
-                document.getElementById("popup").style.display = "none";
-                document.getElementById("popup-overlay").style.display = "none";
-            } catch (e) {
-                console.error("שגיאה ב-closePopup:", e);
-            }
+            document.getElementById("popup").style.display = "none";
+            document.getElementById("popup-overlay").style.display = "none";
         }
 
         function switchToModelPage() {
-            try {
-                closePopup();
-                showPage('model');
-            } catch (e) {
-                console.error("שגיאה ב-switchToModelPage:", e);
-            }
+            closePopup();
+            showPage('model');
         }
 
         function lookupSerial() {
@@ -1258,235 +1200,140 @@ function getDramaticModelDetails(model) {
                 document.getElementById("serial-result").style.display = "block";
             }
         }
-        // פונקציה להפעלת קונפטי
-function triggerConfetti() {
-    const confettiContainer = document.createElement('div');
-    confettiContainer.className = 'confetti';
-    document.body.appendChild(confettiContainer);
 
-    for (let i = 0; i < 50; i++) {
-        const piece = document.createElement('div');
-        piece.className = 'confetti-piece';
-        piece.style.left = Math.random() * 100 + 'vw';
-        piece.style.animationDelay = Math.random() * 2 + 's';
-        confettiContainer.appendChild(piece);
-    }
+        function triggerConfetti() {
+            const confettiContainer = document.createElement('div');
+            confettiContainer.className = 'confetti';
+            document.body.appendChild(confettiContainer);
 
-    setTimeout(() => {
-        confettiContainer.remove();
-    }, 5000); // מסיר את הקונפטי אחרי 5 שניות
-}
-        // פתיחת חלון התחברות
-function openLoginPopup() {
-    document.getElementById("login-popup").style.display = "block";
-    document.getElementById("login-overlay").style.display = "block";
-}
+            for (let i = 0; i < 50; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + 'vw';
+                piece.style.animationDelay = Math.random() * 2 + 's';
+                confettiContainer.appendChild(piece);
+            }
 
-// סגירת חלון התחברות
-function closeLoginPopup() {
-    document.getElementById("login-popup").style.display = "none";
-    document.getElementById("login-overlay").style.display = "none";
-}
+            setTimeout(() => {
+                confettiContainer.remove();
+            }, 5000);
+        }
 
-// התחברות ושמירת שם משתמש
-function login() {
-    const username = document.getElementById("usernameInput").value.trim();
-    if (!username) {
-        alert("אנא הזן שם משתמש!");
-        return;
-    }
-    localStorage.setItem("username", username);
-    closeLoginPopup();
-    alert(`ברוך הבא, ${username}! אתה במצב Ultimate.`);
-    toggleUltimateMode(); // במקום toggleDramaticMode()
+        function openLoginPopup() {
+            document.getElementById("login-popup").style.display = "block";
+            document.getElementById("login-overlay").style.display = "block";
+        }
 
-// שינוי פונקציית toggleDramaticMode
-function UltimateMode() {
-    const username = localStorage.getItem("username");
-    if (!username) {
-        openLoginPopup(); // דורש התחברות אם אין משתמש
-    } else {
-        dramaticMode = !dramaticMode;
-        const btn = document.getElementById('dramaticModeBtn');
-        btn.style.background = dramaticMode ? 'rgba(69, 123, 157, 0.5)' : 'rgba(255, 255, 255, 0.1)';
-        if (document.getElementById('result').style.display === 'block') {
+        function closeLoginPopup() {
+            document.getElementById("login-popup").style.display = "none";
+            document.getElementById("login-overlay").style.display = "none";
+        }
+
+        function login() {
+            const username = document.getElementById("usernameInput").value.trim();
+            if (!username) {
+                alert("אנא הזן שם משתמש!");
+                return;
+            }
+            localStorage.setItem("username", username);
+            closeLoginPopup();
+            alert(`ברוך הבא, ${username}! אתה במצב Ultimate.`);
+            toggleUltimateMode();
+        }
+
+        function initTeamData() {
+            const username = localStorage.getItem("username");
+            if (!username) return null;
+            let teamData = JSON.parse(localStorage.getItem(`team_${username}`)) || {
+                teamName: "",
+                cards: [],
+                searchesLeft: 5,
+                savesLeft: 2,
+                lastReset: null
+            };
+            const today = new Date().toDateString();
+            if (teamData.lastReset !== today) {
+                teamData.searchesLeft = 5;
+                teamData.savesLeft = 2;
+                teamData.lastReset = today;
+            }
+            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+            return teamData;
+        }
+
+        function showTeamOptions() {
+            const username = localStorage.getItem("username");
+            if (!username) {
+                openLoginPopup();
+            } else {
+                openTeamPopup();
+            }
+        }
+
+        function openTeamPopup() {
+            const teamData = initTeamData();
+            if (!teamData) return;
+            document.getElementById("teamNameInput").value = teamData.teamName;
+            const teamCardsDiv = document.getElementById("teamCards");
+            teamCardsDiv.innerHTML = `<p>חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרות: ${teamData.savesLeft}</p>`;
+            if (teamData.cards.length > 0) {
+                teamCardsDiv.innerHTML += `<h4>שחקנים בקבוצה (${teamData.cards.length}/11):</h4>
+                    <ul>${teamData.cards.map((card, index) => 
+                        `<li>${card.model} (${card.role}, ${card.rating}) <button onclick="removeCard(${index})">מחק</button></li>`).join('')}</ul>`;
+            } else {
+                teamCardsDiv.innerHTML += "<p>אין קלפים בקבוצה עדיין.</p>";
+            }
+            document.getElementById("team-popup").style.display = "block";
+            document.getElementById("team-overlay").style.display = "block";
+        }
+
+        function closeTeamPopup() {
+            document.getElementById("team-popup").style.display = "none";
+            document.getElementById("team-overlay").style.display = "none";
+        }
+
+        function saveTeamName() {
+            const username = localStorage.getItem("username");
+            const teamName = document.getElementById("teamNameInput").value.trim();
+            if (!teamName) {
+                alert("אנא הזן שם לקבוצה!");
+                return;
+            }
+            let teamData = initTeamData();
+            if (!teamData) return;
+            teamData.teamName = teamName;
+            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+            alert(`שם הקבוצה "${teamName}" נשמר!`);
+            openTeamPopup();
+        }
+
+        function removeCard(index) {
+            const username = localStorage.getItem("username");
+            let teamData = initTeamData();
+            if (!teamData) return;
+            teamData.cards.splice(index, 1);
+            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+            openTeamPopup();
+        }
+
+        function saveCard(model, role, rating) {
+            const username = localStorage.getItem("username");
+            let teamData = initTeamData();
+            if (!teamData) return;
+            if (teamData.savesLeft <= 0) {
+                alert("נגמרו לך השמירות להיום!");
+                return;
+            }
+            if (teamData.cards.length >= 11) {
+                alert("הקבוצה מלאה (11 שחקנים)! מחק קלף כדי להוסיף חדש.");
+                return;
+            }
+            teamData.cards.push({ model, role, rating });
+            teamData.savesLeft--;
+            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+            alert(`הקלף ${model} (${role}, ${rating}) נוסף לקבוצה!`);
             lookupModel();
         }
-    }
-}
-        // נתונים ראשוניים לקבוצה
-function initTeamData() {
-    const username = localStorage.getItem("username");
-    if (!username) return;
-    let teamData = JSON.parse(localStorage.getItem(`team_${username}`)) || {
-        teamName: "",
-        cards: [],
-        searchesLeft: 5,
-        savesLeft: 2,
-        lastReset: null
-    };
-    const today = new Date().toDateString();
-    if (teamData.lastReset !== today) {
-        teamData.searchesLeft = 5;
-        teamData.savesLeft = 2;
-        teamData.lastReset = today;
-    }
-    localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
-    return teamData;
-}
-
-// הצגת אפשרויות מצב דרמטי וניהול קבוצה
-function showTeamOptions() {
-    const username = localStorage.getItem("username");
-    if (!username) {
-        openLoginPopup();
-    } else {
-        openTeamPopup();
-    }
-}
-
-// פתיחת חלון ניהול קבוצה
-function openTeamPopup() {
-    const teamData = initTeamData();
-    document.getElementById("teamNameInput").value = teamData.teamName;
-    const teamCardsDiv = document.getElementById("teamCards");
-    teamCardsDiv.innerHTML = `<p>חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרות: ${teamData.savesLeft}</p>`;
-    if (teamData.cards.length > 0) {
-        teamCardsDiv.innerHTML += `<h4>שחקנים בקבוצה (${teamData.cards.length}/11):</h4>
-            <ul>${teamData.cards.map((card, index) => 
-                `<li>${card.model} (${card.role}, ${card.rating}) <button onclick="removeCard(${index})">מחק</button></li>`).join('')}</ul>`;
-    } else {
-        teamCardsDiv.innerHTML += "<p>אין קלפים בקבוצה עדיין.</p>";
-    }
-    document.getElementById("team-popup").style.display = "block";
-    document.getElementById("team-overlay").style.display = "block";
-}
-
-// סגירת חלון ניהול קבוצה
-function closeTeamPopup() {
-    document.getElementById("team-popup").style.display = "none";
-    document.getElementById("team-overlay").style.display = "none";
-}
-
-// שמירת שם קבוצה
-function saveTeamName() {
-    const username = localStorage.getItem("username");
-    const teamName = document.getElementById("teamNameInput").value.trim();
-    if (!teamName) {
-        alert("אנא הזן שם לקבוצה!");
-        return;
-    }
-    let teamData = initTeamData();
-    teamData.teamName = teamName;
-    localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
-    alert(`שם הקבוצה "${teamName}" נשמר!`);
-    openTeamPopup();
-}
-
-// מחיקת קלף מהקבוצה
-function removeCard(index) {
-    const username = localStorage.getItem("username");
-    let teamData = initTeamData();
-    teamData.cards.splice(index, 1);
-    localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
-    openTeamPopup();
-}
-
-// שינוי ב-getDramaticModelDetails להוספת קלף לקבוצה
-function getDramaticModelDetails(model) {
-    const username = localStorage.getItem("username");
-    let teamData = initTeamData();
-
-    if (teamData.searchesLeft <= 0) {
-        return `<div class="card">שגיאה: נגמרו לך החיפושים להיום!</div>`;
-    }
-
-    // קוד קיים...
-    let displayType = '';
-    let image = '';
-    let size = parseInt(model[2] + model[3]) || 0;
-    let yearCode = '';
-    for (let i = 4; i < model.length; i++) {
-        if (yearCodes[model[i]]) {
-            yearCode = model[i];
-            break;
-        }
-    }
-    let year = yearCodes[yearCode] || 'לא ידוע';
-    let overallScore = 0;
-    let stars = '';
-    let celebrationEffect = '';
-    let countryCode = model.length >= 13 ? model.slice(-2) : 'לא ידוע';
-    let countryFlag = '';
-    const countryFlags = { /* קוד קיים */ };
-
-    if (/^R[FSBTL]/.test(model)) { /* קוד קיים */ }
-    else if (/^W[WD]|^DV/.test(model)) { /* קוד קיים */ }
-    else if (/^[QULPK][NEA]/.test(model)) {
-        displayType = tvDisplay[model[0]] || 'לא ידוע';
-        let isFrame = model.includes('LS03');
-        let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
-        if (isFrame && size >= 85 && year === '2024') overallScore = 94; // Frame 2024 85+
-        else if (model[0] === 'Q' && size >= 85 && year === '2024') overallScore = 94; // QLED 2024 85+
-        else if (isFrame) overallScore = Math.min(88 + Math.floor((size - 43) / 10), 93);
-        else if (isOLED) overallScore = Math.min(82 + Math.floor((size - 55) / 10), 91);
-        else if (model[0] === 'Q') overallScore = Math.min(85 + Math.floor((size - 55) / 10), 93);
-        else overallScore = Math.min(75 + Math.floor((size - 43) / 10), 88);
-        image = productImages[displayType] || '';
-        countryFlag = countryFlags[countryCode] || '';
-    }
-
-    if (!image) {
-        return `<div class="card">שגיאה: לא נמצאה תמונה עבור הדגם הזה במצב דרמטי.</div>`;
-    }
-
-    if (overallScore >= 90) stars = '★★★★★';
-    else if (overallScore >= 80) stars = '★★★★☆';
-    else if (overallScore >= 70) stars = '★★★☆☆';
-    else if (overallScore >= 60) stars = '★★☆☆☆';
-    else stars = '★☆☆☆☆';
-
-    if (overallScore >= 88) {
-        celebrationEffect = ' celebration';
-        setTimeout(() => triggerConfetti(), 2000);
-    }
-
-    let flagHtml = countryFlag ? `<img src="${countryFlag}" alt="דגל המדינה" class="country-flag">` : '';
-
-    // הוספת כפתור לשמירת הקלף
-    teamData.searchesLeft--;
-    localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
-    const roles = ['שוער', 'מגן', 'קשר', 'חלוץ'];
-    const randomRole = roles[Math.floor(Math.random() * roles.length)];
-
-    return `<div class="dramatic-card hollywood${celebrationEffect}">
-                <img src="${image}" alt="${displayType}">
-                <div class="tv-name">${model} - ${displayType}</div>
-                ${flagHtml}
-                <div class="stars">${stars}</div>
-                <div class="overall">${overallScore}</div>
-                <button onclick="saveCard('${model}', '${randomRole}', ${overallScore})" ${teamData.savesLeft <= 0 ? 'disabled' : ''}>שמור לקבוצה (${teamData.savesLeft} נותרו)</button>
-            </div>`;
-}
-
-// שמירת קלף לקבוצה
-function saveCard(model, role, rating) {
-    const username = localStorage.getItem("username");
-    let teamData = initTeamData();
-    if (teamData.savesLeft <= 0) {
-        alert("נגמרו לך השמירות להיום!");
-        return;
-    }
-    if (teamData.cards.length >= 11) {
-        alert("הקבוצה מלאה (11 שחקנים)! מחק קלף כדי להוסיף חדש.");
-        return;
-    }
-    teamData.cards.push({ model, role, rating });
-    teamData.savesLeft--;
-    localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
-    alert(`הקלף ${model} (${role}, ${rating}) נוסף לקבוצה!`);
-    lookupModel(); // רענון התצוגה
-}
     </script>
 </body>
 </html>
