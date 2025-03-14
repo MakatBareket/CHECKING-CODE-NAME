@@ -1220,45 +1220,70 @@
         }
 
         function lookupSerial() {
-            try {
-                var serial = document.getElementById("serialInput").value.trim().toUpperCase();
-                var resultDiv = document.getElementById("serial-result");
-                var loader = document.getElementById("loader-serial");
+    try {
+        var serial = document.getElementById("serialInput").value.trim().toUpperCase();
+        var resultDiv = document.getElementById("serial-result");
+        var loader = document.getElementById("loader-serial");
 
-                if (!serial || serial.length < 10) {
-                    resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי (מינימום 10 תווים, לדוגמה: S01X5K123456).</div>';
-                    resultDiv.style.display = "block";
-                    return;
-                }
-
-                loader.style.display = "block";
-                resultDiv.style.display = "none";
-                setTimeout(() => {
-                    var yearCode = serial[4]; // תו 5 במספר הסיריאלי (למשל, K עבור 2016)
-                    var year = yearCodes[yearCode] || 'לא ידוע';
-                    var monthCode = serial[5]; // תו 6 (בדרך כלל הקסדצימלי 1-C עבור ינואר-דצמבר)
-                    var month = parseInt(monthCode, 16);
-                    month = (month >= 1 && month <= 12) ? month : 'לא ידוע';
-                    var warrantyEnd = year !== 'לא ידוע' && month !== 'לא ידוע' ? `${month}/${parseInt(year) + 2}` : 'לא ניתן לחשב';
-
-                    resultDiv.innerHTML = `<div class="card">
-                                            מספר סיריאלי: ${serial}<br>
-                                            שנת ייצור: ${year}<br>
-                                            חודש ייצור: ${month === 'לא ידוע' ? month : month + ' (' + ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'][month - 1] + ')' }<br>
-                                            תום אחריות: ${warrantyEnd}<br>
-                                            הערה: למידע נוסף יש לבדוק לפי קוד דגם.
-                                          </div>`;
-                    resultDiv.style.display = "block";
-                    loader.style.display = "none";
-                    showPopup();
-                }, 1000);
-            } catch (e) {
-                console.error("שגיאה ב-lookupSerial:", e);
-                resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד המספר הסיריאלי: ${e.message}</div>`;
-                resultDiv.style.display = "block";
-                loader.style.display = "none";
-            }
+        if (!serial || (serial.length !== 11 && serial.length !== 15)) {
+            resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי באורך 11 או 15 תווים (לדוגמה: S01X5K12345 או S01X5K1M12345678).</div>';
+            resultDiv.style.display = "block";
+            return;
         }
+
+        loader.style.display = "block";
+        resultDiv.style.display = "none";
+
+        setTimeout(() => {
+            const yearCodes = {
+                'F': 2014, 'G': 2015, 'H': 2016, 'J': 2017, 'K': 2018, 'M': 2019, 'N': 2020,
+                'R': 2021, 'T': 2022, 'W': 2023, 'X': 2024, 'Y': 2025
+            };
+            const monthCodes = {
+                '1': 'ינואר', '2': 'פברואר', '3': 'מרץ', '4': 'אפריל', '5': 'מאי', '6': 'יוני',
+                '7': 'יולי', '8': 'אוגוסט', '9': 'ספטמבר', 'A': 'אוקטובר', 'B': 'נובמבר', 'C': 'דצמבר'
+            };
+
+            let yearIndex = serial.length === 15 ? 7 : 3; // תו 8 ב-15 תווים, תו 4 ב-11 תווים
+            let monthIndex = serial.length === 15 ? 8 : 4; // תו 9 ב-15 תווים, תו 5 ב-11 תווים
+            let yearCode = serial[yearIndex];
+            let monthCode = serial[monthIndex];
+            let year = yearCodes[yearCode] || 'לא ידוע';
+            let month = monthCodes[monthCode] || 'לא ידוע';
+
+            let warrantyStatus = 'לא ניתן לחשב';
+            if (year !== 'לא ידוע' && month !== 'לא ידוע') {
+                let productionDate = new Date(year, Object.keys(monthCodes).indexOf(monthCode));
+                let march2024 = new Date(2024, 2); // מרץ 2024
+                let december2024 = new Date(2024, 11); // דצמבר 2024
+
+                if (productionDate < march2024) {
+                    warrantyStatus = 'לא באחריות';
+                } else if (productionDate >= march2024 && productionDate <= december2024) {
+                    warrantyStatus = 'באחריות סמליין';
+                } else if (productionDate > december2024) {
+                    warrantyStatus = 'באחריות סמסונג';
+                }
+            }
+
+            resultDiv.innerHTML = `<div class="card">
+                                    מספר סיריאלי: ${serial}<br>
+                                    שנת ייצור: ${year}<br>
+                                    חודש ייצור: ${month}<br>
+                                    סטטוס אחריות: ${warrantyStatus}<br>
+                                    הערה: למידע נוסף יש לבדוק לפי קוד דגם.
+                                  </div>`;
+            resultDiv.style.display = "block";
+            loader.style.display = "none";
+            showPopup();
+        }, 1000);
+    } catch (e) {
+        console.error("שגיאה ב-lookupSerial:", e);
+        resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד המספר הסיריאלי: ${e.message}</div>`;
+        resultDiv.style.display = "block";
+        loader.style.display = "none";
+    }
+}
 
         function showPopup() {
             document.getElementById("popup").style.display = "block";
@@ -1370,35 +1395,126 @@
             document.querySelector('.dramatic-card button').disabled = true;
         }
 
-        function openTeamPopup() {
-            const username = localStorage.getItem("currentUser");
-            let teamData = initTeamData();
-            if (!teamData) return;
+       function openTeamPopup() {
+    const username = localStorage.getItem("currentUser");
+    let teamData = initTeamData();
+    if (!teamData) return;
 
-            let cardsHtml = '<ul>';
-            teamData.cards.forEach((card, index) => {
-                cardsHtml += `<li>${card.model} - ${card.role} (${card.rating}) <button onclick="removeCard(${index})">הסר</button></li>`;
-            });
-            cardsHtml += '</ul>';
+    let cardsHtml = '<ul>';
+    teamData.cards.forEach((card, index) => {
+        cardsHtml += `<li>${card.model} - ${card.role} (${card.rating}) <button onclick="removeCard(${index})">הסר</button></li>`;
+    });
+    cardsHtml += '</ul>';
 
-            document.getElementById("team-popup").innerHTML = `
-                <h3>ניהול קבוצה</h3>
-                <input type="text" id="teamNameInput" placeholder="הזן שם קבוצה" value="${teamData.teamName}">
-                <button onclick="saveTeamName()">שמור שם קבוצה</button>
-                <p>חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרות: ${teamData.savesLeft}</p>
-                <div id="teamCards">${cardsHtml}</div>
-                <button onclick="showTeamField()">תצוגת מגרש</button>
-                <button onclick="showLeague()">צפה בליגה</button>
-                <button onclick="exportTeamData()">ייצא נתונים</button>
-                <button onclick="importTeamData()">ייבא נתונים</button>
-                <textarea id="exportData" placeholder="ייצא/ייבא נתונים" style="width: 100%; height: 100px; margin-top: 10px;"></textarea>
-                <div class="popup-buttons">
-                    <button onclick="closeTeamPopup()">סגור</button>
-                </div>
-            `;
-            document.getElementById("team-popup").style.display = "block";
-            document.getElementById("team-overlay").style.display = "block";
-        }
+    const countries = {
+        'ישראל': ['ירושלים', 'תל אביב', 'חיפה', 'באר שבע', 'אילת'],
+        'אנגליה': ['לונדון', 'מנצ\'סטר', 'ליברפול', 'ברמינגהם'],
+        'ספרד': ['מדריד', 'ברצלונה', 'ולנסיה', 'סביליה'],
+        'ארה"ב': ['ניו יורק', 'לוס אנג\'לס', 'שיקגו', 'מיאמי']
+    };
+    const countryFlags = {
+        'ישראל': 'https://flagcdn.com/w80/il.png',
+        'אנגליה': 'https://flagcdn.com/w80/gb.png',
+        'ספרד': 'https://flagcdn.com/w80/es.png',
+        'ארה"ב': 'https://flagcdn.com/w80/us.png'
+    };
+
+    let countryOptions = Object.keys(countries).map(country => 
+        `<option value="${country}" ${teamData.country === country ? 'selected' : ''}>${country}</option>`
+    ).join('');
+    let cityOptions = teamData.country ? countries[teamData.country].map(city => 
+        `<option value="${city}" ${teamData.city === city ? 'selected' : ''}>${city}</option>`
+    ).join('') : '';
+
+    document.getElementById("team-popup").innerHTML = `
+        <h3>ניהול קבוצה</h3>
+        <input type="text" id="teamNameInput" placeholder="הזן שם קבוצה" value="${teamData.teamName}">
+        <input type="text" id="managerNameInput" placeholder="שם מנהל הקבוצה" value="${teamData.managerName || ''}" style="margin-top: 10px;">
+        <input type="text" id="stadiumNameInput" placeholder="שם האצטדיון" value="${teamData.stadiumName || ''}" style="margin-top: 10px;">
+        <div style="margin-top: 10px;">
+            <label>מדינה: </label>
+            <select id="countrySelect" onchange="updateCities()">
+                <option value="">בחר מדינה</option>
+                ${countryOptions}
+            </select>
+            <img id="countryFlag" src="${teamData.country ? countryFlags[teamData.country] : ''}" style="width: 40px; height: 25px; vertical-align: middle; margin-left: 10px; ${teamData.country ? '' : 'display: none;'}">
+        </div>
+        <div style="margin-top: 10px;">
+            <label>עיר: </label>
+            <select id="citySelect">
+                <option value="">בחר עיר</option>
+                ${cityOptions}
+            </select>
+        </div>
+        <button onclick="saveTeamDetails()" style="margin-top: 10px;">שמור פרטי קבוצה</button>
+        <p>חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרות: ${teamData.savesLeft}</p>
+        <div id="teamCards">${cardsHtml}</div>
+        <button onclick="showTeamField()">תצוגת מגרש</button>
+        <button onclick="showLeague()">צפה בליגה</button>
+        <button onclick="exportTeamData()">ייצא נתונים</button>
+        <button onclick="importTeamData()">ייבא נתונים</button>
+        <textarea id="exportData" placeholder="ייצא/ייבא נתונים" style="width: 100%; height: 100px; margin-top: 10px;"></textarea>
+        <div class="popup-buttons">
+            <button onclick="closeTeamPopup()">סגור</button>
+        </div>
+    `;
+    document.getElementById("team-popup").style.display = "block";
+    document.getElementById("team-overlay").style.display = "block";
+}
+
+function updateCities() {
+    const countrySelect = document.getElementById("countrySelect");
+    const citySelect = document.getElementById("citySelect");
+    const countryFlag = document.getElementById("countryFlag");
+    const selectedCountry = countrySelect.value;
+    const countries = {
+        'ישראל': ['ירושלים', 'תל אביב', 'חיפה', 'באר שבע', 'אילת'],
+        'אנגליה': ['לונדון', 'מנצ\'סטר', 'ליברפול', 'ברמינגהם'],
+        'ספרד': ['מדריד', 'ברצלונה', 'ולנסיה', 'סביליה'],
+        'ארה"ב': ['ניו יורק', 'לוס אנג\'לס', 'שיקגו', 'מיאמי']
+    };
+    const countryFlags = {
+        'ישראל': 'https://flagcdn.com/w80/il.png',
+        'אנגליה': 'https://flagcdn.com/w80/gb.png',
+        'ספרד': 'https://flagcdn.com/w80/es.png',
+        'ארה"ב': 'https://flagcdn.com/w80/us.png'
+    };
+
+    citySelect.innerHTML = '<option value="">בחר עיר</option>';
+    if (selectedCountry && countries[selectedCountry]) {
+        countries[selectedCountry].forEach(city => {
+            citySelect.innerHTML += `<option value="${city}">${city}</option>`;
+        });
+        countryFlag.src = countryFlags[selectedCountry];
+        countryFlag.style.display = 'inline';
+    } else {
+        countryFlag.style.display = 'none';
+    }
+}
+
+function saveTeamDetails() {
+    const username = localStorage.getItem("currentUser");
+    let teamData = initTeamData();
+    let teamName = document.getElementById("teamNameInput").value.trim();
+    let managerName = document.getElementById("managerNameInput").value.trim();
+    let stadiumName = document.getElementById("stadiumNameInput").value.trim();
+    let country = document.getElementById("countrySelect").value;
+    let city = document.getElementById("citySelect").value;
+
+    if (!teamName) {
+        alert("יש להזין שם לקבוצה!");
+        return;
+    }
+
+    teamData.teamName = teamName;
+    teamData.managerName = managerName;
+    teamData.stadiumName = stadiumName;
+    teamData.country = country;
+    teamData.city = city;
+    localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+    alert("פרטי הקבוצה נשמרו בהצלחה!");
+    openTeamPopup(); // רענון התצוגה
+}
 
         function closeTeamPopup() {
             document.getElementById("team-popup").style.display = "none";
