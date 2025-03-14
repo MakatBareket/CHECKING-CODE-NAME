@@ -90,7 +90,8 @@
 
     <div id="ultimate-notif-overlay" class="popup-overlay"></div>
     <div id="ultimate-notif" class="popup futuristic-popup"></div>
-
+<div id="team-save-overlay" class="popup-overlay" onclick="closeTeamSavePopup()"></div>
+<div id="team-save-popup" class="popup"></div>
 <style>
     body {
         font-family: 'Rubik', Arial, sans-serif;
@@ -672,6 +673,104 @@
     height: 20px;
     vertical-align: middle;
     margin-left: 10px;
+}
+    /* שיפור שדות המיקום והמדינה */
+.team-field select {
+    padding: 10px;
+    border: 2px solid #00d4ff;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+.team-field select:focus {
+    outline: none;
+    border-color: #f4a261;
+    box-shadow: 0 0 12px rgba(244, 162, 97, 0.5);
+}
+.team-field .country-flag {
+    width: 40px;
+    height: 25px;
+    border-radius: 5px;
+    margin-left: 10px;
+    vertical-align: middle;
+    animation: flagPop 0.5s ease-out;
+}
+@keyframes flagPop {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* פופ-אפ עתידני לשמירת פרטים */
+#team-save-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2500;
+}
+#team-save-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #1a1a1a, #4a4a4a);
+    border: 2px solid gold;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 500px;
+    text-align: center;
+    z-index: 2600;
+}
+.team-save-item {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: hollywoodReveal 1s ease-out forwards;
+}
+.team-save-item:nth-child(1) { animation-delay: 0.5s; }
+.team-save-item:nth-child(2) { animation-delay: 1.5s; }
+.team-save-item:nth-child(3) { animation-delay: 2.5s; }
+.team-save-item:nth-child(4) { animation-delay: 3.5s; }
+.team-save-item h3 {
+    font-family: 'Impact', sans-serif;
+    font-size: 32px;
+    color: gold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+}
+.team-save-item p {
+    font-size: 18px;
+    color: #ffffff;
+    margin: 10px 0;
+}
+.team-save-item img {
+    width: 200px;
+    height: auto;
+    border: 3px solid #f4a261;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+@keyframes hollywoodReveal {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* סגנון כפתורי עריכה/שמירה */
+.team-field button.active {
+    background: #f4a261;
+    color: #1d3557;
+}
+.team-field button:disabled {
+    background: #666;
+    cursor: not-allowed;
 }
 </style>
 <script>
@@ -1441,14 +1540,26 @@ const teamLocations = {
             teamName: '',
             coachName: '',
             stadiumName: '',
+            stadiumLevel: 1, // רמה 1: 1000 מקומות
             country: '',
             city: '',
             cards: [],
             searchesLeft: 10,
-            savesLeft: 11
+            savesLeft: 11,
+            coins: 30, // מתחילים עם 30 מטבעות
+            lastCoinUpdate: new Date().toISOString().split('T')[0] // תאריך אחרון לעדכון מטבעות
         };
         localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
     }
+
+    // עדכון מטבעות יומי
+    const today = new Date().toISOString().split('T')[0];
+    if (teamData.lastCoinUpdate !== today) {
+        teamData.coins += 30;
+        teamData.lastCoinUpdate = today;
+        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+    }
+
     return teamData;
 }
 
@@ -1472,7 +1583,7 @@ const teamLocations = {
         alert(`נוסף לקבוצה: ${model} כ${role} עם דירוג ${rating}`);
         document.querySelector('.dramatic-card button').disabled = true;
     }
-    function openTeamPopup() {
+   function openTeamPopup() {
     const username = localStorage.getItem("currentUser");
     let teamData = initTeamData();
     if (!username) {
@@ -1498,6 +1609,95 @@ const teamLocations = {
             cityOptions += `<option value="${city}" ${teamData.city === city ? 'selected' : ''}>${city}</option>`;
         });
     }
+
+    const stadiumLevels = {
+        1: { capacity: 1000, image: 'https://thumbs.dreamstime.com/b/amateur-soccer-field-illuminated-night-small-football-lit-lanterns-evening-green-spotlight-image252808480.jpg' },
+        2: { capacity: 5000, image: 'https://integralspor.com/uploads/facility/detail/5000-seats-stadium-10631.jpg' },
+        3: { capacity: 10000, image: 'https://javiergarciaalda.com/wp-content/uploads/2021/11/JavierGAlda_Libia_3-escorzo-pepon.jpg' },
+        4: { capacity: 20000, image: 'https://stadiumdb.com/img/news/2022/02/09Ord2.jpg' }
+    };
+    const currentStadium = stadiumLevels[teamData.stadiumLevel];
+    const nextLevel = teamData.stadiumLevel < 4 ? teamData.stadiumLevel + 1 : null;
+    const upgradeCost = nextLevel ? (nextLevel - 1) * 50 : null;
+
+    const popup = document.getElementById("team-popup");
+    popup.innerHTML = `
+        <h3>ניהול קבוצה</h3>
+        <div class="team-field">
+            <input type="text" id="teamNameInput" value="${teamData.teamName}" readonly style="background-color: #e9ecef;">
+            <button id="editTeamNameBtn" class="active">ערוך</button>
+        </div>
+        <div class="team-field">
+            <input type="text" id="coachNameInput" value="${teamData.coachName}" readonly style="background-color: #e9ecef;">
+            <button id="editCoachNameBtn" class="active">ערוך</button>
+        </div>
+        <div class="team-field">
+            <input type="text" id="stadiumNameInput" value="${teamData.stadiumName}" readonly style="background-color: #e9ecef;">
+            <button id="editStadiumNameBtn" class="active">ערוך</button>
+        </div>
+        <div class="team-field">
+            <select id="countrySelect">
+                ${countryOptions}
+            </select>
+            <select id="citySelect">
+                ${cityOptions}
+            </select>
+            ${teamData.country && teamLocations[teamData.country] ? `<img src="${teamLocations[teamData.country].flag}" alt="דגל ${teamData.country}" class="country-flag">` : ''}
+        </div>
+        <button id="saveTeamBtn" style="margin-top: 15px;">שמור פרטי קבוצה</button>
+        <h4 style="margin-top: 20px;">אצטדיון: ${teamData.stadiumName || 'ללא שם'} (${currentStadium.capacity} מקומות)</h4>
+        <img src="${currentStadium.image}" alt="אצטדיון" style="width: 200px; height: auto; border-radius: 10px; margin: 10px auto; display: block;">
+        ${nextLevel ? `<button id="upgradeStadiumBtn" ${teamData.coins < upgradeCost ? 'disabled' : ''}>שדרג ל-${stadiumLevels[nextLevel].capacity} מקומות (${upgradeCost} מטבעות)</button>` : '<p>אצטדיון ברמה מקסימלית!</p>'}
+        <h4 style="margin-top: 20px;">שחקנים (${teamData.cards.length}/11)</h4>
+        <div id="teamCards">${cardsHtml}</div>
+        <div class="popup-buttons">
+            <button id="fieldViewBtn">תצוגת מגרש</button>
+            <button id="closeTeamBtn">סגור</button>
+        </div>
+        <p style="margin-top: 10px;">חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרו: ${teamData.savesLeft} | מטבעות: ${teamData.coins}</p>
+    `;
+
+    // מאזיני אירועים לכפתורי עריכה/שמירה
+    const toggleEditButton = (btnId, inputId) => {
+        const btn = document.getElementById(btnId);
+        const input = document.getElementById(inputId);
+        btn.addEventListener("click", () => {
+            if (input.hasAttribute("readonly")) {
+                input.removeAttribute("readonly");
+                input.style.backgroundColor = "#fff";
+                btn.textContent = "שמור";
+                btn.classList.remove("active");
+            } else {
+                input.setAttribute("readonly", true);
+                input.style.backgroundColor = "#e9ecef";
+                btn.textContent = "ערוך";
+                btn.classList.add("active");
+                saveTeamDetails(); // שמירה אוטומטית כשלוחצים "שמור"
+            }
+        });
+    };
+    toggleEditButton("editTeamNameBtn", "teamNameInput");
+    toggleEditButton("editCoachNameBtn", "coachNameInput");
+    toggleEditButton("editStadiumNameBtn", "stadiumNameInput");
+
+    // מאזיני אירועים נוספים
+    document.getElementById("countrySelect").addEventListener("change", updateCities);
+    document.getElementById("saveTeamBtn").addEventListener("click", saveTeamDetails);
+    document.getElementById("fieldViewBtn").addEventListener("click", openFieldPopup);
+    document.getElementById("closeTeamBtn").addEventListener("click", closeTeamPopup);
+    if (nextLevel) {
+        document.getElementById("upgradeStadiumBtn").addEventListener("click", () => upgradeStadium(teamData, nextLevel, upgradeCost));
+    }
+    document.querySelectorAll(".remove-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const index = parseInt(btn.getAttribute("data-index"));
+            removeCard(index);
+        });
+    });
+
+    popup.style.display = "block";
+    document.getElementById("team-overlay").style.display = "block";
+}
 
     const popup = document.getElementById("team-popup");
     popup.innerHTML = `
@@ -1585,16 +1785,26 @@ function saveTeamDetails() {
 
     localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
 
-    document.getElementById("teamNameInput").setAttribute("readonly", true);
-    document.getElementById("teamNameInput").style.backgroundColor = "#e9ecef";
-    document.getElementById("coachNameInput").setAttribute("readonly", true);
-    document.getElementById("coachNameInput").style.backgroundColor = "#e9ecef";
-    document.getElementById("stadiumNameInput").setAttribute("readonly", true);
-    document.getElementById("stadiumNameInput").style.backgroundColor = "#e9ecef";
+    const stadiumLevels = {
+        1: { image: 'https://thumbs.dreamstime.com/b/amateur-soccer-field-illuminated-night-small-football-lit-lanterns-evening-green-spotlight-image252808480.jpg' },
+        2: { image: 'https://integralspor.com/uploads/facility/detail/5000-seats-stadium-10631.jpg' },
+        3: { image: 'https://javiergarciaalda.com/wp-content/uploads/2021/11/JavierGAlda_Libia_3-escorzo-pepon.jpg' },
+        4: { image: 'https://stadiumdb.com/img/news/2022/02/09Ord2.jpg' }
+    };
+    const stadiumImage = stadiumLevels[teamData.stadiumLevel].image;
 
-    alert("פרטי הקבוצה נשמרו בהצלחה!");
+    const popup = document.getElementById("team-save-popup");
+    popup.innerHTML = `
+        <div class="team-save-item"><h3>${teamData.teamName || 'קבוצה ללא שם'}</h3></div>
+        <div class="team-save-item"><p>${teamData.city || 'ללא עיר'}, ${teamData.country || 'ללא מדינה'} ${teamData.country && teamLocations[teamData.country] ? `<img src="${teamLocations[teamData.country].flag}" alt="דגל ${teamData.country}" class="country-flag">` : ''}</p></div>
+        <div class="team-save-item"><p>מאמן: ${teamData.coachName || 'ללא מאמן'}</p></div>
+        <div class="team-save-item"><img src="${stadiumImage}" alt="אצטדיון ${teamData.stadiumName || 'ללא שם'}"></div>
+    `;
+    popup.style.display = "block";
+    document.getElementById("team-save-overlay").style.display = "block";
+
+    setTimeout(closeTeamSavePopup, 5000); // סגירה אוטומטית אחרי 5 שניות
 }
-
 // פונקציה חדשה לעריכה
 function toggleEdit(inputId) {
     const input = document.getElementById(inputId);
@@ -1679,6 +1889,22 @@ function toggleEdit(inputId) {
     window.onload = () => {
         updateUltimateButtonState();
     };
+    function closeTeamSavePopup() {
+    document.getElementById("team-save-popup").style.display = "none";
+    document.getElementById("team-save-overlay").style.display = "none";
+}
+    function upgradeStadium(teamData, nextLevel, cost) {
+    if (teamData.coins < cost) {
+        alert("אין לך מספיק מטבעות לשדרוג!");
+        return;
+    }
+
+    teamData.coins -= cost;
+    teamData.stadiumLevel = nextLevel;
+    localStorage.setItem(`team_${localStorage.getItem("currentUser")}`, JSON.stringify(teamData));
+    alert(`האצטדיון שודרג ל-${nextLevel * 5000 || 1000} מקומות!`);
+    openTeamPopup(); // עדכון התצוגה
+}
 </script>
 </body>
 </html>
