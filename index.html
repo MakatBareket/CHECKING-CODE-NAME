@@ -1135,16 +1135,22 @@
                 overallScore = Math.floor(Math.random() * (85 - 70 + 1)) + 70;
                 if (size >= 60 && year >= '2023') overallScore += 5;
                 image = productImages[displayType] || defaultImage;
-                countryFlag = countryFlags[countryCode] || '';
             } else if (/^W[WD]|^DV/.test(model)) {
                 displayType = washerTech[model.slice(0, 2)] || 'מכונת כביסה לא ידועה';
                 overallScore = Math.floor(Math.random() * (80 - 65 + 1)) + 65;
                 image = productImages['מכונת כביסה'] || defaultImage;
-                countryFlag = countryFlags[countryCode] || '';
             } else if (/^[QULPK][NEA]/.test(model)) {
-                displayType = tvDisplay[model[0]] || 'טלוויזיה לא ידועה';
                 let isFrame = model.includes('LS03');
                 let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
+                let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
+
+                if (isFrame) displayType = 'The Frame';
+                else if (isOLED) displayType = 'OLED';
+                else if (isNseries) displayType = 'N4000-N5500 Series';
+                else if (model[0] === 'U' && year >= '2018') displayType = 'CRYSTAL UHD';
+                else if (model[0] === 'U' && year < '2018') displayType = 'LED';
+                else displayType = tvDisplay[model[0]] || 'טלוויזיה לא ידועה';
+
                 if (isFrame && size >= 85 && year === '2024') overallScore = 94;
                 else if (model[0] === 'Q' && size >= 85 && year === '2024') overallScore = 94;
                 else if (isFrame) overallScore = Math.min(88 + Math.floor((size - 43) / 10), 93);
@@ -1152,13 +1158,13 @@
                 else if (model[0] === 'Q') overallScore = Math.min(85 + Math.floor((size - 55) / 10), 93);
                 else overallScore = Math.min(75 + Math.floor((size - 43) / 10), 88);
                 image = productImages[displayType] || defaultImage;
-                countryFlag = countryFlags[countryCode] || '';
             } else {
                 displayType = 'מוצר לא מזוהה';
                 overallScore = Math.floor(Math.random() * (80 - 60 + 1)) + 60;
                 image = defaultImage;
-                countryFlag = countryFlags[countryCode] || '';
             }
+
+            countryFlag = countryFlags[countryCode] || '';
 
             if (overallScore >= 90) stars = '★★★★★';
             else if (overallScore >= 80) stars = '★★★★☆';
@@ -1282,9 +1288,8 @@
                 localStorage.setItem("currentUser", username);
                 alert("התחברת בהצלחה!");
                 closeLoginPopup();
-                if (ultimateMode) {
-                    openUltimateMenu();
-                }
+                updateUltimateButtonState();
+                if (ultimateMode) openUltimateMenu();
             } else {
                 alert("שם משתמש או סיסמה שגויים.");
             }
@@ -1309,6 +1314,7 @@
                 alert("נרשמת והתחברת בהצלחה!");
                 closeLoginPopup();
                 initTeamData();
+                updateUltimateButtonState();
             }
         }
 
@@ -1413,7 +1419,7 @@
                 document.getElementById("ultimate-menu").style.display = "block";
                 document.getElementById("ultimate-menu-overlay").style.display = "block";
             } else {
-                alert("אנא הפעל מצב Ultimate תחילה!");
+                toggleUltimateMode();
             }
         }
 
@@ -1533,7 +1539,21 @@
             document.getElementById("league-overlay").style.display = "none";
         }
 
+        function updateUltimateButtonState() {
+            const btn = document.getElementById("dramaticModeBtn");
+            btn.classList.toggle("active", ultimateMode);
+        }
+
+        // טעינת משתמש נוכחי בעת טעינת הדף
+        document.addEventListener("DOMContentLoaded", () => {
+            const username = localStorage.getItem("currentUser");
+            if (username && getUsers()[username]) {
+                updateUltimateButtonState();
+            }
+        });
+
     </script>
 </body>
 </html>
+
 
