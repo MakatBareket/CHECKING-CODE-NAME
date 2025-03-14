@@ -359,7 +359,7 @@
             0% { opacity: 0; transform: scale(0.5); }
             100% { opacity: 1; transform: scale(1); }
         }
-        #dramaticModeBtn {
+        #dramaticModeBtn, #teamManagementBtn {
             position: fixed;
             top: 20px;
             right: 20px;
@@ -375,7 +375,11 @@
             transition: transform 0.2s, color 0.3s;
             padding: 0;
         }
-        #dramaticModeBtn:hover {
+        #teamManagementBtn {
+            right: 60px;
+            display: none;
+        }
+        #dramaticModeBtn:hover, #teamManagementBtn:hover {
             transform: scale(1.2);
             color: #f4a261;
         }
@@ -579,6 +583,7 @@
 </head>
 <body>
     <button id="dramaticModeBtn" onclick="toggleUltimateMode()" title="הפעל/כבה מצב Ultimate"><span style="font-size: 20px;">🏆</span></button>
+    <button id="teamManagementBtn" onclick="openTeamPopup()" title="ניהול קבוצה"><span style="font-size: 20px;">⚽</span></button>
     <div class="navbar">
         <a href="#" onclick="showPage('model')" class="active">חיפוש לפי קוד דגם</a>
         <a href="#" onclick="showPage('serial')">בדיקה לפי מספר סיריאלי</a>
@@ -672,12 +677,6 @@
 
         let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
 
-        document.addEventListener("DOMContentLoaded", () => {
-            const btn = document.getElementById("dramaticModeBtn");
-            btn.style.opacity = "1";
-            btn.classList.toggle("active", ultimateMode);
-        });
-
         function getUsers() {
             return JSON.parse(localStorage.getItem("users")) || {};
         }
@@ -689,6 +688,7 @@
         function toggleUltimateMode() {
             const username = localStorage.getItem("currentUser");
             const btn = document.getElementById("dramaticModeBtn");
+            const teamBtn = document.getElementById("teamManagementBtn");
 
             if (!username) {
                 openLoginPopup();
@@ -698,6 +698,7 @@
             ultimateMode = !ultimateMode;
             localStorage.setItem("ultimateMode", ultimateMode);
             btn.classList.toggle("active", ultimateMode);
+            teamBtn.style.display = ultimateMode ? "block" : "none";
 
             if (ultimateMode) {
                 alert("מצב Ultimate הופעל!");
@@ -880,7 +881,6 @@
                 console.error("שגיאה ב-showSuggestions:", e);
             }
         }
-
         function lookupModel() {
             try {
                 var model = document.getElementById("modelInput").value.trim().toUpperCase();
@@ -932,6 +932,7 @@
                 return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
             }
         }
+
         function getFridgeDetails(model) {
             let config = fridgeConfig[model[1]] || 'לא ידוע';
             let capacityCode = parseInt(model[2] + model[3]);
@@ -1220,12 +1221,12 @@
 
         function lookupSerial() {
             try {
-                var serial = document.getElementById("serialInput").value.trim();
+                var serial = document.getElementById("serialInput").value.trim().toUpperCase();
                 var resultDiv = document.getElementById("serial-result");
                 var loader = document.getElementById("loader-serial");
 
-                if (!serial || serial.length < 8) {
-                    resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי (מינימום 8 תווים).</div>';
+                if (!serial || serial.length < 10) {
+                    resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי (מינימום 10 תווים, לדוגמה: S01X5K123456).</div>';
                     resultDiv.style.display = "block";
                     return;
                 }
@@ -1233,15 +1234,17 @@
                 loader.style.display = "block";
                 resultDiv.style.display = "none";
                 setTimeout(() => {
-                    var yearCode = serial[4];
+                    var yearCode = serial[4]; // תו 5 במספר הסיריאלי (למשל, K עבור 2016)
                     var year = yearCodes[yearCode] || 'לא ידוע';
-                    var month = parseInt(serial[5], 16);
-                    month = month > 0 && month <= 12 ? month : 'לא ידוע';
+                    var monthCode = serial[5]; // תו 6 (בדרך כלל הקסדצימלי 1-C עבור ינואר-דצמבר)
+                    var month = parseInt(monthCode, 16);
+                    month = (month >= 1 && month <= 12) ? month : 'לא ידוע';
                     var warrantyEnd = year !== 'לא ידוע' && month !== 'לא ידוע' ? `${month}/${parseInt(year) + 2}` : 'לא ניתן לחשב';
+
                     resultDiv.innerHTML = `<div class="card">
                                             מספר סיריאלי: ${serial}<br>
                                             שנת ייצור: ${year}<br>
-                                            חודש ייצור: ${month}<br>
+                                            חודש ייצור: ${month === 'לא ידוע' ? month : month + ' (' + ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'][month - 1] + ')' }<br>
                                             תום אחריות: ${warrantyEnd}<br>
                                             הערה: למידע נוסף יש לבדוק לפי קוד דגם.
                                           </div>`;
@@ -1251,6 +1254,9 @@
                 }, 1000);
             } catch (e) {
                 console.error("שגיאה ב-lookupSerial:", e);
+                resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד המספר הסיריאלי: ${e.message}</div>`;
+                resultDiv.style.display = "block";
+                loader.style.display = "none";
             }
         }
 
@@ -1318,6 +1324,14 @@
             }
         }
 
+        function updateUltimateButtonState() {
+            const username = localStorage.getItem("currentUser");
+            const btn = document.getElementById("dramaticModeBtn");
+            const teamBtn = document.getElementById("teamManagementBtn");
+            btn.classList.toggle("active", ultimateMode);
+            teamBtn.style.display = ultimateMode ? "block" : "none";
+        }
+
         function initTeamData() {
             const username = localStorage.getItem("currentUser");
             if (!username) return null;
@@ -1375,7 +1389,12 @@
                 <div id="teamCards">${cardsHtml}</div>
                 <button onclick="showTeamField()">תצוגת מגרש</button>
                 <button onclick="showLeague()">צפה בליגה</button>
-                <button onclick="closeTeamPopup()">סגור</button>
+                <button onclick="exportTeamData()">ייצא נתונים</button>
+                <button onclick="importTeamData()">ייבא נתונים</button>
+                <textarea id="exportData" placeholder="ייצא/ייבא נתונים" style="width: 100%; height: 100px; margin-top: 10px;"></textarea>
+                <div class="popup-buttons">
+                    <button onclick="closeTeamPopup()">סגור</button>
+                </div>
             `;
             document.getElementById("team-popup").style.display = "block";
             document.getElementById("team-overlay").style.display = "block";
@@ -1491,43 +1510,28 @@
             const username = localStorage.getItem("currentUser");
             let teamData = initTeamData();
             if (!teamData || !teamData.teamName) {
-                alert("אנא שמור שם לקבוצה תחילה!");
+                alert("יש להזין שם קבוצה לפני צפייה בליגה!");
                 return;
             }
 
             let users = getUsers();
             let leagueData = [];
             for (let user in users) {
-                let team = JSON.parse(localStorage.getItem(`team_${user}`));
-                if (team && team.teamName && team.cards.length > 0) {
-                    let totalRating = team.cards.reduce((sum, card) => sum + card.rating, 0);
-                    let avgRating = (totalRating / team.cards.length).toFixed(1);
-                    leagueData.push({ teamName: team.teamName, avgRating, players: team.cards.length });
+                let userTeam = JSON.parse(localStorage.getItem(`team_${user}`));
+                if (userTeam && userTeam.teamName && userTeam.cards.length > 0) {
+                    let totalRating = userTeam.cards.reduce((sum, card) => sum + card.rating, 0);
+                    let avgRating = (totalRating / userTeam.cards.length).toFixed(1);
+                    leagueData.push({ teamName: userTeam.teamName, avgRating: avgRating, players: userTeam.cards.length });
                 }
             }
 
             leagueData.sort((a, b) => b.avgRating - a.avgRating);
 
-            let tableHtml = `
-                <table>
-                    <tr>
-                        <th>מיקום</th>
-                        <th>שם קבוצה</th>
-                        <th>דירוג ממוצע</th>
-                        <th>מספר שחקנים</th>
-                    </tr>
-            `;
+            let tableHtml = '<table><tr><th>מיקום</th><th>שם קבוצה</th><th>דירוג ממוצע</th><th>שחקנים</th></tr>';
             leagueData.forEach((team, index) => {
-                tableHtml += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${team.teamName}</td>
-                        <td>${team.avgRating}</td>
-                        <td>${team.players}</td>
-                    </tr>
-                `;
+                tableHtml += `<tr><td>${index + 1}</td><td>${team.teamName}</td><td>${team.avgRating}</td><td>${team.players}</td></tr>`;
             });
-            tableHtml += `</table>`;
+            tableHtml += '</table>';
 
             document.getElementById("leagueTable").innerHTML = tableHtml;
             document.getElementById("league-popup").style.display = "block";
@@ -1539,21 +1543,42 @@
             document.getElementById("league-overlay").style.display = "none";
         }
 
-        function updateUltimateButtonState() {
-            const btn = document.getElementById("dramaticModeBtn");
-            btn.classList.toggle("active", ultimateMode);
+        function exportTeamData() {
+            const username = localStorage.getItem("currentUser");
+            let teamData = initTeamData();
+            if (!teamData) return;
+
+            let exportString = JSON.stringify(teamData);
+            document.getElementById("exportData").value = exportString;
+            alert("הנתונים יוצאו בהצלחה! העתק את הטקסט מהשדה כדי לשמור אותו.");
         }
 
-        // טעינת משתמש נוכחי בעת טעינת הדף
-        document.addEventListener("DOMContentLoaded", () => {
+        function importTeamData() {
             const username = localStorage.getItem("currentUser");
-            if (username && getUsers()[username]) {
-                updateUltimateButtonState();
-            }
-        });
+            let importString = document.getElementById("exportData").value.trim();
 
+            if (!importString) {
+                alert("אנא הזן נתונים לייבוא!");
+                return;
+            }
+
+            try {
+                let importedData = JSON.parse(importString);
+                if (!importedData.teamName || !Array.isArray(importedData.cards)) {
+                    throw new Error("פורמט נתונים לא תקין!");
+                }
+                localStorage.setItem(`team_${username}`, JSON.stringify(importedData));
+                alert("הנתונים יובאו בהצלחה!");
+                openTeamPopup();
+            } catch (e) {
+                alert(`שגיאה בייבוא הנתונים: ${e.message}`);
+            }
+        }
+
+        window.onload = function() {
+            updateUltimateButtonState();
+        };
     </script>
 </body>
 </html>
-
 
