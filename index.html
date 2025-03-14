@@ -3,12 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
     <title>הזן קוד דגם</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Rubik', Arial, sans-serif;
@@ -52,6 +47,23 @@
             font-family: 'Rubik', sans-serif;
         }
         input:focus {
+            outline: none;
+            border-color: #1d3557;
+            box-shadow: 0 0 12px rgba(29, 53, 87, 0.5);
+        }
+        input[type="password"] {
+            width: calc(100% - 24px);
+            padding: 14px;
+            margin-top: 15px;
+            border: 2px solid #457b9d;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+            background: #f7f9fb;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-family: 'Rubik', sans-serif;
+        }
+        input[type="password"]:focus {
             outline: none;
             border-color: #1d3557;
             box-shadow: 0 0 12px rgba(29, 53, 87, 0.5);
@@ -567,6 +579,7 @@
             background: rgba(69, 123, 157, 0.3);
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <button id="dramaticModeBtn" onclick="toggleUltimateMode()" title="הפעל/כבה מצב Ultimate"><span style="font-size: 20px;">🏆</span></button>
@@ -619,7 +632,7 @@
     <div id="login-overlay" class="popup-overlay" onclick="closeLoginPopup()"></div>
     <div id="login-popup" class="popup">
         <h3 id="login-title">התחבר או הירשם</h3>
-        <input type="email" id="emailInput" placeholder="הזן אימייל" style="color: #1d3557;">
+        <input type="text" id="usernameInput" placeholder="הזן שם משתמש" style="color: #1d3557;">
         <input type="password" id="passwordInput" placeholder="הזן סיסמה" style="color: #1d3557; margin-top: 10px;">
         <div class="popup-buttons">
             <button onclick="login()">התחבר</button>
@@ -658,974 +671,914 @@
             <button onclick="closeFieldPopup()">סגור</button>
         </div>
     </div>
-<script>
-    // Firebase Config and Initialization
-    const firebaseConfig = {
-        apiKey: "AIzaSyBv9HT58L3iai5NBj4sAwXBnvr7ni52cI0",
-        authDomain: "model-code-league.firebaseapp.com",
-        databaseURL: "https://model-code-league-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "model-code-league",
-        storageBucket: "model-code-league.firebasestorage.app",
-        messagingSenderId: "341001867383",
-        appId: "1:341001867383:web:9b39865210e8512c9d3672",
-        measurementId: "G-HBK62VJY08"
-    };
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.database();
+    <script>
+        console.log("הדף נטען בהצלחה");
 
-    let ultimateMode = false;
-    let currentUser = null;
+        let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
 
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            currentUser = user;
-            ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
-            updateUltimateButtonState();
-            loadTeamData(user.uid);
-        } else {
-            currentUser = null;
-            ultimateMode = false;
-            updateUltimateButtonState();
+        function getUsers() {
+            return JSON.parse(localStorage.getItem("users")) || {};
         }
-    });
 
-    function updateUltimateButtonState() {
-        const btn = document.getElementById("dramaticModeBtn");
-        const teamBtn = document.getElementById("teamManagementBtn");
-        btn.classList.toggle("active", ultimateMode);
-        teamBtn.style.display = currentUser && ultimateMode ? "block" : "none";
-    }
-
-    function toggleUltimateMode() {
-        if (!currentUser) {
-            openLoginPopup();
-            return;
+        function saveUsers(users) {
+            localStorage.setItem("users", JSON.stringify(users));
         }
-        ultimateMode = !ultimateMode;
-        localStorage.setItem("ultimateMode", ultimateMode);
-        updateUltimateButtonState();
-        if (ultimateMode) {
-            alert("מצב Ultimate הופעל!");
-            openUltimateMenu();
-        } else {
-            alert("מצב Ultimate כובה.");
-            closeUltimateMenu();
+
+        function toggleUltimateMode() {
+            const username = localStorage.getItem("currentUser");
+            const btn = document.getElementById("dramaticModeBtn");
+            const teamBtn = document.getElementById("teamManagementBtn");
+
+            if (!username) {
+                openLoginPopup();
+                return;
+            }
+
+            ultimateMode = !ultimateMode;
+            localStorage.setItem("ultimateMode", ultimateMode);
+            btn.classList.toggle("active", ultimateMode);
+            teamBtn.style.display = ultimateMode ? "block" : "none";
+
+            if (ultimateMode) {
+                alert("מצב Ultimate הופעל!");
+                openUltimateMenu();
+            } else {
+                alert("מצב Ultimate כובה.");
+                closeUltimateMenu();
+            }
+
+            if (document.getElementById("result").style.display === "block") {
+                lookupModel();
+            }
         }
-        if (document.getElementById("result").style.display === "block") {
-            lookupModel();
+
+        function showPage(pageId) {
+            try {
+                document.querySelectorAll('.content').forEach(page => page.classList.remove('active'));
+                document.querySelectorAll('.navbar a').forEach(link => link.classList.remove('active'));
+                document.getElementById(pageId + '-page').classList.add('active');
+                document.querySelector(`a[onclick="showPage('${pageId}')"]`).classList.add('active');
+            } catch (e) {
+                console.error("שגיאה ב-showPage:", e);
+            }
         }
-    }
 
-    function showPage(pageId) {
-        document.querySelectorAll('.content').forEach(page => page.classList.remove('active'));
-        document.querySelectorAll('.navbar a').forEach(link => link.classList.remove('active'));
-        document.getElementById(pageId + '-page').classList.add('active');
-        document.querySelector(`a[onclick="showPage('${pageId}')"]`).classList.add('active');
-    }
+        const fridgeConfig = {
+            'F': 'French Door (דלת צרפתית)', 'S': 'Side by Side (דלת ליד דלת)', 'T': 'Top Freezer (מקפיא עליון)',
+            'B': 'Bottom Freezer (מקפיא תחתון)', 'L': 'Bottom Freezer (מקפיא תחתון)'
+        };
 
-    const fridgeConfig = {
-        'F': 'French Door (דלת צרפתית)', 'S': 'Side by Side (דלת ליד דלת)', 'T': 'Top Freezer (מקפיא עליון)',
-        'B': 'Bottom Freezer (מקפיא תחתון)', 'L': 'Bottom Freezer (מקפיא תחתון)'
-    };
+        const yearCodes = {
+            'H': '2014', 'J': '2015', 'K': '2016', 'M': '2017', 'N': '2018', 'R': '2019', 'T': '2020',
+            'A': '2021', 'B': '2022', 'C': '2023', 'D': '2024', 'F': '2025'
+        };
 
-    const yearCodes = {
-        'H': '2014', 'J': '2015', 'K': '2016', 'M': '2017', 'N': '2018', 'R': '2019', 'T': '2020',
-        'A': '2021', 'B': '2022', 'C': '2023', 'D': '2024', 'F': '2025'
-    };
+        const fridgeFinish = {
+            'SP': 'נירוסטה', 'SR': 'נירוסטה', 'SL': 'כסוף', 'UT': 'כחול', 'SA': 'גרפיט', 'WW': 'לבן'
+        };
 
-    const fridgeFinish = {
-        'SP': 'נירוסטה', 'SR': 'נירוסטה', 'SL': 'כסוף', 'UT': 'כחול', 'SA': 'גרפיט', 'WW': 'לבן'
-    };
+        const countryCodesFridge = {
+            'AA': 'ארה"ב', 'WT': 'הונג קונג', 'EC': 'קוריאה', 'TL': 'הודו', 'EM': 'מקסיקו', 'ML': 'ישראל'
+        };
 
-    const countryCodesFridge = {
-        'AA': 'ארה"ב', 'WT': 'הונג קונג', 'EC': 'קוריאה', 'TL': 'הודו', 'EM': 'מקסיקו', 'ML': 'ישראל'
-    };
+        const washerTech = {
+            'WW': 'מכונת כביסה פתח קידמי', 'WD': 'מייבש כביסה עם משאבת חום', 'DV': 'מייבש סטנדרטי'
+        };
 
-    const washerTech = {
-        'WW': 'מכונת כביסה פתח קידמי', 'WD': 'מייבש כביסה עם משאבת חום', 'DV': 'מייבש סטנדרטי'
-    };
+        const washerColor = {
+            'G': 'לבן', 'P': 'נירוסטה', 'S': 'כסף', 'V': 'שחור'
+        };
 
-    const washerColor = {
-        'G': 'לבן', 'P': 'נירוסטה', 'S': 'כסף', 'V': 'שחור'
-    };
+        const countryCodesWasher = {
+            'US': 'ארה"ב', 'LP': 'הונג קונג', 'AH': 'קוריאה', 'T1': 'הודו', 'AX': 'מקסיקו', 'KJ': 'ישראל'
+        };
 
-    const countryCodesWasher = {
-        'US': 'ארה"ב', 'LP': 'הונג קונג', 'AH': 'קוריאה', 'T1': 'הודו', 'AX': 'מקסיקו', 'KJ': 'ישראל'
-    };
+        const tvDisplay = {
+            'Q': 'QLED', 'U': 'LED', 'P': 'Plasma', 'L': 'LCD', 'K': 'OLED'
+        };
 
-    const tvDisplay = {
-        'Q': 'QLED', 'U': 'LED', 'P': 'Plasma', 'L': 'LCD', 'K': 'OLED'
-    };
+        const tvMarket = {
+            'N': 'צפון אמריקה', 'E': 'אירופה', 'A': 'אסיה'
+        };
 
-    const tvMarket = {
-        'N': 'צפון אמריקה', 'E': 'אירופה', 'A': 'אסיה'
-    };
+        const countryCodesTV = {
+            'ZA': 'אפריקה', 'RU': 'רוסיה', 'UA': 'אוקראינה', '2C': 'סין', 'XU': 'בריטניה', 'XY': 'אוסטרליה',
+            'SQ': 'ישראל', 'IL': 'ישראל'
+        };
 
-    const countryCodesTV = {
-        'ZA': 'אפריקה', 'RU': 'רוסיה', 'UA': 'אוקראינה', '2C': 'סין', 'XU': 'בריטניה', 'XY': 'אוסטרליה',
-        'SQ': 'ישראל', 'IL': 'ישראל'
-    };
+        const broadcastStandards = {
+            'F': 'ATSC/QAM', 'U': 'DVB', 'G': 'ISDB-T', 'T': '2xDVB'
+        };
 
-    const broadcastStandards = {
-        'F': 'ATSC/QAM', 'U': 'DVB', 'G': 'ISDB-T', 'T': '2xDVB'
-    };
+        const productImages = {
+            'QLED': 'https://images.samsung.com/is/image/samsung/p6pim/my/qa65q70dakxxm/gallery/my-qled-tv-qa65q70dakxxm-front-gray-540854235?$684_547_PNG$',
+            'NEO QLED': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBlPyKp_atLUlx5rg7cEpI-XhH9t9MM3-wmg&s',
+            'CRYSTAL UHD': 'https://images.samsung.com/is/image/samsung/p6pim/il/ue75cu7100uxsq/gallery/il-crystal-uhd-cu7000-ue75cu7100uxsq-536351326?$684_547_PNG$',
+            'OLED': 'https://www.electricshop.co.il/images/itempics/QE65S95D_030620241010481.jpg',
+            'The Frame': 'https://www.topmarket.co.il/images/detailed/227/16e8949b60f75b0601296b8fe0b488db.jpg',
+            'French Door (דלת צרפתית)': 'https://www.alm.co.il/media/catalog/product/r/f/rf65dg965eb1ml_001_front_black_1_.jpg?auto=webp&format=pjpg&width=640&height=800&fit=cover',
+            'Side by Side (דלת ליד דלת)': 'https://www.electricshop.co.il/images/itempics/RF27T5001S92_12012023195056.jpg',
+            'Bottom Freezer (מקפיא תחתון)': 'https://res.cloudinary.com/shufersal/image/upload/f_auto,q_auto/v1551800922/prod/product_images/products_zoom/WKW52_Z_P_8806090184161_2.png',
+            'Top Freezer (מקפיא עליון)': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSO7r_kWY7GuXsXmU--f7VKVVBmm40A8FInjQ&s',
+            'מכונת כביסה': 'https://images.samsung.com/is/image/samsung/il_WF1802WPC-YKJ_002_Front_white?$624_624_PNG$',
+            'N4000-N5500 Series': 'https://www.eplus.co.il/images/itempics/UE32T5300_18032022102312_large.jpg'
+        };
 
-    const productImages = {
-        'QLED': 'https://images.samsung.com/is/image/samsung/p6pim/my/qa65q70dakxxm/gallery/my-qled-tv-qa65q70dakxxm-front-gray-540854235?$684_547_PNG$',
-        'NEO QLED': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBlPyKp_atLUlx5rg7cEpI-XhH9t9MM3-wmg&s',
-        'CRYSTAL UHD': 'https://images.samsung.com/is/image/samsung/p6pim/il/ue75cu7100uxsq/gallery/il-crystal-uhd-cu7000-ue75cu7100uxsq-536351326?$684_547_PNG$',
-        'OLED': 'https://www.electricshop.co.il/images/itempics/QE65S95D_030620241010481.jpg',
-        'The Frame': 'https://www.topmarket.co.il/images/detailed/227/16e8949b60f75b0601296b8fe0b488db.jpg',
-        'French Door (דלת צרפתית)': 'https://www.alm.co.il/media/catalog/product/r/f/rf65dg965eb1ml_001_front_black_1_.jpg?auto=webp&format=pjpg&width=640&height=800&fit=cover',
-        'Side by Side (דלת ליד דלת)': 'https://www.electricshop.co.il/images/itempics/RF27T5001S92_12012023195056.jpg',
-        'Bottom Freezer (מקפיא תחתון)': 'https://res.cloudinary.com/shufersal/image/upload/f_auto,q_auto/v1551800922/prod/product_images/products_zoom/WKW52_Z_P_8806090184161_2.png',
-        'Top Freezer (מקפיא עליון)': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSO7r_kWY7GuXsXmU--f7VKVVBmm40A8FInjQ&s',
-        'מכונת כביסה': 'https://images.samsung.com/is/image/samsung/il_WF1802WPC-YKJ_002_Front_white?$624_624_PNG$',
-        'N4000-N5500 Series': 'https://www.eplus.co.il/images/itempics/UE32T5300_18032022102312_large.jpg'
-    };
+        const sampleModels = [
+            'QE85QN85CATXSQ', 'UE65RU8000KXSQ', 'UA43LS03NAU', 'QE50Q7FAAUXIL',
+            'RF65DG965EB1ML', 'WW80TA046AX', 'UA65RU8000KXSQ', 'QE85LS03D',
+            'QE85LS03C', 'QE85LS03B', 'QE65S95D', 'QE65S90A', 'QE65S85T',
+            'UE32N4000UXSQ', 'UE32N4100UXSQ', 'UE32N4200UXSQ', 'UE32N4300UXSQ',
+            'UE32N4400UXSQ', 'UE32N4500UXSQ', 'UE32N5000UXSQ', 'UE32N5100UXSQ',
+            'UE32N5200UXSQ', 'UE32N5300UXSQ', 'UE32N5400UXSQ', 'UE32N5500UXSQ'
+        ];
 
-    const sampleModels = [
-        'QE85QN85CATXSQ', 'UE65RU8000KXSQ', 'UA43LS03NAU', 'QE50Q7FAAUXIL',
-        'RF65DG965EB1ML', 'WW80TA046AX', 'UA65RU8000KXSQ', 'QE85LS03D',
-        'QE85LS03C', 'QE85LS03B', 'QE65S95D', 'QE65S90A', 'QE65S85T',
-        'UE32N4000UXSQ', 'UE32N4100UXSQ', 'UE32N4200UXSQ', 'UE32N4300UXSQ',
-        'UE32N4400UXSQ', 'UE32N4500UXSQ', 'UE32N5000UXSQ', 'UE32N5100UXSQ',
-        'UE32N5200UXSQ', 'UE32N5300UXSQ', 'UE32N5400UXSQ', 'UE32N5500UXSQ'
-    ];
+        const productFeatures = {
+            'QLED': {
+                description: 'טכנולוגיית QLED (Quantum Dot LED) מבית סמסונג מציעה צבעים עשירים וחדים במיוחד עם ניגודיות גבוהה.',
+                features: [
+                    '100% נפח צבע עם Quantum Dot - צבעים מדויקים בכל רמת בהירות.',
+                    'תאורה אחורית מתקדמת עם Quantum HDR לחוויית צפייה דינמית.',
+                    'זווית צפייה רחבה עם טכנולוגיית Anti-Reflection.',
+                    'חסכוני בחשמל בהשוואה לטלוויזיות LED רגילות.'
+                ]
+            },
+            'The Frame': {
+                description: 'טלוויזיית The Frame משלבת עיצוב ייחודי שמתאים לקיר כמו תמונה, עם איכות תצוגה מתקדמת.',
+                features: [
+                    'מצב אמנות (Art Mode) - הצגת תמונות ויצירות אמנות כשהטלוויזיה כבויה.',
+                    'חיישן תנועה ותאורה להתאמה אוטומטית של התצוגה.',
+                    'מסגרת הניתנת להתאמה אישית (לבן, חום, שחור ועוד).',
+                    'תמיכה ב-QLED לניגודיות וצבעים משופרים.'
+                ]
+            },
+            'OLED': {
+                description: 'טכנולוגיית OLED מספקת שחור מושלם וצבעים עמוקים בזכות פיקסלים שמאירים עצמאית.',
+                features: [
+                    'ניגודיות אינסופית עם שחור מוחלט.',
+                    'זמן תגובה מהיר במיוחד למשחקים ותנועה חלקה.',
+                    'זווית צפייה רחבה ללא איבוד איכות.',
+                    'עיצוב דק במיוחד עם גמישות תכנונית.'
+                ]
+            },
+            'CRYSTAL UHD': {
+                description: 'טלוויזיות Crystal UHD מציעות רזולוציה גבוהה עם מעבד Crystal לשיפור התמונה.',
+                features: [
+                    'מעבד Crystal 4K לשדרוג תמונה לרזולוציית 4K.',
+                    'HDR 10+ לפרטים משופרים באזורים מוארים וכהים.',
+                    'צבעים חיים עם טווח דינמי רחב.',
+                    'עיצוב AirSlim דק ומודרני.'
+                ]
+            },
+            'LED': {
+                description: 'טלוויזיות LED סטנדרטיות עם איכות תמונה טובה במחיר נגיש.',
+                features: [
+                    'תאורת LED חסכונית לאיכות תמונה בסיסית.',
+                    'תמיכה ב-HDR לשיפור ניגודיות.',
+                    'רזולוציה עד 4K (בדגמים מתקדמים).',
+                    'מתאים לשימוש יומיומי פשוט.'
+                ]
+            },
+            'N4000-N5500 Series': {
+                description: 'סדרות N4000 עד N5500 הן טלוויזיות LED Full HD מבית סמסונג, המציעות איכות תמונה טובה לשימוש יומיומי עם עיצוב פשוט ופונקציונלי.',
+                features: [
+                    'רזולוציה Full HD (1920x1080) לתמונה חדה וברורה.',
+                    'טכנולוגיית PurColor לשיפור צבעים טבעיים.',
+                    'תמיכה ב-HDR בסיסי לניגודיות משופרת.',
+                    'מערכת הפעלה Tizen פשוטה לשימוש (גרסאות ישנות יותר בהתאם לשנה).',
+                    'עיצוב דק וקומפקטי המתאים לכל חלל.'
+                ]
+            }
+        };
 
-    const productFeatures = {
-        'QLED': {
-            description: 'טכנולוגיית QLED (Quantum Dot LED) מבית סמסונג מציעה צבעים עשירים וחדים במיוחד עם ניגודיות גבוהה.',
-            features: [
-                '100% נפח צבע עם Quantum Dot - צבעים מדויקים בכל רמת בהירות.',
-                'תאורה אחורית מתקדמת עם Quantum HDR לחוויית צפייה דינמית.',
-                'זווית צפייה רחבה עם טכנולוגיית Anti-Reflection.',
-                'חסכוני בחשמל בהשוואה לטלוויזיות LED רגילות.'
-            ]
-        },
-        'The Frame': {
-            description: 'טלוויזיית The Frame משלבת עיצוב ייחודי שמתאים לקיר כמו תמונה, עם איכות תצוגה מתקדמת.',
-            features: [
-                'מצב אמנות (Art Mode) - הצגת תמונות ויצירות אמנות כשהטלוויזיה כבויה.',
-                'חיישן תנועה ותאורה להתאמה אוטומטית של התצוגה.',
-                'מסגרת הניתנת להתאמה אישית (לבן, חום, שחור ועוד).',
-                'תמיכה ב-QLED לניגודיות וצבעים משופרים.'
-            ]
-        },
-        'OLED': {
-            description: 'טכנולוגיית OLED מספקת שחור מושלם וצבעים עמוקים בזכות פיקסלים שמאירים עצמאית.',
-            features: [
-                'ניגודיות אינסופית עם שחור מוחלט.',
-                'זמן תגובה מהיר במיוחד למשחקים ותנועה חלקה.',
-                'זווית צפייה רחבה ללא איבוד איכות.',
-                'עיצוב דק במיוחד עם גמישות תכנונית.'
-            ]
-        },
-        'CRYSTAL UHD': {
-            description: 'טלוויזיות Crystal UHD מציעות רזולוציה גבוהה עם מעבד Crystal לשיפור התמונה.',
-            features: [
-                'מעבד Crystal 4K לשדרוג תמונה לרזולוציית 4K.',
-                'HDR 10+ לפרטים משופרים באזורים מוארים וכהים.',
-                'צבעים חיים עם טווח דינמי רחב.',
-                'עיצוב AirSlim דק ומודרני.'
-            ]
-        },
-        'LED': {
-            description: 'טלוויזיות LED סטנדרטיות עם איכות תמונה טובה במחיר נגיש.',
-            features: [
-                'תאורת LED חסכונית לאיכות תמונה בסיסית.',
-                'תמיכה ב-HDR לשיפור ניגודיות.',
-                'רזולוציה עד 4K (בדגמים מתקדמים).',
-                'מתאים לשימוש יומיומי פשוט.'
-            ]
-        },
-        'N4000-N5500 Series': {
-            description: 'סדרות N4000 עד N5500 הן טלוויזיות LED Full HD מבית סמסונג, המציעות איכות תמונה טובה לשימוש יומיומי עם עיצוב פשוט ופונקציונלי.',
-            features: [
-                'רזולוציה Full HD (1920x1080) לתמונה חדה וברורה.',
-                'טכנולוגיית PurColor לשיפור צבעים טבעיים.',
-                'תמיכה ב-HDR בסיסי לניגודיות משופרת.',
-                'מערכת הפעלה Tizen פשוטה לשימוש (גרסאות ישנות יותר בהתאם לשנה).',
-                'עיצוב דק וקומפקטי המתאים לכל חלל.'
-            ]
-        }
-    };
-
-    function showSuggestions(input) {
-        const suggestionsDiv = document.getElementById('suggestions');
-        suggestionsDiv.innerHTML = '';
-        if (input.length < 2) {
-            suggestionsDiv.style.display = 'none';
-            return;
-        }
-        const filtered = sampleModels.filter(model => model.toUpperCase().startsWith(input.toUpperCase()));
-        if (filtered.length > 0) {
-            filtered.forEach(model => {
-                const item = document.createElement('div');
-                item.className = 'suggestion-item';
-                item.textContent = model;
-                item.onclick = () => {
-                    document.getElementById('modelInput').value = model;
+        function showSuggestions(input) {
+            try {
+                const suggestionsDiv = document.getElementById('suggestions');
+                suggestionsDiv.innerHTML = '';
+                if (input.length < 2) {
                     suggestionsDiv.style.display = 'none';
-                    lookupModel();
-                };
-                suggestionsDiv.appendChild(item);
-            });
-            suggestionsDiv.style.display = 'block';
-        } else {
-            suggestionsDiv.style.display = 'none';
+                    return;
+                }
+                const filtered = sampleModels.filter(model => model.toUpperCase().startsWith(input.toUpperCase()));
+                if (filtered.length > 0) {
+                    filtered.forEach(model => {
+                        const item = document.createElement('div');
+                        item.className = 'suggestion-item';
+                        item.textContent = model;
+                        item.onclick = () => {
+                            document.getElementById('modelInput').value = model;
+                            suggestionsDiv.style.display = 'none';
+                            lookupModel();
+                        };
+                        suggestionsDiv.appendChild(item);
+                    });
+                    suggestionsDiv.style.display = 'block';
+                } else {
+                    suggestionsDiv.style.display = 'none';
+                }
+            } catch (e) {
+                console.error("שגיאה ב-showSuggestions:", e);
+            }
         }
-    }
+        function lookupModel() {
+            try {
+                var model = document.getElementById("modelInput").value.trim().toUpperCase();
+                var resultDiv = document.getElementById("result");
+                var loader = document.getElementById("loader");
 
-    function lookupModel() {
-        var model = document.getElementById("modelInput").value.trim().toUpperCase();
-        var resultDiv = document.getElementById("result");
-        var loader = document.getElementById("loader");
-
-        if (!model || model.length < 5) {
-            resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין קוד דגם חוקי (מינימום 5 תווים).</div>';
-            resultDiv.style.display = "block";
-            return;
-        }
-
-        if (ultimateMode && currentUser) {
-            db.ref(`teams/${currentUser.uid}`).once('value').then(snapshot => {
-                let teamData = snapshot.val();
-                if (teamData.searchesLeft <= 0) {
-                    resultDiv.innerHTML = '<div class="card">שגיאה: נגמרו לך החיפושים להיום!</div>';
+                if (!model || model.length < 5) {
+                    resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין קוד דגם חוקי (מינימום 5 תווים).</div>';
                     resultDiv.style.display = "block";
                     return;
                 }
-                teamData.searchesLeft--;
-                db.ref(`teams/${currentUser.uid}`).update({ searchesLeft: teamData.searchesLeft });
+
                 loader.style.display = "block";
                 resultDiv.style.display = "none";
                 setTimeout(() => {
-                    var details = getDramaticModelDetails(model);
+                    var details = ultimateMode ? getDramaticModelDetails(model) : getModelDetails(model);
                     resultDiv.innerHTML = details;
                     resultDiv.style.display = "block";
                     loader.style.display = "none";
                 }, 1000);
-            });
-        } else {
-            loader.style.display = "block";
-            resultDiv.style.display = "none";
-            setTimeout(() => {
-                var details = getModelDetails(model);
-                resultDiv.innerHTML = details;
-                resultDiv.style.display = "block";
-                loader.style.display = "none";
-            }, 1000);
-        }
-    }
-
-    function suggestRandomModel() {
-        const randomModel = sampleModels[Math.floor(Math.random() * sampleModels.length)];
-        document.getElementById("modelInput").value = randomModel;
-        lookupModel();
-    }
-
-    function getModelDetails(model) {
-        if (/^R[FSBTL]/.test(model)) {
-            return getFridgeDetails(model);
-        } else if (/^W[WD]|^DV/.test(model)) {
-            return getWasherDetails(model);
-        } else if (/^[QULPK][NEA]/.test(model)) {
-            return getTVDetails(model);
-        } else {
-            return `<div class="card">שגיאה: הדגם שהוזן אינו מזוהה. אנא ודא שהקוד תקין ונסה שוב.</div>`;
-        }
-    }
-
-    function getFridgeDetails(model) {
-        let config = fridgeConfig[model[1]] || 'לא ידוע';
-        let capacityCode = parseInt(model[2] + model[3]);
-        let capacityLiters = capacityCode * 10 + ' ליטר';
-        let year = yearCodes[model[4]] || 'לא ידוע';
-        let series = model[5] || 'לא ידוע';
-        let finishCode = model.slice(6, 8);
-        let finish = fridgeFinish[finishCode] || 'לא ידוע';
-        let countryCode = model.slice(-2);
-        let country = countryCodesFridge[countryCode] || 'לא ידוע';
-        let image = productImages[config] || '';
-
-        return `<div class="card">
-                    מקרר סמסונג - דגם: ${model}<br>
-                    תצורה: ${config}<br>
-                    נפח: ${capacityLiters}<br>
-                    שנת ייצור: ${year}<br>
-                    סדרת דגם: ${series}<br>
-                    גימור: ${finish}<br>
-                    מדינה: ${country}<br>
-                    ${image ? `<img src="${image}" alt="${config}">` : ''}
-                    <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                </div>`;
-    }
-
-    function getWasherDetails(model) {
-        let tech = washerTech[model.slice(0, 2)] || 'לא ידוע';
-        let capacityCode = model[2];
-        let capacity = '';
-        switch (capacityCode) {
-            case '6': capacity = '6 ק"ג'; break;
-            case '7': capacity = '7 ק"ג'; break;
-            case '8': capacity = '8 ק"ג'; break;
-            case '9': capacity = '9 ק"ג'; break;
-            case '1': capacity = model[3] === '1' ? '11 ק"ג' : '10 ק"ג'; break;
-            case '2': capacity = '12 ק"ג'; break;
-            default: capacity = 'לא ידוע';
-        }
-        let year = yearCodes[model[4]] || 'לא ידוע';
-        let month = model[5] || 'לא ידוע';
-        let color = washerColor[model[9]] || 'לא ידוע';
-        let countryCode = model.slice(-2);
-        let country = countryCodesWasher[countryCode] || 'לא ידוע';
-        let image = productImages['מכונת כביסה'] || '';
-
-        return `<div class="card">
-                    ${tech} סמסונג - דגם: ${model}<br>
-                    קיבולת: ${capacity}<br>
-                    שנת ייצור: ${year}<br>
-                    חודש ייצור: ${month}<br>
-                    צבע: ${color}<br>
-                    מדינה: ${country}<br>
-                    ${image ? `<img src="${image}" alt="מכונת כביסה">` : ''}
-                    <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                </div>`;
-    }
-
-    function getTVDetails(model) {
-        let display = tvDisplay[model[0]] || 'לא ידוע';
-        let isFrame = model.includes('LS03');
-        let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
-        let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
-
-        if (isFrame) display = 'The Frame';
-        else if (isOLED) display = 'OLED';
-        else if (isNseries) display = 'N4000-N5500 Series';
-        else if (model[0] === 'U' && yearCodes[model[4]] >= 2018) display = 'CRYSTAL UHD';
-        else if (model[0] === 'U' && yearCodes[model[4]] < 2018) display = 'LED';
-
-        let yearCode = '';
-        for (let i = 4; i < model.length; i++) {
-            if (yearCodes[model[i]]) {
-                yearCode = model[i];
-                break;
+            } catch (e) {
+                console.error("שגיאה ב-lookupModel:", e);
             }
         }
-        let year = yearCodes[yearCode] || 'לא ידוע';
 
-        let market = tvMarket[model[1]] || 'לא ידוע';
-        let size = model[2] + model[3];
+        function suggestRandomModel() {
+            try {
+                const randomModel = sampleModels[Math.floor(Math.random() * sampleModels.length)];
+                document.getElementById("modelInput").value = randomModel;
+                lookupModel();
+            } catch (e) {
+                console.error("שגיאה ב-suggestRandomModel:", e);
+            }
+        }
 
-        let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
-        let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
-        let series = isFrame ? 'LS03' : (isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd));
-        if (isNseries) series = model.slice(4, 9);
+        function getModelDetails(model) {
+            try {
+                if (/^R[FSBTL]/.test(model)) {
+                    return getFridgeDetails(model);
+                } else if (/^W[WD]|^DV/.test(model)) {
+                    return getWasherDetails(model);
+                } else if (/^[QULPK][NEA]/.test(model)) {
+                    return getTVDetails(model);
+                } else {
+                    return `<div class="card">שגיאה: הדגם שהוזן אינו מזוהה. אנא ודא שהקוד תקין ונסה שוב.</div>`;
+                }
+            } catch (e) {
+                console.error("שגיאה ב-getModelDetails:", e);
+                return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
+            }
+        }
 
-        let broadcast = (year >= 2018 && year !== 'לא ידוע') ? 'DVB-T2' : 'DVB-T1';
-
-        let os = 'לא צוינה';
-        if (year === '2023' || year === '2024' || year === '2025') os = 'Tizen 8.0';
-        else if (year === '2022') os = 'Tizen 7.0';
-        else if (year === '2021') os = 'Tizen 6.5';
-        else if (year === '2020') os = 'Tizen 6.0';
-        else if (year === '2019') os = 'Tizen 5.0';
-        else if (year === '2017') os = 'Tizen 4.0';
-        else if (year < 2019) os = 'Tizen (גרסה ישנה יותר)';
-
-        let country = 'לא ידוע';
-        let countryNote = '';
-        if (model.length >= 13) {
+        function getFridgeDetails(model) {
+            let config = fridgeConfig[model[1]] || 'לא ידוע';
+            let capacityCode = parseInt(model[2] + model[3]);
+            let capacityLiters = capacityCode * 10 + ' ליטר';
+            let year = yearCodes[model[4]] || 'לא ידוע';
+            let series = model[5] || 'לא ידוע';
+            let finishCode = model.slice(6, 8);
+            let finish = fridgeFinish[finishCode] || 'לא ידוע';
             let countryCode = model.slice(-2);
-            country = countryCodesTV[countryCode] || 'לא ידוע';
-            if (year === '2025') {
-                if (countryCode === 'IL') country = 'ישראל (ניופאן)';
-                else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
+            let country = countryCodesFridge[countryCode] || 'לא ידוע';
+            let image = productImages[config] || '';
+
+            return `<div class="card">
+                        מקרר סמסונג - דגם: ${model}<br>
+                        תצורה: ${config}<br>
+                        נפח: ${capacityLiters}<br>
+                        שנת ייצור: ${year}<br>
+                        סדרת דגם: ${series}<br>
+                        גימור: ${finish}<br>
+                        מדינה: ${country}<br>
+                        ${image ? `<img src="${image}" alt="${config}">` : ''}
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                    </div>`;
+        }
+
+        function getWasherDetails(model) {
+            let tech = washerTech[model.slice(0, 2)] || 'לא ידוע';
+            let capacityCode = model[2];
+            let capacity = '';
+            switch (capacityCode) {
+                case '6': capacity = '6 ק"ג'; break;
+                case '7': capacity = '7 ק"ג'; break;
+                case '8': capacity = '8 ק"ג'; break;
+                case '9': capacity = '9 ק"ג'; break;
+                case '1': capacity = model[3] === '1' ? '11 ק"ג' : '10 ק"ג'; break;
+                case '2': capacity = '12 ק"ג'; break;
+                default: capacity = 'לא ידוע';
             }
-            if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
-                countryNote = ' - יבוא מקביל';
+            let year = yearCodes[model[4]] || 'לא ידוע';
+            let month = model[5] || 'לא ידוע';
+            let color = washerColor[model[9]] || 'לא ידוע';
+            let countryCode = model.slice(-2);
+            let country = countryCodesWasher[countryCode] || 'לא ידוע';
+            let image = productImages['מכונת כביסה'] || '';
+
+            return `<div class="card">
+                        ${tech} סמסונג - דגם: ${model}<br>
+                        קיבולת: ${capacity}<br>
+                        שנת ייצור: ${year}<br>
+                        חודש ייצור: ${month}<br>
+                        צבע: ${color}<br>
+                        מדינה: ${country}<br>
+                        ${image ? `<img src="${image}" alt="מכונת כביסה">` : ''}
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                    </div>`;
+        }
+
+        function getTVDetails(model) {
+            try {
+                let display = tvDisplay[model[0]] || 'לא ידוע';
+                let isFrame = model.includes('LS03');
+                let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
+                let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
+
+                if (isFrame) display = 'The Frame';
+                else if (isOLED) display = 'OLED';
+                else if (isNseries) display = 'N4000-N5500 Series';
+                else if (model[0] === 'U' && yearCodes[model[4]] >= 2018) display = 'CRYSTAL UHD';
+                else if (model[0] === 'U' && yearCodes[model[4]] < 2018) display = 'LED';
+
+                let yearCode = '';
+                for (let i = 4; i < model.length; i++) {
+                    if (yearCodes[model[i]]) {
+                        yearCode = model[i];
+                        break;
+                    }
+                }
+                let year = yearCodes[yearCode] || 'לא ידוע';
+
+                let market = tvMarket[model[1]] || 'לא ידוע';
+                let size = model[2] + model[3];
+
+                let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
+                let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
+                let series = isFrame ? 'LS03' : (isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd));
+                if (isNseries) series = model.slice(4, 9);
+
+                let broadcast = (year >= 2018 && year !== 'לא ידוע') ? 'DVB-T2' : 'DVB-T1';
+
+                let os = 'לא צוינה';
+                if (year === '2023' || year === '2024' || year === '2025') os = 'Tizen 8.0';
+                else if (year === '2022') os = 'Tizen 7.0';
+                else if (year === '2021') os = 'Tizen 6.5';
+                else if (year === '2020') os = 'Tizen 6.0';
+                else if (year === '2019') os = 'Tizen 5.0';
+                else if (year === '2017') os = 'Tizen 4.0';
+                else if (year < 2019) os = 'Tizen (גרסה ישנה יותר)';
+
+                let country = 'לא ידוע';
+                let countryNote = '';
+                if (model.length >= 13) {
+                    let countryCode = model.slice(-2);
+                    country = countryCodesTV[countryCode] || 'לא ידוע';
+                    if (year === '2025') {
+                        if (countryCode === 'IL') country = 'ישראל (ניופאן)';
+                        else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
+                    }
+                    if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
+                        countryNote = ' - יבוא מקביל';
+                    }
+                } else if (model.length === 10 || model.length === 12) {
+                    country = 'לא צוין';
+                }
+                if (model[1] === 'A') {
+                    countryNote = ' - יבוא מקביל';
+                }
+                let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
+                let image = productImages[imageKey] || '';
+
+                let featuresHtml = '';
+                if (productFeatures[display]) {
+                    featuresHtml = `
+                        <br><strong>${productFeatures[display].description}</strong><br>
+                        <ul style="text-align: right; padding-right: 20px;">
+                            ${productFeatures[display].features.map(feature => `<li>${feature}</li>`).join('')}
+                        </ul>
+                    `;
+                }
+
+                return `<div class="card">
+                            טלוויזיה סמסונג - דגם: ${model}<br>
+                            סוג תצוגה: ${display}<br>
+                            אזור שוק: ${market}<br>
+                            גודל מסך: ${size} אינץ'<br>
+                            שנת ייצור: ${year}<br>
+                            סדרת דגם: ${series}<br>
+                            מקלט שידור: ${broadcast}<br>
+                            מערכת הפעלה: ${os}<br>
+                            מדינה: ${country}${countryNote}<br>
+                            ${image ? `<img src="${image}" alt="${display}">` : ''}
+                            ${featuresHtml}
+                            <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                        </div>`;
+            } catch (e) {
+                console.error("שגיאה ב-getTVDetails:", e);
+                return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
             }
-        } else if (model.length === 10 || model.length === 12) {
-            country = 'לא צוין';
-        }
-        if (model[1] === 'A') {
-            countryNote = ' - יבוא מקביל';
-        }
-        let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
-        let image = productImages[imageKey] || '';
-
-        let featuresHtml = '';
-        if (productFeatures[display]) {
-            featuresHtml = `
-                <br><strong>${productFeatures[display].description}</strong><br>
-                <ul style="text-align: right; padding-right: 20px;">
-                    ${productFeatures[display].features.map(feature => `<li>${feature}</li>`).join('')}
-                </ul>
-            `;
         }
 
-        return `<div class="card">
-                    טלוויזיה סמסונג - דגם: ${model}<br>
-                    סוג תצוגה: ${display}<br>
-                    אזור שוק: ${market}<br>
-                    גודל מסך: ${size} אינץ'<br>
-                    שנת ייצור: ${year}<br>
-                    סדרת דגם: ${series}<br>
-                    מקלט שידור: ${broadcast}<br>
-                    מערכת הפעלה: ${os}<br>
-                    מדינה: ${country}${countryNote}<br>
-                    ${image ? `<img src="${image}" alt="${display}">` : ''}
-                    ${featuresHtml}
-                    <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                </div>`;
-    }
+        function getDramaticModelDetails(model) {
+            const username = localStorage.getItem("currentUser");
+            let teamData = initTeamData();
 
-    function getDramaticModelDetails(model) {
-        let displayType = '';
-        let image = '';
-        let size = parseInt(model[2] + model[3]) || 0;
-        let yearCode = '';
-        for (let i = 4; i < model.length; i++) {
-            if (yearCodes[model[i]]) {
-                yearCode = model[i];
-                break;
+            if (teamData && teamData.searchesLeft <= 0) {
+                return `<div class="card">שגיאה: נגמרו לך החיפושים להיום!</div>`;
             }
-        }
-        let year = yearCodes[yearCode] || 'לא ידוע';
-        let overallScore = 0;
-        let stars = '';
-        let celebrationEffect = '';
-        let countryCode = model.length >= 13 ? model.slice(-2) : 'לא ידוע';
-        let countryFlag = '';
 
-        const countryFlags = {
-            'IL': 'https://flagcdn.com/w80/il.png',
-            'SQ': 'https://flagcdn.com/w80/il.png',
-            'ZA': 'https://flagcdn.com/w80/za.png',
-            'RU': 'https://flagcdn.com/w80/ru.png',
-            'UA': 'https://flagcdn.com/w80/ua.png',
-            '2C': 'https://flagcdn.com/w80/cn.png',
-            'XU': 'https://flagcdn.com/w80/gb.png',
-            'XY': 'https://flagcdn.com/w80/au.png',
-            'AA': 'https://flagcdn.com/w80/us.png',
-            'WT': 'https://flagcdn.com/w80/hk.png',
-            'EC': 'https://flagcdn.com/w80/kr.png',
-            'TL': 'https://flagcdn.com/w80/in.png',
-            'EM': 'https://flagcdn.com/w80/mx.png',
-            'US': 'https://flagcdn.com/w80/us.png',
-            'LP': 'https://flagcdn.com/w80/hk.png',
-            'AH': 'https://flagcdn.com/w80/kr.png',
-            'T1': 'https://flagcdn.com/w80/in.png',
-            'AX': 'https://flagcdn.com/w80/mx.png',
-            'KJ': 'https://flagcdn.com/w80/il.png'
-        };
-
-        const defaultImage = 'https://via.placeholder.com/300x200?text=מוצר+סמסונג';
-
-        if (/^R[FSBTL]/.test(model)) {
-            displayType = fridgeConfig[model[1]] || 'מקרר לא ידוע';
-            overallScore = Math.floor(Math.random() * (85 - 70 + 1)) + 70;
-            if (size >= 60 && year >= '2023') overallScore += 5;
-            image = productImages[displayType] || defaultImage;
-        } else if (/^W[WD]|^DV/.test(model)) {
-            displayType = washerTech[model.slice(0, 2)] || 'מכונת כביסה לא ידועה';
-            overallScore = Math.floor(Math.random() * (80 - 65 + 1)) + 65;
-            image = productImages['מכונת כביסה'] || defaultImage;
-        } else if (/^[QULPK][NEA]/.test(model)) {
-            let isFrame = model.includes('LS03');
-            let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
-            let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
-
-            if (isFrame) displayType = 'The Frame';
-            else if (isOLED) displayType = 'OLED';
-            else if (isNseries) displayType = 'N4000-N5500 Series';
-            else if (model[0] === 'U' && year >= '2018') displayType = 'CRYSTAL UHD';
-            else if (model[0] === 'U' && year < '2018') displayType = 'LED';
-            else displayType = tvDisplay[model[0]] || 'טלוויזיה לא ידועה';
-
-            if (isFrame && size >= 85 && year === '2024') overallScore = 94;
-            else if (model[0] === 'Q' && size >= 85 && year === '2024') overallScore = 94;
-            else if (isFrame) overallScore = Math.min(88 + Math.floor((size - 43) / 10), 93);
-            else if (isOLED) overallScore = Math.min(82 + Math.floor((size - 55) / 10), 91);
-            else if (model[0] === 'Q') overallScore = Math.min(85 + Math.floor((size - 55) / 10), 93);
-            else overallScore = Math.min(75 + Math.floor((size - 43) / 10), 88);
-            image = productImages[displayType] || defaultImage;
-        } else {
-            displayType = 'מוצר לא מזוהה';
-            overallScore = Math.floor(Math.random() * (80 - 60 + 1)) + 60;
-            image = defaultImage;
-        }
-
-        countryFlag = countryFlags[countryCode] || '';
-
-        if (overallScore >= 90) stars = '★★★★★';
-        else if (overallScore >= 80) stars = '★★★★☆';
-        else if (overallScore >= 70) stars = '★★★☆☆';
-        else if (overallScore >= 60) stars = '★★☆☆☆';
-        else stars = '★☆☆☆☆';
-
-        if (overallScore >= 88) {
-            celebrationEffect = ' celebration';
-            setTimeout(() => triggerConfetti(), 2000);
-        }
-
-        let flagHtml = countryFlag ? `<img src="${countryFlag}" alt="דגל המדינה" class="country-flag">` : '';
-
-        return `<div class="dramatic-card hollywood${celebrationEffect}">
-                    <img src="${image}" alt="${displayType}">
-                    <div class="tv-name">${model} - ${displayType}</div>
-                    ${flagHtml}
-                    <div class="stars">${stars}</div>
-                    <div class="overall">${overallScore}</div>
-                    <button onclick="saveCard('${model}', 'שחקן', ${overallScore})">שמור לקבוצה</button>
-                </div>`;
-    }
-
-    function triggerConfetti() {
-        const confettiContainer = document.createElement('div');
-        confettiContainer.className = 'confetti';
-        document.body.appendChild(confettiContainer);
-
-        for (let i = 0; i < 50; i++) {
-            const confettiPiece = document.createElement('div');
-            confettiPiece.className = 'confetti-piece';
-            confettiPiece.style.left = Math.random() * 100 + 'vw';
-            confettiPiece.style.animationDelay = Math.random() * 2 + 's';
-            confettiContainer.appendChild(confettiPiece);
-        }
-
-        setTimeout(() => confettiContainer.remove(), 5000);
-    }
-
-    function lookupSerial() {
-        var serial = document.getElementById("serialInput").value.trim().toUpperCase();
-        var resultDiv = document.getElementById("serial-result");
-        var loader = document.getElementById("loader-serial");
-
-        if (!serial || (serial.length !== 11 && serial.length !== 15)) {
-            resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי באורך 11 או 15 תווים (לדוגמה: S01X5K12345 או S01X5K1M12345678).</div>';
-            resultDiv.style.display = "block";
-            return;
-        }
-
-        loader.style.display = "block";
-        resultDiv.style.display = "none";
-
-        setTimeout(() => {
-            const yearCodes = {
-                'F': 2014, 'G': 2015, 'H': 2016, 'J': 2017, 'K': 2018, 'M': 2019, 'N': 2020,
-                'R': 2021, 'T': 2022, 'W': 2023, 'X': 2024, 'Y': 2025
-            };
-            const monthCodes = {
-                '1': 'ינואר', '2': 'פברואר', '3': 'מרץ', '4': 'אפריל', '5': 'מאי', '6': 'יוני',
-                '7': 'יולי', '8': 'אוגוסט', '9': 'ספטמבר', 'A': 'אוקטובר', 'B': 'נובמבר', 'C': 'דצמבר'
-            };
-
-            let yearIndex = serial.length === 15 ? 7 : 3;
-            let monthIndex = serial.length === 15 ? 8 : 4;
-            let yearCode = serial[yearIndex];
-            let monthCode = serial[monthIndex];
-            let year = yearCodes[yearCode] || 'לא ידוע';
-            let month = monthCodes[monthCode] || 'לא ידוע';
-
-            let warrantyStatus = 'לא ניתן לחשב';
-            if (year !== 'לא ידוע' && month !== 'לא ידוע') {
-                let productionDate = new Date(year, Object.keys(monthCodes).indexOf(monthCode));
-                let march2024 = new Date(2024, 2);
-                let december2024 = new Date(2024, 11);
-
-                if (productionDate < march2024) {
-                    warrantyStatus = 'לא באחריות';
-                } else if (productionDate >= march2024 && productionDate <= december2024) {
-                    warrantyStatus = 'באחריות סמליין';
-                } else if (productionDate > december2024) {
-                    warrantyStatus = 'באחריות סמסונג';
+            let displayType = '';
+            let image = '';
+            let size = parseInt(model[2] + model[3]) || 0;
+            let yearCode = '';
+            for (let i = 4; i < model.length; i++) {
+                if (yearCodes[model[i]]) {
+                    yearCode = model[i];
+                    break;
                 }
             }
+            let year = yearCodes[yearCode] || 'לא ידוע';
+            let overallScore = 0;
+            let stars = '';
+            let celebrationEffect = '';
+            let countryCode = model.length >= 13 ? model.slice(-2) : 'לא ידוע';
+            let countryFlag = '';
 
-            resultDiv.innerHTML = `<div class="card">
-                                    מספר סיריאלי: ${serial}<br>
-                                    שנת ייצור: ${year}<br>
-                                    חודש ייצור: ${month}<br>
-                                    סטטוס אחריות: ${warrantyStatus}<br>
-                                    הערה: למידע נוסף יש לבדוק לפי קוד דגם.
-                                  </div>`;
-            resultDiv.style.display = "block";
-            loader.style.display = "none";
-            showPopup();
-        }, 1000);
-    }
-    function showPopup() {
-        document.getElementById("popup").style.display = "block";
-        document.getElementById("popup-overlay").style.display = "block";
-    }
+            const countryFlags = {
+                'IL': 'https://flagcdn.com/w80/il.png',
+                'SQ': 'https://flagcdn.com/w80/il.png',
+                'ZA': 'https://flagcdn.com/w80/za.png',
+                'RU': 'https://flagcdn.com/w80/ru.png',
+                'UA': 'https://flagcdn.com/w80/ua.png',
+                '2C': 'https://flagcdn.com/w80/cn.png',
+                'XU': 'https://flagcdn.com/w80/gb.png',
+                'XY': 'https://flagcdn.com/w80/au.png',
+                'AA': 'https://flagcdn.com/w80/us.png',
+                'WT': 'https://flagcdn.com/w80/hk.png',
+                'EC': 'https://flagcdn.com/w80/kr.png',
+                'TL': 'https://flagcdn.com/w80/in.png',
+                'EM': 'https://flagcdn.com/w80/mx.png',
+                'US': 'https://flagcdn.com/w80/us.png',
+                'LP': 'https://flagcdn.com/w80/hk.png',
+                'AH': 'https://flagcdn.com/w80/kr.png',
+                'T1': 'https://flagcdn.com/w80/in.png',
+                'AX': 'https://flagcdn.com/w80/mx.png',
+                'KJ': 'https://flagcdn.com/w80/il.png'
+            };
 
-    function closePopup() {
-        document.getElementById("popup").style.display = "none";
-        document.getElementById("popup-overlay").style.display = "none";
-    }
+            const defaultImage = 'https://via.placeholder.com/300x200?text=מוצר+סמסונג';
 
-    function switchToModelPage() {
-        closePopup();
-        showPage('model');
-    }
+            if (/^R[FSBTL]/.test(model)) {
+                displayType = fridgeConfig[model[1]] || 'מקרר לא ידוע';
+                overallScore = Math.floor(Math.random() * (85 - 70 + 1)) + 70;
+                if (size >= 60 && year >= '2023') overallScore += 5;
+                image = productImages[displayType] || defaultImage;
+            } else if (/^W[WD]|^DV/.test(model)) {
+                displayType = washerTech[model.slice(0, 2)] || 'מכונת כביסה לא ידועה';
+                overallScore = Math.floor(Math.random() * (80 - 65 + 1)) + 65;
+                image = productImages['מכונת כביסה'] || defaultImage;
+            } else if (/^[QULPK][NEA]/.test(model)) {
+                let isFrame = model.includes('LS03');
+                let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
+                let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
 
-    function openLoginPopup() {
-        document.getElementById("login-popup").style.display = "block";
-        document.getElementById("login-overlay").style.display = "block";
-    }
+                if (isFrame) displayType = 'The Frame';
+                else if (isOLED) displayType = 'OLED';
+                else if (isNseries) displayType = 'N4000-N5500 Series';
+                else if (model[0] === 'U' && year >= '2018') displayType = 'CRYSTAL UHD';
+                else if (model[0] === 'U' && year < '2018') displayType = 'LED';
+                else displayType = tvDisplay[model[0]] || 'טלוויזיה לא ידועה';
 
-    function closeLoginPopup() {
-        document.getElementById("login-popup").style.display = "none";
-        document.getElementById("login-overlay").style.display = "none";
-    }
+                if (isFrame && size >= 85 && year === '2024') overallScore = 94;
+                else if (model[0] === 'Q' && size >= 85 && year === '2024') overallScore = 94;
+                else if (isFrame) overallScore = Math.min(88 + Math.floor((size - 43) / 10), 93);
+                else if (isOLED) overallScore = Math.min(82 + Math.floor((size - 55) / 10), 91);
+                else if (model[0] === 'Q') overallScore = Math.min(85 + Math.floor((size - 55) / 10), 93);
+                else overallScore = Math.min(75 + Math.floor((size - 43) / 10), 88);
+                image = productImages[displayType] || defaultImage;
+            } else {
+                displayType = 'מוצר לא מזוהה';
+                overallScore = Math.floor(Math.random() * (80 - 60 + 1)) + 60;
+                image = defaultImage;
+            }
 
-    function login() {
-        let email = document.getElementById("emailInput").value.trim();
-        let password = document.getElementById("passwordInput").value.trim();
+            countryFlag = countryFlags[countryCode] || '';
 
-        auth.signInWithEmailAndPassword(email, password)
-            .then(userCredential => {
-                alert("התחברת בהצלחה!");
-                closeLoginPopup();
-            })
-            .catch(error => {
-                alert(`שגיאה בהתחברות: ${error.message}`);
-            });
-    }
+            if (overallScore >= 90) stars = '★★★★★';
+            else if (overallScore >= 80) stars = '★★★★☆';
+            else if (overallScore >= 70) stars = '★★★☆☆';
+            else if (overallScore >= 60) stars = '★★☆☆☆';
+            else stars = '★☆☆☆☆';
 
-    function register() {
-        let email = document.getElementById("emailInput").value.trim();
-        let password = document.getElementById("passwordInput").value.trim();
+            if (overallScore >= 88) {
+                celebrationEffect = ' celebration';
+                setTimeout(() => triggerConfetti(), 2000);
+            }
 
-        if (!email || !password) {
-            alert("יש למלא את כל השדות!");
-            return;
+            let flagHtml = countryFlag ? `<img src="${countryFlag}" alt="דגל המדינה" class="country-flag">` : '';
+
+            if (teamData) {
+                teamData.searchesLeft--;
+                localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+                const roles = ['שוער', 'מגן', 'קשר', 'חלוץ'];
+                const randomRole = roles[Math.floor(Math.random() * roles.length)];
+                return `<div class="dramatic-card hollywood${celebrationEffect}">
+                            <img src="${image}" alt="${displayType}">
+                            <div class="tv-name">${model} - ${displayType}</div>
+                            ${flagHtml}
+                            <div class="stars">${stars}</div>
+                            <div class="overall">${overallScore}</div>
+                            <button onclick="saveCard('${model}', '${randomRole}', ${overallScore})" ${teamData.savesLeft <= 0 ? 'disabled' : ''}>שמור לקבוצה (${teamData.savesLeft} נותרו)</button>
+                        </div>`;
+            } else {
+                return `<div class="dramatic-card hollywood${celebrationEffect}">
+                            <img src="${image}" alt="${displayType}">
+                            <div class="tv-name">${model} - ${displayType}</div>
+                            ${flagHtml}
+                            <div class="stars">${stars}</div>
+                            <div class="overall">${overallScore}</div>
+                        </div>`;
+            }
+        }
+        function triggerConfetti() {
+            const confettiContainer = document.createElement('div');
+            confettiContainer.className = 'confetti';
+            document.body.appendChild(confettiContainer);
+
+            for (let i = 0; i < 50; i++) {
+                const confettiPiece = document.createElement('div');
+                confettiPiece.className = 'confetti-piece';
+                confettiPiece.style.left = Math.random() * 100 + 'vw';
+                confettiPiece.style.animationDelay = Math.random() * 2 + 's';
+                confettiContainer.appendChild(confettiPiece);
+            }
+
+            setTimeout(() => confettiContainer.remove(), 5000);
         }
 
-        auth.createUserWithEmailAndPassword(email, password)
-            .then(userCredential => {
+        function lookupSerial() {
+            try {
+                var serial = document.getElementById("serialInput").value.trim().toUpperCase();
+                var resultDiv = document.getElementById("serial-result");
+                var loader = document.getElementById("loader-serial");
+
+                if (!serial || serial.length < 10) {
+                    resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי (מינימום 10 תווים, לדוגמה: S01X5K123456).</div>';
+                    resultDiv.style.display = "block";
+                    return;
+                }
+
+                loader.style.display = "block";
+                resultDiv.style.display = "none";
+                setTimeout(() => {
+                    var yearCode = serial[4]; // תו 5 במספר הסיריאלי (למשל, K עבור 2016)
+                    var year = yearCodes[yearCode] || 'לא ידוע';
+                    var monthCode = serial[5]; // תו 6 (בדרך כלל הקסדצימלי 1-C עבור ינואר-דצמבר)
+                    var month = parseInt(monthCode, 16);
+                    month = (month >= 1 && month <= 12) ? month : 'לא ידוע';
+                    var warrantyEnd = year !== 'לא ידוע' && month !== 'לא ידוע' ? `${month}/${parseInt(year) + 2}` : 'לא ניתן לחשב';
+
+                    resultDiv.innerHTML = `<div class="card">
+                                            מספר סיריאלי: ${serial}<br>
+                                            שנת ייצור: ${year}<br>
+                                            חודש ייצור: ${month === 'לא ידוע' ? month : month + ' (' + ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'][month - 1] + ')' }<br>
+                                            תום אחריות: ${warrantyEnd}<br>
+                                            הערה: למידע נוסף יש לבדוק לפי קוד דגם.
+                                          </div>`;
+                    resultDiv.style.display = "block";
+                    loader.style.display = "none";
+                    showPopup();
+                }, 1000);
+            } catch (e) {
+                console.error("שגיאה ב-lookupSerial:", e);
+                resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד המספר הסיריאלי: ${e.message}</div>`;
+                resultDiv.style.display = "block";
+                loader.style.display = "none";
+            }
+        }
+
+        function showPopup() {
+            document.getElementById("popup").style.display = "block";
+            document.getElementById("popup-overlay").style.display = "block";
+        }
+
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+            document.getElementById("popup-overlay").style.display = "none";
+        }
+
+        function switchToModelPage() {
+            closePopup();
+            showPage('model');
+        }
+
+        function openLoginPopup() {
+            document.getElementById("login-popup").style.display = "block";
+            document.getElementById("login-overlay").style.display = "block";
+        }
+
+        function closeLoginPopup() {
+            document.getElementById("login-popup").style.display = "none";
+            document.getElementById("login-overlay").style.display = "none";
+        }
+
+        function login() {
+            let username = document.getElementById("usernameInput").value.trim();
+            let password = document.getElementById("passwordInput").value.trim();
+            let users = getUsers();
+
+            if (users[username] && users[username].password === password) {
+                localStorage.setItem("currentUser", username);
+                alert("התחברת בהצלחה!");
+                closeLoginPopup();
+                updateUltimateButtonState();
+                if (ultimateMode) openUltimateMenu();
+            } else {
+                alert("שם משתמש או סיסמה שגויים.");
+            }
+        }
+
+        function register() {
+            let username = document.getElementById("usernameInput").value.trim();
+            let password = document.getElementById("passwordInput").value.trim();
+            let users = getUsers();
+
+            if (!username || !password) {
+                alert("יש למלא את כל השדות!");
+                return;
+            }
+
+            if (users[username]) {
+                alert("שם המשתמש כבר קיים!");
+            } else {
+                users[username] = { password: password };
+                saveUsers(users);
+                localStorage.setItem("currentUser", username);
                 alert("נרשמת והתחברת בהצלחה!");
                 closeLoginPopup();
-                initTeamData(userCredential.user.uid);
-            })
-            .catch(error => {
-                alert(`שגיאה ברישום: ${error.message}`);
-            });
-    }
+                initTeamData();
+                updateUltimateButtonState();
+            }
+        }
 
-    function initTeamData(uid) {
-        db.ref(`teams/${uid}`).once('value').then(snapshot => {
-            if (!snapshot.val()) {
-                const teamData = {
+        function updateUltimateButtonState() {
+            const username = localStorage.getItem("currentUser");
+            const btn = document.getElementById("dramaticModeBtn");
+            const teamBtn = document.getElementById("teamManagementBtn");
+            btn.classList.toggle("active", ultimateMode);
+            teamBtn.style.display = ultimateMode ? "block" : "none";
+        }
+
+        function initTeamData() {
+            const username = localStorage.getItem("currentUser");
+            if (!username) return null;
+
+            let teamData = JSON.parse(localStorage.getItem(`team_${username}`));
+            if (!teamData) {
+                teamData = {
                     teamName: '',
                     cards: [],
                     searchesLeft: 10,
-                    savesLeft: 11,
-                    lastReset: new Date().toDateString(),
-                    managerName: '',
-                    stadiumName: '',
-                    country: '',
-                    city: ''
+                    savesLeft: 11
                 };
-                db.ref(`teams/${uid}`).set(teamData);
+                localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
             }
-        });
-    }
+            return teamData;
+        }
 
-    function loadTeamData(uid) {
-        db.ref(`teams/${uid}`).once('value').then(snapshot => {
-            let teamData = snapshot.val();
-            const today = new Date().toDateString();
-            if (teamData.lastReset !== today) {
-                teamData.searchesLeft = 10;
-                teamData.savesLeft = 11;
-                teamData.lastReset = today;
-                db.ref(`teams/${uid}`).update({
-                    searchesLeft: 10,
-                    savesLeft: 11,
-                    lastReset: today
-                });
-            }
-        });
-    }
+        function saveCard(model, role, rating) {
+            const username = localStorage.getItem("currentUser");
+            let teamData = initTeamData();
 
-    function saveCard(model, role, rating) {
-        if (!currentUser) return;
-        db.ref(`teams/${currentUser.uid}`).once('value').then(snapshot => {
-            let teamData = snapshot.val();
-            if (teamData.savesLeft <= 0) {
+            if (!teamData || teamData.savesLeft <= 0) {
                 alert("לא נותרו שמירות!");
                 return;
             }
+
             if (teamData.cards.length >= 11) {
                 alert("הקבוצה מלאה (11 שחקנים)!");
                 return;
             }
+
             teamData.cards.push({ model, role, rating });
             teamData.savesLeft--;
-            db.ref(`teams/${currentUser.uid}`).update({
-                cards: teamData.cards,
-                savesLeft: teamData.savesLeft
-            });
+            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
             alert(`נוסף לקבוצה: ${model} כ${role} עם דירוג ${rating}`);
-        });
-    }
-
-    function openTeamPopup() {
-        if (!currentUser) {
-            openLoginPopup();
-            return;
+            document.querySelector('.dramatic-card button').disabled = true;
         }
-        db.ref(`teams/${currentUser.uid}`).once('value').then(snapshot => {
-            let teamData = snapshot.val();
+
+        function openTeamPopup() {
+            const username = localStorage.getItem("currentUser");
+            let teamData = initTeamData();
+            if (!teamData) return;
+
             let cardsHtml = '<ul>';
             teamData.cards.forEach((card, index) => {
                 cardsHtml += `<li>${card.model} - ${card.role} (${card.rating}) <button onclick="removeCard(${index})">הסר</button></li>`;
             });
             cardsHtml += '</ul>';
 
-            const countries = {
-                'ישראל': ['ירושלים', 'תל אביב', 'חיפה', 'באר שבע', 'אילת'],
-                'אנגליה': ['לונדון', 'מנצ\'סטר', 'ליברפול', 'ברמינגהם'],
-                'ספרד': ['מדריד', 'ברצלונה', 'ולנסיה', 'סביליה'],
-                'ארה"ב': ['ניו יורק', 'לוס אנג\'לס', 'שיקגו', 'מיאמי']
-            };
-            const countryFlags = {
-                'ישראל': 'https://flagcdn.com/w80/il.png',
-                'אנגליה': 'https://flagcdn.com/w80/gb.png',
-                'ספרד': 'https://flagcdn.com/w80/es.png',
-                'ארה"ב': 'https://flagcdn.com/w80/us.png'
-            };
-
-            let countryOptions = Object.keys(countries).map(country => 
-                `<option value="${country}" ${teamData.country === country ? 'selected' : ''}>${country}</option>`
-            ).join('');
-            let cityOptions = teamData.country ? countries[teamData.country].map(city => 
-                `<option value="${city}" ${teamData.city === city ? 'selected' : ''}>${city}</option>`
-            ).join('') : '';
-
             document.getElementById("team-popup").innerHTML = `
                 <h3>ניהול קבוצה</h3>
                 <input type="text" id="teamNameInput" placeholder="הזן שם קבוצה" value="${teamData.teamName}">
-                <input type="text" id="managerNameInput" placeholder="שם מנהל הקבוצה" value="${teamData.managerName || ''}" style="margin-top: 10px;">
-                <input type="text" id="stadiumNameInput" placeholder="שם האצטדיון" value="${teamData.stadiumName || ''}" style="margin-top: 10px;">
-                <div style="margin-top: 10px;">
-                    <label>מדינה: </label>
-                    <select id="countrySelect" onchange="updateCities()">
-                        <option value="">בחר מדינה</option>
-                        ${countryOptions}
-                    </select>
-                    <img id="countryFlag" src="${teamData.country ? countryFlags[teamData.country] : ''}" style="width: 40px; height: 25px; vertical-align: middle; margin-left: 10px; ${teamData.country ? '' : 'display: none;'}">
-                </div>
-                <div style="margin-top: 10px;">
-                    <label>עיר: </label>
-                    <select id="citySelect">
-                        <option value="">בחר עיר</option>
-                        ${cityOptions}
-                    </select>
-                </div>
-                <button onclick="saveTeamDetails()" style="margin-top: 10px;">שמור פרטי קבוצה</button>
+                <button onclick="saveTeamName()">שמור שם קבוצה</button>
                 <p>חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרות: ${teamData.savesLeft}</p>
                 <div id="teamCards">${cardsHtml}</div>
-                <button onclick="showTeamField()" style="margin-top: 10px;">תצוגת מגרש</button>
-                <button onclick="showLeague()" style="margin-top: 10px;">צפה בליגה</button>
+                <button onclick="showTeamField()">תצוגת מגרש</button>
+                <button onclick="showLeague()">צפה בליגה</button>
+                <button onclick="exportTeamData()">ייצא נתונים</button>
+                <button onclick="importTeamData()">ייבא נתונים</button>
+                <textarea id="exportData" placeholder="ייצא/ייבא נתונים" style="width: 100%; height: 100px; margin-top: 10px;"></textarea>
                 <div class="popup-buttons">
                     <button onclick="closeTeamPopup()">סגור</button>
                 </div>
             `;
             document.getElementById("team-popup").style.display = "block";
             document.getElementById("team-overlay").style.display = "block";
-        });
-    }
-
-    function updateCities() {
-        const countrySelect = document.getElementById("countrySelect");
-        const citySelect = document.getElementById("citySelect");
-        const countryFlag = document.getElementById("countryFlag");
-        const selectedCountry = countrySelect.value;
-        const countries = {
-            'ישראל': ['ירושלים', 'תל אביב', 'חיפה', 'באר שבע', 'אילת'],
-            'אנגליה': ['לונדון', 'מנצ\'סטר', 'ליברפול', 'ברמינגהם'],
-            'ספרד': ['מדריד', 'ברצלונה', 'ולנסיה', 'סביליה'],
-            'ארה"ב': ['ניו יורק', 'לוס אנג\'לס', 'שיקגו', 'מיאמי']
-        };
-        const countryFlags = {
-            'ישראל': 'https://flagcdn.com/w80/il.png',
-            'אנגליה': 'https://flagcdn.com/w80/gb.png',
-            'ספרד': 'https://flagcdn.com/w80/es.png',
-            'ארה"ב': 'https://flagcdn.com/w80/us.png'
-        };
-
-        citySelect.innerHTML = '<option value="">בחר עיר</option>';
-        if (selectedCountry && countries[selectedCountry]) {
-            countries[selectedCountry].forEach(city => {
-                const option = document.createElement('option');
-                option.value = city;
-                option.textContent = city;
-                citySelect.appendChild(option);
-            });
-            countryFlag.src = countryFlags[selectedCountry];
-            countryFlag.style.display = 'inline';
-        } else {
-            countryFlag.style.display = 'none';
         }
-    }
 
-    function saveTeamDetails() {
-        if (!currentUser) return;
-        const teamName = document.getElementById("teamNameInput").value.trim();
-        const managerName = document.getElementById("managerNameInput").value.trim();
-        const stadiumName = document.getElementById("stadiumNameInput").value.trim();
-        const country = document.getElementById("countrySelect").value;
-        const city = document.getElementById("citySelect").value;
+        function closeTeamPopup() {
+            document.getElementById("team-popup").style.display = "none";
+            document.getElementById("team-overlay").style.display = "none";
+        }
 
-        db.ref(`teams/${currentUser.uid}`).update({
-            teamName: teamName,
-            managerName: managerName,
-            stadiumName: stadiumName,
-            country: country,
-            city: city
-        }).then(() => {
-            alert("פרטי הקבוצה נשמרו בהצלחה!");
-            openTeamPopup();
-        }).catch(error => {
-            alert(`שגיאה בשמירת פרטי הקבוצה: ${error.message}`);
-        });
-    }
+        function saveTeamName() {
+            const username = localStorage.getItem("currentUser");
+            let teamData = initTeamData();
+            let teamName = document.getElementById("teamNameInput").value.trim();
 
-    function removeCard(index) {
-        if (!currentUser) return;
-        db.ref(`teams/${currentUser.uid}`).once('value').then(snapshot => {
-            let teamData = snapshot.val();
+            if (!teamName) {
+                alert("יש להזין שם לקבוצה!");
+                return;
+            }
+
+            teamData.teamName = teamName;
+            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+            alert("שם הקבוצה נשמר!");
+        }
+
+        function removeCard(index) {
+            const username = localStorage.getItem("currentUser");
+            let teamData = initTeamData();
+
             teamData.cards.splice(index, 1);
-            db.ref(`teams/${currentUser.uid}`).update({
-                cards: teamData.cards
-            }).then(() => {
-                alert("השחקן הוסר מהקבוצה!");
-                openTeamPopup();
-            });
-        });
-    }
+            teamData.savesLeft++;
+            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+            openTeamPopup();
+        }
 
-    function showTeamField() {
-        if (!currentUser) return;
-        db.ref(`teams/${currentUser.uid}`).once('value').then(snapshot => {
-            let teamData = snapshot.val();
-            let fieldHtml = '';
-            const positions = [
-                { role: 'שוער', top: '50%', left: '10%' },
-                { role: 'מגן ימני', top: '30%', left: '25%' },
-                { role: 'בלם ימני', top: '50%', left: '25%' },
-                { role: 'בלם שמאלי', top: '50%', left: '40%' },
-                { role: 'מגן שמאלי', top: '30%', left: '40%' },
-                { role: 'קשר הגנתי', top: '50%', left: '55%' },
-                { role: 'קשר ימני', top: '30%', left: '70%' },
-                { role: 'קשר שמאלי', top: '30%', left: '85%' },
-                { role: 'קשר התקפי', top: '50%', left: '70%' },
-                { role: 'חלוץ ימני', top: '70%', left: '70%' },
-                { role: 'חלוץ שמאלי', top: '70%', left: '85%' }
-            ];
+        function openUltimateMenu() {
+            const username = localStorage.getItem("currentUser");
+            if (!username) {
+                openLoginPopup();
+            } else if (ultimateMode) {
+                document.getElementById("ultimate-menu").style.display = "block";
+                document.getElementById("ultimate-menu-overlay").style.display = "block";
+            } else {
+                toggleUltimateMode();
+            }
+        }
 
-            teamData.cards.forEach((card, index) => {
-                if (index < positions.length) {
-                    fieldHtml += `
-                        <div class="player" style="top: ${positions[index].top}; left: ${positions[index].left};">
-                            ${card.model}<br>${positions[index].role} (${card.rating})
-                        </div>`;
+        function closeUltimateMenu() {
+            document.getElementById("ultimate-menu").style.display = "none";
+            document.getElementById("ultimate-menu-overlay").style.display = "none";
+        }
+
+        function openTeamManagement() {
+            closeUltimateMenu();
+            openTeamPopup();
+        }
+
+        function showTeamField() {
+            const username = localStorage.getItem("currentUser");
+            let teamData = initTeamData();
+            if (!teamData) return;
+
+            const field = document.getElementById("field");
+            field.innerHTML = "";
+
+            const positions = {
+                'שוער': [{ top: '45%', left: '5%' }],
+                'מגן': [
+                    { top: '20%', left: '20%' },
+                    { top: '70%', left: '20%' },
+                    { top: '20%', left: '30%' },
+                    { top: '70%', left: '30%' }
+                ],
+                'קשר': [
+                    { top: '35%', left: '45%' },
+                    { top: '55%', left: '45%' },
+                    { top: '35%', left: '55%' },
+                    { top: '55%', left: '55%' }
+                ],
+                'חלוץ': [
+                    { top: '30%', left: '75%' },
+                    { top: '60%', left: '75%' }
+                ]
+            };
+
+            let roleCounts = { 'שוער': 0, 'מגן': 0, 'קשר': 0, 'חלוץ': 0 };
+
+            teamData.cards.forEach(card => {
+                const role = card.role;
+                const count = roleCounts[role];
+                if (positions[role] && count < positions[role].length) {
+                    const pos = positions[role][count];
+                    const playerDiv = document.createElement("div");
+                    playerDiv.className = "player";
+                    playerDiv.style.top = pos.top;
+                    playerDiv.style.left = pos.left;
+                    playerDiv.textContent = `${card.model} (${card.rating})`;
+                    field.appendChild(playerDiv);
+                    roleCounts[role]++;
                 }
             });
 
-            document.getElementById("field").innerHTML = fieldHtml;
             document.getElementById("field-popup").style.display = "block";
             document.getElementById("field-overlay").style.display = "block";
-        });
-    }
+        }
 
-    function closeTeamPopup() {
-        document.getElementById("team-popup").style.display = "none";
-        document.getElementById("team-overlay").style.display = "none";
-    }
+        function closeFieldPopup() {
+            document.getElementById("field-popup").style.display = "none";
+            document.getElementById("field-overlay").style.display = "none";
+        }
 
-    function closeFieldPopup() {
-        document.getElementById("field-popup").style.display = "none";
-        document.getElementById("field-overlay").style.display = "none";
-    }
+        function showLeague() {
+            const username = localStorage.getItem("currentUser");
+            let teamData = initTeamData();
+            if (!teamData || !teamData.teamName) {
+                alert("יש להזין שם קבוצה לפני צפייה בליגה!");
+                return;
+            }
 
-    function showLeague() {
-        if (!currentUser) return;
-        db.ref('teams').once('value').then(snapshot => {
-            let teams = [];
-            snapshot.forEach(childSnapshot => {
-                const teamData = childSnapshot.val();
-                const totalRating = teamData.cards.reduce((sum, card) => sum + card.rating, 0);
-                teams.push({
-                    teamName: teamData.teamName || 'קבוצה ללא שם',
-                    managerName: teamData.managerName || 'אלמוני',
-                    totalRating: totalRating,
-                    playerCount: teamData.cards.length
-                });
+            let users = getUsers();
+            let leagueData = [];
+            for (let user in users) {
+                let userTeam = JSON.parse(localStorage.getItem(`team_${user}`));
+                if (userTeam && userTeam.teamName && userTeam.cards.length > 0) {
+                    let totalRating = userTeam.cards.reduce((sum, card) => sum + card.rating, 0);
+                    let avgRating = (totalRating / userTeam.cards.length).toFixed(1);
+                    leagueData.push({ teamName: userTeam.teamName, avgRating: avgRating, players: userTeam.cards.length });
+                }
+            }
+
+            leagueData.sort((a, b) => b.avgRating - a.avgRating);
+
+            let tableHtml = '<table><tr><th>מיקום</th><th>שם קבוצה</th><th>דירוג ממוצע</th><th>שחקנים</th></tr>';
+            leagueData.forEach((team, index) => {
+                tableHtml += `<tr><td>${index + 1}</td><td>${team.teamName}</td><td>${team.avgRating}</td><td>${team.players}</td></tr>`;
             });
-
-            teams.sort((a, b) => b.totalRating - a.totalRating);
-
-            let tableHtml = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>מיקום</th>
-                            <th>שם קבוצה</th>
-                            <th>מנהל</th>
-                            <th>מספר שחקנים</th>
-                            <th>דירוג כולל</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            teams.forEach((team, index) => {
-                tableHtml += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${team.teamName}</td>
-                        <td>${team.managerName}</td>
-                        <td>${team.playerCount}/11</td>
-                        <td>${team.totalRating}</td>
-                    </tr>
-                `;
-            });
-            tableHtml += '</tbody></table>';
+            tableHtml += '</table>';
 
             document.getElementById("leagueTable").innerHTML = tableHtml;
             document.getElementById("league-popup").style.display = "block";
             document.getElementById("league-overlay").style.display = "block";
-        });
-    }
+        }
 
-    function closeLeaguePopup() {
-        document.getElementById("league-popup").style.display = "none";
-        document.getElementById("league-overlay").style.display = "none";
-    }
+        function closeLeaguePopup() {
+            document.getElementById("league-popup").style.display = "none";
+            document.getElementById("league-overlay").style.display = "none";
+        }
 
-    function openUltimateMenu() {
-        document.getElementById("ultimate-menu").style.display = "block";
-        document.getElementById("ultimate-menu-overlay").style.display = "block";
-    }
+        function exportTeamData() {
+            const username = localStorage.getItem("currentUser");
+            let teamData = initTeamData();
+            if (!teamData) return;
 
-    function closeUltimateMenu() {
-        document.getElementById("ultimate-menu").style.display = "none";
-        document.getElementById("ultimate-menu-overlay").style.display = "none";
-    }
+            let exportString = JSON.stringify(teamData);
+            document.getElementById("exportData").value = exportString;
+            alert("הנתונים יוצאו בהצלחה! העתק את הטקסט מהשדה כדי לשמור אותו.");
+        }
 
-    function openTeamManagement() {
-        closeUltimateMenu();
-        openTeamPopup();
-    }
+        function importTeamData() {
+            const username = localStorage.getItem("currentUser");
+            let importString = document.getElementById("exportData").value.trim();
 
-    // סגירת התגית של ה-script
-</script>
+            if (!importString) {
+                alert("אנא הזן נתונים לייבוא!");
+                return;
+            }
+
+            try {
+                let importedData = JSON.parse(importString);
+                if (!importedData.teamName || !Array.isArray(importedData.cards)) {
+                    throw new Error("פורמט נתונים לא תקין!");
+                }
+                localStorage.setItem(`team_${username}`, JSON.stringify(importedData));
+                alert("הנתונים יובאו בהצלחה!");
+                openTeamPopup();
+            } catch (e) {
+                alert(`שגיאה בייבוא הנתונים: ${e.message}`);
+            }
+        }
+
+        window.onload = function() {
+            updateUltimateButtonState();
+        };
+    </script>
 </body>
 </html>
 
