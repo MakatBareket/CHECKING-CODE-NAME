@@ -1431,8 +1431,8 @@
                 <button onclick="saveTeamDetails()" style="margin-top: 10px;">שמור פרטי קבוצה</button>
                 <p>חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרות: ${teamData.savesLeft}</p>
                 <div id="teamCards">${cardsHtml}</div>
-                <button onclick="showTeamField()">תצוגת מגרש</button>
-                <button onclick="showLeague()">צפה בליגה</button>
+                <button onclick="showTeamField()" style="margin-top: 10px;">תצוגת מגרש</button>
+                <button onclick="showLeague()" style="margin-top: 10px;">צפה בליגה</button>
                 <div class="popup-buttons">
                     <button onclick="closeTeamPopup()">סגור</button>
                 </div>
@@ -1447,6 +1447,185 @@
         const citySelect = document.getElementById("citySelect");
         const countryFlag = document.getElementById("countryFlag");
         const selectedCountry = countrySelect.value;
-        const
+        const countries = {
+            'ישראל': ['ירושלים', 'תל אביב', 'חיפה', 'באר שבע', 'אילת'],
+            'אנגליה': ['לונדון', 'מנצ\'סטר', 'ליברפול', 'ברמינגהם'],
+            'ספרד': ['מדריד', 'ברצלונה', 'ולנסיה', 'סביליה'],
+            'ארה"ב': ['ניו יורק', 'לוס אנג\'לס', 'שיקגו', 'מיאמי']
+        };
+        const countryFlags = {
+            'ישראל': 'https://flagcdn.com/w80/il.png',
+            'אנגליה': 'https://flagcdn.com/w80/gb.png',
+            'ספרד': 'https://flagcdn.com/w80/es.png',
+            'ארה"ב': 'https://flagcdn.com/w80/us.png'
+        };
 
+        citySelect.innerHTML = '<option value="">בחר עיר</option>';
+        if (selectedCountry && countries[selectedCountry]) {
+            countries[selectedCountry].forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+            countryFlag.src = countryFlags[selectedCountry];
+            countryFlag.style.display = 'inline';
+        } else {
+            countryFlag.style.display = 'none';
+        }
+    }
+
+    function saveTeamDetails() {
+        if (!currentUser) return;
+        const teamName = document.getElementById("teamNameInput").value.trim();
+        const managerName = document.getElementById("managerNameInput").value.trim();
+        const stadiumName = document.getElementById("stadiumNameInput").value.trim();
+        const country = document.getElementById("countrySelect").value;
+        const city = document.getElementById("citySelect").value;
+
+        db.ref(`teams/${currentUser.uid}`).update({
+            teamName: teamName,
+            managerName: managerName,
+            stadiumName: stadiumName,
+            country: country,
+            city: city
+        }).then(() => {
+            alert("פרטי הקבוצה נשמרו בהצלחה!");
+            openTeamPopup();
+        }).catch(error => {
+            alert(`שגיאה בשמירת פרטי הקבוצה: ${error.message}`);
+        });
+    }
+
+    function removeCard(index) {
+        if (!currentUser) return;
+        db.ref(`teams/${currentUser.uid}`).once('value').then(snapshot => {
+            let teamData = snapshot.val();
+            teamData.cards.splice(index, 1);
+            db.ref(`teams/${currentUser.uid}`).update({
+                cards: teamData.cards
+            }).then(() => {
+                alert("השחקן הוסר מהקבוצה!");
+                openTeamPopup();
+            });
+        });
+    }
+
+    function showTeamField() {
+        if (!currentUser) return;
+        db.ref(`teams/${currentUser.uid}`).once('value').then(snapshot => {
+            let teamData = snapshot.val();
+            let fieldHtml = '';
+            const positions = [
+                { role: 'שוער', top: '50%', left: '10%' },
+                { role: 'מגן ימני', top: '30%', left: '25%' },
+                { role: 'בלם ימני', top: '50%', left: '25%' },
+                { role: 'בלם שמאלי', top: '50%', left: '40%' },
+                { role: 'מגן שמאלי', top: '30%', left: '40%' },
+                { role: 'קשר הגנתי', top: '50%', left: '55%' },
+                { role: 'קשר ימני', top: '30%', left: '70%' },
+                { role: 'קשר שמאלי', top: '30%', left: '85%' },
+                { role: 'קשר התקפי', top: '50%', left: '70%' },
+                { role: 'חלוץ ימני', top: '70%', left: '70%' },
+                { role: 'חלוץ שמאלי', top: '70%', left: '85%' }
+            ];
+
+            teamData.cards.forEach((card, index) => {
+                if (index < positions.length) {
+                    fieldHtml += `
+                        <div class="player" style="top: ${positions[index].top}; left: ${positions[index].left};">
+                            ${card.model}<br>${positions[index].role} (${card.rating})
+                        </div>`;
+                }
+            });
+
+            document.getElementById("field").innerHTML = fieldHtml;
+            document.getElementById("field-popup").style.display = "block";
+            document.getElementById("field-overlay").style.display = "block";
+        });
+    }
+
+    function closeTeamPopup() {
+        document.getElementById("team-popup").style.display = "none";
+        document.getElementById("team-overlay").style.display = "none";
+    }
+
+    function closeFieldPopup() {
+        document.getElementById("field-popup").style.display = "none";
+        document.getElementById("field-overlay").style.display = "none";
+    }
+
+    function showLeague() {
+        if (!currentUser) return;
+        db.ref('teams').once('value').then(snapshot => {
+            let teams = [];
+            snapshot.forEach(childSnapshot => {
+                const teamData = childSnapshot.val();
+                const totalRating = teamData.cards.reduce((sum, card) => sum + card.rating, 0);
+                teams.push({
+                    teamName: teamData.teamName || 'קבוצה ללא שם',
+                    managerName: teamData.managerName || 'אלמוני',
+                    totalRating: totalRating,
+                    playerCount: teamData.cards.length
+                });
+            });
+
+            teams.sort((a, b) => b.totalRating - a.totalRating);
+
+            let tableHtml = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>מיקום</th>
+                            <th>שם קבוצה</th>
+                            <th>מנהל</th>
+                            <th>מספר שחקנים</th>
+                            <th>דירוג כולל</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            teams.forEach((team, index) => {
+                tableHtml += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${team.teamName}</td>
+                        <td>${team.managerName}</td>
+                        <td>${team.playerCount}/11</td>
+                        <td>${team.totalRating}</td>
+                    </tr>
+                `;
+            });
+            tableHtml += '</tbody></table>';
+
+            document.getElementById("leagueTable").innerHTML = tableHtml;
+            document.getElementById("league-popup").style.display = "block";
+            document.getElementById("league-overlay").style.display = "block";
+        });
+    }
+
+    function closeLeaguePopup() {
+        document.getElementById("league-popup").style.display = "none";
+        document.getElementById("league-overlay").style.display = "none";
+    }
+
+    function openUltimateMenu() {
+        document.getElementById("ultimate-menu").style.display = "block";
+        document.getElementById("ultimate-menu-overlay").style.display = "block";
+    }
+
+    function closeUltimateMenu() {
+        document.getElementById("ultimate-menu").style.display = "none";
+        document.getElementById("ultimate-menu-overlay").style.display = "none";
+    }
+
+    function openTeamManagement() {
+        closeUltimateMenu();
+        openTeamPopup();
+    }
+
+    // סגירת התגית של ה-script
+</script>
+</body>
+</html>
 
