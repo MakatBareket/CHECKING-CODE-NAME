@@ -8,7 +8,7 @@
 </head>
 <body>
     <button id="dramaticModeBtn" onclick="toggleUltimateMode()" title="הפעל/כבה מצב Ultimate"><span style="font-size: 20px;">🏆</span></button>
-    <button id="teamManagementBtn" onclick="openTeamPopup()" title="ניהול קבוצה"><span style="font-size: 20px;">⚽</span></button>
+    <button id="teamManagementBtn" onclick="openUltimateMenu()" title="ניהול קבוצה"><span style="font-size: 20px;">⚽</span></button>
     <div class="navbar">
         <a href="#" onclick="showPage('model')" class="active">חיפוש לפי קוד דגם</a>
         <a href="#" onclick="showPage('serial')">בדיקה לפי מספר סיריאלי</a>
@@ -689,45 +689,45 @@
     }
 
     function toggleUltimateMode() {
-        const username = localStorage.getItem("currentUser");
-        const btn = document.getElementById("dramaticModeBtn");
-        const teamBtn = document.getElementById("teamManagementBtn");
+    const username = localStorage.getItem("currentUser");
+    const btn = document.getElementById("dramaticModeBtn");
+    const teamBtn = document.getElementById("teamManagementBtn");
 
-        if (!username) {
-            openLoginPopup();
-            return;
-        }
-
-        ultimateMode = !ultimateMode;
-        localStorage.setItem("ultimateMode", ultimateMode);
-        btn.classList.toggle("active", ultimateMode);
-        teamBtn.style.display = ultimateMode ? "block" : "none";
-
-        const notif = document.getElementById("ultimate-notif");
-        const overlay = document.getElementById("ultimate-notif-overlay");
-        if (ultimateMode) {
-            notif.innerHTML = `<h3>Ultimate Mode הופעל!</h3><p>ברוכים הבאים לעולם העתידני של ניהול קבוצות!</p>`;
-            notif.style.display = "block";
-            overlay.style.display = "block";
-            setTimeout(() => {
-                notif.style.display = "none";
-                overlay.style.display = "none";
-                openUltimateMenu();
-            }, 2000);
-        } else {
-            notif.innerHTML = `<h3>Ultimate Mode כובה</h3><p>חזרת למצב הרגיל. נתראה שוב!</p>`;
-            notif.style.display = "block";
-            overlay.style.display = "block";
-            setTimeout(() => {
-                notif.style.display = "none";
-                overlay.style.display = "none";
-            }, 2000);
-        }
-
-        if (document.getElementById("result").style.display === "block") {
-            lookupModel();
-        }
+    if (!username) {
+        openLoginPopup();
+        return;
     }
+
+    ultimateMode = !ultimateMode;
+    localStorage.setItem("ultimateMode", ultimateMode);
+    btn.classList.toggle("active", ultimateMode);
+    teamBtn.style.display = ultimateMode ? "block" : "none";
+
+    const notif = document.getElementById("ultimate-notif");
+    const overlay = document.getElementById("ultimate-notif-overlay");
+    if (ultimateMode) {
+        notif.innerHTML = `<h3>Ultimate Mode הופעל!</h3><p>ברוכים הבאים לעולם העתידני של ניהול קבוצות!</p>`;
+        notif.style.display = "block";
+        overlay.style.display = "block";
+        setTimeout(() => {
+            notif.style.display = "none";
+            overlay.style.display = "none";
+            openUltimateMenu(); // פותח את תפריט Ultimate לאחר ההתראה
+        }, 2000);
+    } else {
+        notif.innerHTML = `<h3>Ultimate Mode כובה</h3><p>חזרת למצב הרגיל. נתראה שוב!</p>`;
+        notif.style.display = "block";
+        overlay.style.display = "block";
+        setTimeout(() => {
+            notif.style.display = "none";
+            overlay.style.display = "none";
+        }, 2000);
+    }
+
+    if (document.getElementById("result").style.display === "block") {
+        lookupModel(); // מעדכן את תוצאת החיפוש אם היא מוצגת
+    }
+}
 
     function showPage(pageId) {
         try {
@@ -1158,131 +1158,131 @@ const teamLocations = {
         return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
     }
 }
-    function getDramaticModelDetails(model) {
-        if (!model || model.length < 5) {
-            return `<div class="dramatic-card">שגיאה: קוד דגם לא תקין (${model.length} תווים, נדרש לפחות 5).</div>`;
-        }
+   function getDramaticModelDetails(model) {
+    if (!model || model.length < 5) {
+        return `<div class="dramatic-card">שגיאה: קוד דגם לא תקין (${model.length} תווים, נדרש לפחות 5).</div>`;
+    }
 
-        const username = localStorage.getItem("currentUser");
-        let teamData = initTeamData();
+    const username = localStorage.getItem("currentUser");
+    let teamData = initTeamData();
 
-        if (teamData && teamData.searchesLeft <= 0) {
-            return `<div class="dramatic-card">שגיאה: נגמרו לך החיפושים להיום!</div>`;
-        }
+    if (teamData && teamData.searchesLeft <= 0) {
+        return `<div class="dramatic-card">שגיאה: נגמרו לך החיפושים להיום!</div>`;
+    }
 
-        let displayType = '';
-        let image = '';
-        let size = parseInt(model[2] + model[3]) || 0;
-        let yearCode = '';
-        for (let i = 4; i < model.length; i++) {
-            if (yearCodes[model[i]]) {
-                yearCode = model[i];
-                break;
-            }
-        }
-        let year = yearCodes[yearCode] || 'לא ידוע';
-        let overallScore = 0;
-        let stars = '';
-        let celebrationEffect = '';
-        let countryCode = model.length >= 13 ? model.slice(-2) : 'לא ידוע';
-        let countryFlag = '';
-
-        const countryFlags = {
-            'IL': 'https://flagcdn.com/w80/il.png',
-            'SQ': 'https://flagcdn.com/w80/il.png',
-            'ZA': 'https://flagcdn.com/w80/za.png',
-            'RU': 'https://flagcdn.com/w80/ru.png',
-            'UA': 'https://flagcdn.com/w80/ua.png',
-            '2C': 'https://flagcdn.com/w80/cn.png',
-            'XU': 'https://flagcdn.com/w80/gb.png',
-            'XY': 'https://flagcdn.com/w80/au.png',
-            'AA': 'https://flagcdn.com/w80/us.png',
-            'WT': 'https://flagcdn.com/w80/hk.png',
-            'EC': 'https://flagcdn.com/w80/kr.png',
-            'TL': 'https://flagcdn.com/w80/in.png',
-            'EM': 'https://flagcdn.com/w80/mx.png',
-            'US': 'https://flagcdn.com/w80/us.png',
-            'LP': 'https://flagcdn.com/w80/hk.png',
-            'AH': 'https://flagcdn.com/w80/kr.png',
-            'T1': 'https://flagcdn.com/w80/in.png',
-            'AX': 'https://flagcdn.com/w80/mx.png',
-            'KJ': 'https://flagcdn.com/w80/il.png'
-        };
-
-        const defaultImage = 'https://via.placeholder.com/300x200?text=מוצר+סמסונג';
-
-        if (/^R[FSBTL]/.test(model)) {
-            displayType = fridgeConfig[model[1]] || 'מקרר לא ידוע';
-            overallScore = Math.floor(Math.random() * (85 - 70 + 1)) + 70;
-            if (size >= 60 && year >= '2023') overallScore += 5;
-            image = productImages[displayType] || defaultImage;
-        } else if (/^W[WD]|^DV/.test(model)) {
-            displayType = washerTech[model.slice(0, 2)] || 'מכונת כביסה לא ידועה';
-            overallScore = Math.floor(Math.random() * (80 - 65 + 1)) + 65;
-            image = productImages['מכונת כביסה'] || defaultImage;
-        } else if (/^[QULPK][NEA]/.test(model)) {
-            let isFrame = model.includes('LS03');
-            let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
-            let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
-
-            if (isFrame) displayType = 'The Frame';
-            else if (isOLED) displayType = 'OLED';
-            else if (isNseries) displayType = 'N4000-N5500 Series';
-            else if (model[0] === 'U' && year >= '2018') displayType = 'CRYSTAL UHD';
-            else if (model[0] === 'U' && year < '2018') displayType = 'LED';
-            else displayType = tvDisplay[model[0]] || 'טלוויזיה לא ידועה';
-
-            if (isFrame && size >= 85 && year === '2024') overallScore = 94;
-            else if (model[0] === 'Q' && size >= 85 && year === '2024') overallScore = 94;
-            else if (isFrame) overallScore = Math.min(88 + Math.floor((size - 43) / 10), 93);
-            else if (isOLED) overallScore = Math.min(82 + Math.floor((size - 55) / 10), 91);
-            else if (model[0] === 'Q') overallScore = Math.min(85 + Math.floor((size - 55) / 10), 93);
-            else overallScore = Math.min(75 + Math.floor((size - 43) / 10), 88);
-            image = productImages[displayType] || defaultImage;
-        } else {
-            displayType = 'מוצר לא מזוהה';
-            overallScore = Math.floor(Math.random() * (80 - 60 + 1)) + 60;
-            image = defaultImage;
-        }
-
-        countryFlag = countryFlags[countryCode] || '';
-
-        if (overallScore >= 90) stars = '★★★★★';
-        else if (overallScore >= 80) stars = '★★★★☆';
-        else if (overallScore >= 70) stars = '★★★☆☆';
-        else if (overallScore >= 60) stars = '★★☆☆☆';
-        else stars = '★☆☆☆☆';
-
-        if (overallScore >= 88) {
-            celebrationEffect = ' celebration';
-            setTimeout(() => triggerConfetti(), 2000);
-        }
-
-        let flagHtml = countryFlag ? `<img src="${countryFlag}" alt="דגל המדינה" class="country-flag">` : '';
-
-        if (teamData) {
-            teamData.searchesLeft--;
-            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
-            const roles = ['שוער', 'מגן', 'קשר', 'חלוץ'];
-            const randomRole = roles[Math.floor(Math.random() * roles.length)];
-            return `<div class="dramatic-card hollywood${celebrationEffect}">
-                        <img src="${image}" alt="${displayType}">
-                        <div class="tv-name">${model} - ${displayType}</div>
-                        ${flagHtml}
-                        <div class="stars">${stars}</div>
-                        <div class="overall">${overallScore}</div>
-                        <button onclick="saveCard('${model}', '${randomRole}', ${overallScore})" ${teamData.savesLeft <= 0 ? 'disabled' : ''}>שמור לקבוצה (${teamData.savesLeft} נותרו)</button>
-                    </div>`;
-        } else {
-            return `<div class="dramatic-card hollywood${celebrationEffect}">
-                        <img src="${image}" alt="${displayType}">
-                        <div class="tv-name">${model} - ${displayType}</div>
-                        ${flagHtml}
-                        <div class="stars">${stars}</div>
-                        <div class="overall">${overallScore}</div>
-                    </div>`;
+    let displayType = '';
+    let image = '';
+    let size = parseInt(model[2] + model[3]) || 0;
+    let yearCode = '';
+    for (let i = 4; i < model.length; i++) {
+        if (modelYearCodes[model[i]]) {  // שינוי מ-yearCodes ל-modelYearCodes
+            yearCode = model[i];
+            break;
         }
     }
+    let year = modelYearCodes[yearCode] || 'לא ידוע';  // שינוי מ-yearCodes ל-modelYearCodes
+    let overallScore = 0;
+    let stars = '';
+    let celebrationEffect = '';
+    let countryCode = model.length >= 13 ? model.slice(-2) : 'לא ידוע';
+    let countryFlag = '';
+
+    const countryFlags = {
+        'IL': 'https://flagcdn.com/w80/il.png',
+        'SQ': 'https://flagcdn.com/w80/il.png',
+        'ZA': 'https://flagcdn.com/w80/za.png',
+        'RU': 'https://flagcdn.com/w80/ru.png',
+        'UA': 'https://flagcdn.com/w80/ua.png',
+        '2C': 'https://flagcdn.com/w80/cn.png',
+        'XU': 'https://flagcdn.com/w80/gb.png',
+        'XY': 'https://flagcdn.com/w80/au.png',
+        'AA': 'https://flagcdn.com/w80/us.png',
+        'WT': 'https://flagcdn.com/w80/hk.png',
+        'EC': 'https://flagcdn.com/w80/kr.png',
+        'TL': 'https://flagcdn.com/w80/in.png',
+        'EM': 'https://flagcdn.com/w80/mx.png',
+        'US': 'https://flagcdn.com/w80/us.png',
+        'LP': 'https://flagcdn.com/w80/hk.png',
+        'AH': 'https://flagcdn.com/w80/kr.png',
+        'T1': 'https://flagcdn.com/w80/in.png',
+        'AX': 'https://flagcdn.com/w80/mx.png',
+        'KJ': 'https://flagcdn.com/w80/il.png'
+    };
+
+    const defaultImage = 'https://via.placeholder.com/300x200?text=מוצר+סמסונג';
+
+    if (/^R[FSBTL]/.test(model)) {
+        displayType = fridgeConfig[model[1]] || 'מקרר לא ידוע';
+        overallScore = Math.floor(Math.random() * (85 - 70 + 1)) + 70;
+        if (size >= 60 && year >= '2023') overallScore += 5;
+        image = productImages[displayType] || defaultImage;
+    } else if (/^W[WD]|^DV/.test(model)) {
+        displayType = washerTech[model.slice(0, 2)] || 'מכונת כביסה לא ידועה';
+        overallScore = Math.floor(Math.random() * (80 - 65 + 1)) + 65;
+        image = productImages['מכונת כביסה'] || defaultImage;
+    } else if (/^[QULPK][NEA]/.test(model)) {
+        let isFrame = model.includes('LS03');
+        let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
+        let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
+
+        if (isFrame) displayType = 'The Frame';
+        else if (isOLED) displayType = 'OLED';
+        else if (isNseries) displayType = 'N4000-N5500 Series';
+        else if (model[0] === 'U' && year >= '2018') displayType = 'CRYSTAL UHD';
+        else if (model[0] === 'U' && year < '2018') displayType = 'LED';
+        else displayType = tvDisplay[model[0]] || 'טלוויזיה לא ידועה';
+
+        if (isFrame && size >= 85 && year === '2024') overallScore = 94;
+        else if (model[0] === 'Q' && size >= 85 && year === '2024') overallScore = 94;
+        else if (isFrame) overallScore = Math.min(88 + Math.floor((size - 43) / 10), 93);
+        else if (isOLED) overallScore = Math.min(82 + Math.floor((size - 55) / 10), 91);
+        else if (model[0] === 'Q') overallScore = Math.min(85 + Math.floor((size - 55) / 10), 93);
+        else overallScore = Math.min(75 + Math.floor((size - 43) / 10), 88);
+        image = productImages[displayType] || defaultImage;
+    } else {
+        displayType = 'מוצר לא מזוהה';
+        overallScore = Math.floor(Math.random() * (80 - 60 + 1)) + 60;
+        image = defaultImage;
+    }
+
+    countryFlag = countryFlags[countryCode] || '';
+
+    if (overallScore >= 90) stars = '★★★★★';
+    else if (overallScore >= 80) stars = '★★★★☆';
+    else if (overallScore >= 70) stars = '★★★☆☆';
+    else if (overallScore >= 60) stars = '★★☆☆☆';
+    else stars = '★☆☆☆☆';
+
+    if (overallScore >= 88) {
+        celebrationEffect = ' celebration';
+        setTimeout(() => triggerConfetti(), 2000);
+    }
+
+    let flagHtml = countryFlag ? `<img src="${countryFlag}" alt="דגל המדינה" class="country-flag">` : '';
+
+    if (teamData) {
+        teamData.searchesLeft--;
+        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+        const roles = ['שוער', 'מגן', 'קשר', 'חלוץ'];
+        const randomRole = roles[Math.floor(Math.random() * roles.length)];
+        return `<div class="dramatic-card hollywood${celebrationEffect}">
+                    <img src="${image}" alt="${displayType}">
+                    <div class="tv-name">${model} - ${displayType}</div>
+                    ${flagHtml}
+                    <div class="stars">${stars}</div>
+                    <div class="overall">${overallScore}</div>
+                    <button onclick="saveCard('${model}', '${randomRole}', ${overallScore})" ${teamData.savesLeft <= 0 ? 'disabled' : ''}>שמור לקבוצה (${teamData.savesLeft} נותרו)</button>
+                </div>`;
+    } else {
+        return `<div class="dramatic-card hollywood${celebrationEffect}">
+                    <img src="${image}" alt="${displayType}">
+                    <div class="tv-name">${model} - ${displayType}</div>
+                    ${flagHtml}
+                    <div class="stars">${stars}</div>
+                    <div class="overall">${overallScore}</div>
+                </div>`;
+    }
+}
 
     function triggerConfetti() {
         const confettiContainer = document.createElement('div');
@@ -1476,6 +1476,10 @@ const teamLocations = {
    function openTeamPopup() {
     const username = localStorage.getItem("currentUser");
     let teamData = initTeamData();
+    if (!username) {
+        openLoginPopup();
+        return;
+    }
     if (!teamData) return;
 
     let cardsHtml = '<ul>';
