@@ -478,6 +478,36 @@
             50% { transform: scale(1.1) rotate(-5deg); }
             100% { opacity: 1; transform: scale(1) rotate(0deg); }
         }
+        #field {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    background: url('https://cdn.pixabay.com/photo/2013/07/13/12/47/football-160177_1280.png') no-repeat center;
+    background-size: cover;
+}
+
+.player {
+    position: absolute;
+    width: 80px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #1d3557;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: #1d3557;
+    text-align: center;
+    padding: 5px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+}
+
+.player:hover {
+    transform: scale(1.1);
+}
         #teamCards ul {
             list-style: none;
             padding: 0;
@@ -532,11 +562,12 @@
         #leagueTable tr:hover {
             background: rgba(69, 123, 157, 0.3);
         }
+        
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <button id="dramaticModeBtn" onclick="showTeamOptions()" title="מצב Ultimate וניהול קבוצה">⚙️</button>
+   <button id="dramaticModeBtn" onclick="openUltimateMenu()" title="תפריט Ultimate">⚙️</button>
     <div class="navbar">
         <a href="#" onclick="showPage('model')" class="active">חיפוש לפי קוד דגם</a>
         <a href="#" onclick="showPage('serial')">בדיקה לפי מספר סיריאלי</a>
@@ -612,7 +643,26 @@
             <button onclick="closeLeaguePopup()">סגור</button>
         </div>
     </div>
+<!-- תפריט מצב Ultimate -->
+<div id="ultimate-menu-overlay" class="popup-overlay" onclick="closeUltimateMenu()"></div>
+<div id="ultimate-menu" class="popup" style="max-width: 300px;">
+    <h3>תפריט Ultimate</h3>
+    <div class="popup-buttons" style="flex-direction: column; gap: 10px;">
+        <button onclick="showTeamField()">ניהול קבוצה</button>
+        <button onclick="showLeague()">ליגה</button>
+        <button onclick="closeUltimateMenu()">סגור</button>
+    </div>
+</div>
 
+<!-- חלון תצוגת מגרש -->
+<div id="field-overlay" class="popup-overlay" onclick="closeFieldPopup()"></div>
+<div id="field-popup" class="popup" style="max-width: 800px; padding: 20px;">
+    <h3>ניהול קבוצה - תצוגת מגרש</h3>
+    <div id="field" style="position: relative; width: 100%; height: 500px; background: url('https://cdn.pixabay.com/photo/2013/07/13/12/47/football-160177_1280.png') no-repeat center; background-size: cover;"></div>
+    <div class="popup-buttons">
+        <button onclick="closeFieldPopup()">סגור</button>
+    </div>
+</div>
     <script>
         console.log("הדף נטען בהצלחה");
 
@@ -1334,6 +1384,124 @@
             alert(`הקלף ${model} (${role}, ${rating}) נוסף לקבוצה!`);
             lookupModel();
         }
+        // פתיחת תפריט Ultimate
+function openUltimateMenu() {
+    const username = localStorage.getItem("username");
+    if (!username) {
+        openLoginPopup();
+    } else if (ultimateMode) {
+        document.getElementById("ultimate-menu").style.display = "block";
+        document.getElementById("ultimate-menu-overlay").style.display = "block";
+    }
+}
+
+// סגירת תפריט Ultimate
+function closeUltimateMenu() {
+    document.getElementById("ultimate-menu").style.display = "none";
+    document.getElementById("ultimate-menu-overlay").style.display = "none";
+}
+
+// הצגת תצוגת מגרש
+function showTeamField() {
+    closeUltimateMenu();
+    const teamData = initTeamData();
+    if (!teamData) return;
+
+    const fieldDiv = document.getElementById("field");
+    fieldDiv.innerHTML = "";
+
+    const positions = {
+        'שוער': [{ top: '85%', left: '47%' }],
+        'מגן': [
+            { top: '65%', left: '20%' },
+            { top: '65%', left: '35%' },
+            { top: '65%', left: '60%' },
+            { top: '65%', left: '75%' }
+        ],
+        'קשר': [
+            { top: '45%', left: '25%' },
+            { top: '45%', left: '45%' },
+            { top: '45%', left: '65%' }
+        ],
+        'חלוץ': [
+            { top: '25%', left: '30%' },
+            { top: '25%', left: '50%' },
+            { top: '25%', left: '70%' }
+        ]
+    };
+
+    let roleCounts = { 'שוער': 0, 'מגן': 0, 'קשר': 0, 'חלוץ': 0 };
+
+    teamData.cards.forEach(card => {
+        const role = card.role;
+        if (roleCounts[role] < positions[role].length) {
+            const pos = positions[role][roleCounts[role]];
+            const playerDiv = document.createElement("div");
+            playerDiv.className = "player";
+            playerDiv.style.top = pos.top;
+            playerDiv.style.left = pos.left;
+            playerDiv.textContent = `${card.model} (${card.rating})`;
+            fieldDiv.appendChild(playerDiv);
+            roleCounts[role]++;
+        }
+    });
+
+    document.getElementById("field-popup").style.display = "block";
+    document.getElementById("field-overlay").style.display = "block";
+}
+
+// סגירת חלון המגרש
+function closeFieldPopup() {
+    document.getElementById("field-popup").style.display = "none";
+    document.getElementById("field-overlay").style.display = "none";
+}
+
+// הצגת ליגה
+function showLeague() {
+    closeUltimateMenu();
+    const leagueTableDiv = document.getElementById("leagueTable");
+    leagueTableDiv.innerHTML = "";
+
+    // דימוי נתוני ליגה
+    const allTeams = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith("team_")) {
+            const teamData = JSON.parse(localStorage.getItem(key));
+            if (teamData.cards.length > 0) {
+                const avgRating = teamData.cards.reduce((sum, card) => sum + card.rating, 0) / teamData.cards.length;
+                allTeams.push({ name: teamData.teamName || key.replace("team_", ""), avgRating, players: teamData.cards.length });
+            }
+        }
+    }
+
+    allTeams.sort((a, b) => b.avgRating - a.avgRating);
+
+    if (allTeams.length === 0) {
+        leagueTableDiv.innerHTML = "<p>אין קבוצות בליגה עדיין.</p>";
+    } else {
+        let tableHtml = "<table><tr><th>מיקום</th><th>שם קבוצה</th><th>ממוצע דירוג</th><th>שחקנים</th></tr>";
+        allTeams.forEach((team, index) => {
+            tableHtml += `<tr><td>${index + 1}</td><td>${team.name}</td><td>${team.avgRating.toFixed(1)}</td><td>${team.players}</td></tr>`;
+        });
+        tableHtml += "</table>";
+        leagueTableDiv.innerHTML = tableHtml;
+    }
+
+    document.getElementById("league-popup").style.display = "block";
+    document.getElementById("league-overlay").style.display = "block";
+}
+
+// סגירת חלון הליגה
+function closeLeaguePopup() {
+    document.getElementById("league-popup").style.display = "none";
+    document.getElementById("league-overlay").style.display = "none";
+}
+
+// עדכון showTeamOptions כדי שיפתח את התפריט במקום חלון ישן
+function showTeamOptions() {
+    openUltimateMenu();
+}
     </script>
 </body>
 </html>
