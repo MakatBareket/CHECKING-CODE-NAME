@@ -500,8 +500,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <button id="dramaticModeBtn" onclick="toggleDramaticMode()" title="שנה למצב דרמטי">⚙️</button>
-
+  <button id="dramaticModeBtn" onclick="showTeamOptions()" title="מצב דרמטי וניהול קבוצה">⚙️</button>
     <div class="navbar">
         <a href="#" onclick="showPage('model')" class="active">חיפוש לפי קוד דגם</a>
         <a href="#" onclick="showPage('serial')">בדיקה לפי מספר סיריאלי</a>
@@ -546,7 +545,25 @@
             <button onclick="closePopup()">סגור</button>
         </div>
     </div>
-
+<div id="login-overlay" class="popup-overlay" onclick="closeLoginPopup()"></div>
+<div id="login-popup" class="popup">
+    <h3>התחבר למצב דרמטי</h3>
+    <input type="text" id="usernameInput" placeholder="הזן שם משתמש" style="color: #1d3557;">
+    <div class="popup-buttons">
+        <button onclick="login()">התחבר</button>
+        <button onclick="closeLoginPopup()">סגור</button>
+    </div>
+</div>
+    <div id="team-overlay" class="popup-overlay" onclick="closeTeamPopup()"></div>
+<div id="team-popup" class="popup" style="max-width: 600px;">
+    <h3>ניהול קבוצה</h3>
+    <input type="text" id="teamNameInput" placeholder="הזן שם לקבוצה" style="color: #1d3557;">
+    <button onclick="saveTeamName()">שמור שם קבוצה</button>
+    <div id="teamCards" style="margin-top: 20px; text-align: right;"></div>
+    <div class="popup-buttons">
+        <button onclick="closeTeamPopup()">סגור</button>
+    </div>
+</div>
     <script>
         // בדיקת טעינה של הדף
         console.log("הדף נטען בהצלחה");
@@ -1160,6 +1177,217 @@ function triggerConfetti() {
     setTimeout(() => {
         confettiContainer.remove();
     }, 5000); // מסיר את הקונפטי אחרי 5 שניות
+}
+        // פתיחת חלון התחברות
+function openLoginPopup() {
+    document.getElementById("login-popup").style.display = "block";
+    document.getElementById("login-overlay").style.display = "block";
+}
+
+// סגירת חלון התחברות
+function closeLoginPopup() {
+    document.getElementById("login-popup").style.display = "none";
+    document.getElementById("login-overlay").style.display = "none";
+}
+
+// התחברות ושמירת שם משתמש
+function login() {
+    const username = document.getElementById("usernameInput").value.trim();
+    if (!username) {
+        alert("אנא הזן שם משתמש!");
+        return;
+    }
+    localStorage.setItem("username", username);
+    closeLoginPopup();
+    alert(`ברוך הבא, ${username}! אתה במצב דרמטי.`);
+    toggleDramaticMode(); // מפעיל מצב דרמטי לאחר התחברות
+}
+
+// שינוי פונקציית toggleDramaticMode
+function toggleDramaticMode() {
+    const username = localStorage.getItem("username");
+    if (!username) {
+        openLoginPopup(); // דורש התחברות אם אין משתמש
+    } else {
+        dramaticMode = !dramaticMode;
+        const btn = document.getElementById('dramaticModeBtn');
+        btn.style.background = dramaticMode ? 'rgba(69, 123, 157, 0.5)' : 'rgba(255, 255, 255, 0.1)';
+        if (document.getElementById('result').style.display === 'block') {
+            lookupModel();
+        }
+    }
+}
+        // נתונים ראשוניים לקבוצה
+function initTeamData() {
+    const username = localStorage.getItem("username");
+    if (!username) return;
+    let teamData = JSON.parse(localStorage.getItem(`team_${username}`)) || {
+        teamName: "",
+        cards: [],
+        searchesLeft: 5,
+        savesLeft: 2,
+        lastReset: null
+    };
+    const today = new Date().toDateString();
+    if (teamData.lastReset !== today) {
+        teamData.searchesLeft = 5;
+        teamData.savesLeft = 2;
+        teamData.lastReset = today;
+    }
+    localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+    return teamData;
+}
+
+// הצגת אפשרויות מצב דרמטי וניהול קבוצה
+function showTeamOptions() {
+    const username = localStorage.getItem("username");
+    if (!username) {
+        openLoginPopup();
+    } else {
+        openTeamPopup();
+    }
+}
+
+// פתיחת חלון ניהול קבוצה
+function openTeamPopup() {
+    const teamData = initTeamData();
+    document.getElementById("teamNameInput").value = teamData.teamName;
+    const teamCardsDiv = document.getElementById("teamCards");
+    teamCardsDiv.innerHTML = `<p>חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרות: ${teamData.savesLeft}</p>`;
+    if (teamData.cards.length > 0) {
+        teamCardsDiv.innerHTML += `<ul>${teamData.cards.map((card, index) => 
+            `<li>${card.model} (${card.role}, ${card.rating}) <button onclick="removeCard(${index})">מחק</button></li>`).join('')}</ul>`;
+    } else {
+        teamCardsDiv.innerHTML += "<p>אין קלפים בקבוצה עדיין.</p>";
+    }
+    document.getElementById("team-popup").style.display = "block";
+    document.getElementById("team-overlay").style.display = "block";
+}
+
+// סגירת חלון ניהול קבוצה
+function closeTeamPopup() {
+    document.getElementById("team-popup").style.display = "none";
+    document.getElementById("team-overlay").style.display = "none";
+}
+
+// שמירת שם קבוצה
+function saveTeamName() {
+    const username = localStorage.getItem("username");
+    const teamName = document.getElementById("teamNameInput").value.trim();
+    if (!teamName) {
+        alert("אנא הזן שם לקבוצה!");
+        return;
+    }
+    let teamData = initTeamData();
+    teamData.teamName = teamName;
+    localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+    alert(`שם הקבוצה "${teamName}" נשמר!`);
+    openTeamPopup();
+}
+
+// מחיקת קלף מהקבוצה
+function removeCard(index) {
+    const username = localStorage.getItem("username");
+    let teamData = initTeamData();
+    teamData.cards.splice(index, 1);
+    localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+    openTeamPopup();
+}
+
+// שינוי ב-getDramaticModelDetails להוספת קלף לקבוצה
+function getDramaticModelDetails(model) {
+    const username = localStorage.getItem("username");
+    let teamData = initTeamData();
+
+    if (teamData.searchesLeft <= 0) {
+        return `<div class="card">שגיאה: נגמרו לך החיפושים להיום!</div>`;
+    }
+
+    // קוד קיים...
+    let displayType = '';
+    let image = '';
+    let size = parseInt(model[2] + model[3]) || 0;
+    let yearCode = '';
+    for (let i = 4; i < model.length; i++) {
+        if (yearCodes[model[i]]) {
+            yearCode = model[i];
+            break;
+        }
+    }
+    let year = yearCodes[yearCode] || 'לא ידוע';
+    let overallScore = 0;
+    let stars = '';
+    let celebrationEffect = '';
+    let countryCode = model.length >= 13 ? model.slice(-2) : 'לא ידוע';
+    let countryFlag = '';
+    const countryFlags = { /* קוד קיים */ };
+
+    if (/^R[FSBTL]/.test(model)) { /* קוד קיים */ }
+    else if (/^W[WD]|^DV/.test(model)) { /* קוד קיים */ }
+    else if (/^[QULPK][NEA]/.test(model)) {
+        displayType = tvDisplay[model[0]] || 'לא ידוע';
+        let isFrame = model.includes('LS03');
+        let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
+        if (isFrame && size >= 85 && year === '2024') overallScore = 94; // Frame 2024 85+
+        else if (model[0] === 'Q' && size >= 85 && year === '2024') overallScore = 94; // QLED 2024 85+
+        else if (isFrame) overallScore = Math.min(88 + Math.floor((size - 43) / 10), 93);
+        else if (isOLED) overallScore = Math.min(82 + Math.floor((size - 55) / 10), 91);
+        else if (model[0] === 'Q') overallScore = Math.min(85 + Math.floor((size - 55) / 10), 93);
+        else overallScore = Math.min(75 + Math.floor((size - 43) / 10), 88);
+        image = productImages[displayType] || '';
+        countryFlag = countryFlags[countryCode] || '';
+    }
+
+    if (!image) {
+        return `<div class="card">שגיאה: לא נמצאה תמונה עבור הדגם הזה במצב דרמטי.</div>`;
+    }
+
+    if (overallScore >= 90) stars = '★★★★★';
+    else if (overallScore >= 80) stars = '★★★★☆';
+    else if (overallScore >= 70) stars = '★★★☆☆';
+    else if (overallScore >= 60) stars = '★★☆☆☆';
+    else stars = '★☆☆☆☆';
+
+    if (overallScore >= 88) {
+        celebrationEffect = ' celebration';
+        setTimeout(() => triggerConfetti(), 2000);
+    }
+
+    let flagHtml = countryFlag ? `<img src="${countryFlag}" alt="דגל המדינה" class="country-flag">` : '';
+
+    // הוספת כפתור לשמירת הקלף
+    teamData.searchesLeft--;
+    localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+    const roles = ['שוער', 'מגן', 'קשר', 'חלוץ'];
+    const randomRole = roles[Math.floor(Math.random() * roles.length)];
+
+    return `<div class="dramatic-card hollywood${celebrationEffect}">
+                <img src="${image}" alt="${displayType}">
+                <div class="tv-name">${model} - ${displayType}</div>
+                ${flagHtml}
+                <div class="stars">${stars}</div>
+                <div class="overall">${overallScore}</div>
+                <button onclick="saveCard('${model}', '${randomRole}', ${overallScore})" ${teamData.savesLeft <= 0 ? 'disabled' : ''}>שמור לקבוצה (${teamData.savesLeft} נותרו)</button>
+            </div>`;
+}
+
+// שמירת קלף לקבוצה
+function saveCard(model, role, rating) {
+    const username = localStorage.getItem("username");
+    let teamData = initTeamData();
+    if (teamData.savesLeft <= 0) {
+        alert("נגמרו לך השמירות להיום!");
+        return;
+    }
+    if (teamData.cards.length >= 11) {
+        alert("הקבוצה מלאה (11 שחקנים)! מחק קלף כדי להוסיף חדש.");
+        return;
+    }
+    teamData.cards.push({ model, role, rating });
+    teamData.savesLeft--;
+    localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+    alert(`הקלף ${model} (${role}, ${rating}) נוסף לקבוצה!`);
+    lookupModel(); // רענון התצוגה
 }
     </script>
 </body>
