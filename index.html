@@ -731,10 +731,15 @@
         'B': 'Bottom Freezer (מקפיא תחתון)', 'L': 'Bottom Freezer (מקפיא תחתון)'
     };
 
-    const yearCodes = {
-        'F': '2014', 'G': '2015', 'H': '2016', 'J': '2017', 'K': '2018', 'M': '2019', 'N': '2020',
-        'R': '2021', 'T': '2022', 'W': '2023', 'X': '2024', 'Y': '2025'
-    };
+ const serialYearCodes = {
+    'F': '2014', 'G': '2015', 'H': '2016', 'J': '2017', 'K': '2018', 'M': '2019', 'N': '2020',
+    'R': '2021', 'T': '2022', 'W': '2023', 'X': '2024', 'Y': '2025'
+};
+
+const modelYearCodes = {
+    'H': '2014', 'J': '2015', 'K': '2016', 'M': '2017', 'N': '2018', 'R': '2019', 'T': '2020',
+    'A': '2021', 'B': '2022', 'C': '2023', 'D': '2024', 'F': '2025'
+};
 
     const monthCodes = {
         '1': 'ינואר', '2': 'פברואר', '3': 'מרץ', '4': 'אפריל', '5': 'מאי', '6': 'יוני',
@@ -954,151 +959,149 @@
     }
 
     function getFridgeDetails(model) {
-        let config = fridgeConfig[model[1]] || 'לא ידוע';
-        let capacityCode = parseInt(model[2] + model[3]);
-        let capacityLiters = capacityCode * 10 + ' ליטר';
-        let year = yearCodes[model[4]] || 'לא ידוע';
-        let series = model[5] || 'לא ידוע';
-        let finishCode = model.slice(6, 8);
-        let finish = fridgeFinish[finishCode] || 'לא ידוע';
-        let countryCode = model.slice(-2);
-        let country = countryCodesFridge[countryCode] || 'לא ידוע';
-        let image = productImages[config] || '';
+    let config = fridgeConfig[model[1]] || 'לא ידוע';
+    let capacityCode = parseInt(model[2] + model[3]) || 0;
+    let capacityLiters = capacityCode ? capacityCode * 10 + ' ליטר' : 'לא זמין';
+    let year = modelYearCodes[model[4]] || 'לא ידוע';
+    let series = model[5] || 'לא ידוע';
+    let finishCode = model.length >= 8 ? model.slice(6, 8) : '';
+    let finish = finishCode ? fridgeFinish[finishCode] || 'לא ידוע' : 'לא זמין';
+    let countryCode = model.length >= 10 ? model.slice(-2) : '';
+    let country = countryCode ? countryCodesFridge[countryCode] || 'לא ידוע' : 'לא זמין';
+    let image = productImages[config] || '';
 
-        return `<div class="card">
-                    מקרר סמסונג - דגם: ${model}<br>
-                    תצורה: ${config}<br>
-                    נפח: ${capacityLiters}<br>
-                    שנת ייצור: ${year}<br>
-                    סדרת דגם: ${series}<br>
-                    גימור: ${finish}<br>
-                    מדינה: ${country}<br>
-                    ${image ? `<img src="${image}" alt="${config}">` : ''}
-                    <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                </div>`;
-    }
+    return `<div class="card">
+                מקרר סמסונג - דגם: ${model}<br>
+                תצורה: ${config}<br>
+                נפח: ${capacityLiters}<br>
+                שנת ייצור: ${year}<br>
+                סדרת דגם: ${series}<br>
+                גימור: ${finish}<br>
+                מדינה: ${country}<br>
+                ${image ? `<img src="${image}" alt="${config}">` : ''}
+                <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+            </div>`;
+}
 
     function getWasherDetails(model) {
-        let tech = washerTech[model.slice(0, 2)] || 'לא ידוע';
-        let capacityCode = model[2];
-        let capacity = '';
-        switch (capacityCode) {
-            case '6': capacity = '6 ק"ג'; break;
-            case '7': capacity = '7 ק"ג'; break;
-            case '8': capacity = '8 ק"ג'; break;
-            case '9': capacity = '9 ק"ג'; break;
-            case '1': capacity = model[3] === '1' ? '11 ק"ג' : '10 ק"ג'; break;
-            case '2': capacity = '12 ק"ג'; break;
-            default: capacity = 'לא ידוע';
-        }
-        let year = yearCodes[model[4]] || 'לא ידוע';
-        let month = model[5] || 'לא ידוע';
-        let color = washerColor[model[9]] || 'לא ידוע';
-        let countryCode = model.slice(-2);
-        let country = countryCodesWasher[countryCode] || 'לא ידוע';
-        let image = productImages['מכונת כביסה'] || '';
-
-        return `<div class="card">
-                    ${tech} סמסונג - דגם: ${model}<br>
-                    קיבולת: ${capacity}<br>
-                    שנת ייצור: ${year}<br>
-                    חודש ייצור: ${month}<br>
-                    צבע: ${color}<br>
-                    מדינה: ${country}<br>
-                    ${image ? `<img src="${image}" alt="מכונת כביסה">` : ''}
-                    <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                </div>`;
+    let tech = washerTech[model.slice(0, 2)] || 'לא ידוע';
+    let capacityCode = model[2];
+    let capacity = '';
+    switch (capacityCode) {
+        case '6': capacity = '6 ק"ג'; break;
+        case '7': capacity = '7 ק"ג'; break;
+        case '8': capacity = '8 ק"ג'; break;
+        case '9': capacity = '9 ק"ג'; break;
+        case '1': capacity = model[3] === '1' ? '11 ק"ג' : '10 ק"ג'; break;
+        case '2': capacity = '12 ק"ג'; break;
+        default: capacity = 'לא זמין';
     }
+    let year = modelYearCodes[model[4]] || 'לא ידוע';
+    let month = model.length >= 6 ? model[5] || 'לא ידוע' : 'לא זמין';
+    let color = model.length >= 10 ? washerColor[model[9]] || 'לא ידוע' : 'לא זמין';
+    let countryCode = model.length >= 12 ? model.slice(-2) : '';
+    let country = countryCode ? countryCodesWasher[countryCode] || 'לא ידוע' : 'לא זמין';
+    let image = productImages['מכונת כביסה'] || '';
+
+    return `<div class="card">
+                ${tech} סמסונג - דגם: ${model}<br>
+                קיבולת: ${capacity}<br>
+                שנת ייצור: ${year}<br>
+                חודש ייצור: ${month}<br>
+                צבע: ${color}<br>
+                מדינה: ${country}<br>
+                ${image ? `<img src="${image}" alt="מכונת כביסה">` : ''}
+                <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+            </div>`;
+}
 
     function getTVDetails(model) {
-        try {
-            if (model.length < 10) {
-                return `<div class="card">שגיאה: קוד דגם קצר מדי (${model.length} תווים, נדרש לפחות 10).</div>`;
+    try {
+        let display = tvDisplay[model[0]] || 'לא ידוע';
+        let isFrame = model.includes('LS03');
+        let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
+        let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
+
+        if (isFrame) display = 'The Frame';
+        else if (isOLED) display = 'OLED';
+        else if (isNseries) display = 'N4000-N5500 Series';
+        else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) >= 2018) display = 'CRYSTAL UHD';
+        else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) < 2018) display = 'LED';
+
+        let yearCode = '';
+        for (let i = 4; i < model.length; i++) {
+            if (modelYearCodes[model[i]]) {
+                yearCode = model[i];
+                break;
             }
-
-            let display = tvDisplay[model[0]] || 'לא ידוע';
-            let isFrame = model.includes('LS03');
-            let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
-            let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
-
-            if (isFrame) display = 'The Frame';
-            else if (isOLED) display = 'OLED';
-            else if (isNseries) display = 'N4000-N5500 Series';
-            else if (model[0] === 'U' && yearCodes[model[4]] >= '2018') display = 'CRYSTAL UHD';
-            else if (model[0] === 'U' && yearCodes[model[4]] < '2018') display = 'LED';
-
-            let yearCode = '';
-            for (let i = 4; i < model.length; i++) {
-                if (yearCodes[model[i]]) {
-                    yearCode = model[i];
-                    break;
-                }
-            }
-            let year = yearCodes[yearCode] || 'לא ידוע';
-
-            let market = tvMarket[model[1]] || 'לא ידוע';
-            let size = model[2] + model[3];
-
-            let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
-            let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
-            let series = isFrame ? 'LS03' : (isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd));
-            if (isNseries) series = model.slice(4, 9);
-            if (!series) series = 'לא ידוע';
-
-            let broadcast = (year >= '2018' && year !== 'לא ידוע') ? 'DVB-T2' : 'DVB-T1';
-
-            let os = 'לא צוינה';
-            if (year === '2023' || year === '2024' || year === '2025') os = 'Tizen 8.0';
-            else if (year === '2022') os = 'Tizen 7.0';
-            else if (year === '2021') os = 'Tizen 6.5';
-            else if (year === '2020') os = 'Tizen 6.0';
-            else if (year === '2019') os = 'Tizen 5.0';
-            else if (year === '2017') os = 'Tizen 4.0';
-            else if (year < '2019') os = 'Tizen (גרסה ישנה יותר)';
-
-            let country = 'לא ידוע';
-            let countryNote = '';
-            if (model.length >= 13) {
-                let countryCode = model.slice(-2);
-                country = countryCodesTV[countryCode] || 'לא ידוע';
-                if (year === '2025') {
-                    if (countryCode === 'IL') country = 'ישראל (ניופאן)';
-                    else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
-                }
-                if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
-                    countryNote = ' - יבוא מקביל';
-                }
-            }
-            let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
-            let image = productImages[imageKey] || '';
-
-            let featuresHtml = productFeatures[display] ? `
-                <br><strong>${productFeatures[display].description}</strong><br>
-                <ul style="text-align: right; padding-right: 20px;">
-                    ${productFeatures[display].features.map(feature => `<li>${feature}</li>`).join('')}
-                </ul>
-            ` : '';
-
-            return `<div class="card">
-                        טלוויזיה סמסונג - דגם: ${model}<br>
-                        סוג תצוגה: ${display}<br>
-                        אזור שוק: ${market}<br>
-                        גודל מסך: ${size} אינץ'<br>
-                        שנת ייצור: ${year}<br>
-                        סדרת דגם: ${series}<br>
-                        מקלט שידור: ${broadcast}<br>
-                        מערכת הפעלה: ${os}<br>
-                        מדינה: ${country}${countryNote}<br>
-                        ${image ? `<img src="${image}" alt="${display}">` : ''}
-                        ${featuresHtml}
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                    </div>`;
-        } catch (e) {
-            console.error("שגיאה ב-getTVDetails:", e);
-            return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
         }
-    }
+        let year = modelYearCodes[yearCode] || 'לא ידוע';
 
+        let market = tvMarket[model[1]] || 'לא ידוע';
+        let size = model.length >= 4 ? model[2] + model[3] : 'לא זמין';
+
+        let seriesStart = yearCode ? model.indexOf(yearCode) + 1 : 4;
+        let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
+        let series = isFrame ? 'LS03' : (isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd));
+        if (isNseries) series = model.slice(4, 9);
+        if (!series) series = 'לא ידוע';
+
+        let broadcast = (year >= '2018' && year !== 'לא ידוע') ? 'DVB-T2' : 'DVB-T1';
+
+        let os = 'לא צוינה';
+        if (year === '2023' || year === '2024' || year === '2025') os = 'Tizen 8.0';
+        else if (year === '2022') os = 'Tizen 7.0';
+        else if (year === '2021') os = 'Tizen 6.5';
+        else if (year === '2020') os = 'Tizen 6.0';
+        else if (year === '2019') os = 'Tizen 5.0';
+        else if (year === '2017') os = 'Tizen 4.0';
+        else if (year < '2019' && year !== 'לא ידוע') os = 'Tizen (גרסה ישנה יותר)';
+
+        let country = 'לא ידוע';
+        let countryNote = '';
+        if (model.length >= 13) {
+            let countryCode = model.slice(-2);
+            country = countryCodesTV[countryCode] || 'לא ידוע';
+            if (year === '2025') {
+                if (countryCode === 'IL') country = 'ישראל (ניופאן)';
+                else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
+            }
+            // בדיקת יבוא מקביל: אם אזור השוק הוא U או Q, זה יבוא מקביל גם אם הסיומת היא ישראל
+            if (model[1] === 'U' || model[1] === 'Q') {
+                countryNote = ' - יבוא מקביל';
+            } else if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
+                countryNote = ' - יבוא מקביל';
+            }
+        }
+        let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
+        let image = productImages[imageKey] || '';
+
+        let featuresHtml = productFeatures[display] ? `
+            <br><strong>${productFeatures[display].description}</strong><br>
+            <ul style="text-align: right; padding-right: 20px;">
+                ${productFeatures[display].features.map(feature => `<li>${feature}</li>`).join('')}
+            </ul>
+        ` : '';
+
+        return `<div class="card">
+                    טלוויזיה סמסונג - דגם: ${model}<br>
+                    סוג תצוגה: ${display}<br>
+                    אזור שוק: ${market}<br>
+                    גודל מסך: ${size} אינץ'<br>
+                    שנת ייצור: ${year}<br>
+                    סדרת דגם: ${series}<br>
+                    מקלט שידור: ${broadcast}<br>
+                    מערכת הפעלה: ${os}<br>
+                    מדינה: ${country}${countryNote}<br>
+                    ${image ? `<img src="${image}" alt="${display}">` : ''}
+                    ${featuresHtml}
+                    <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                </div>`;
+    } catch (e) {
+        console.error("שגיאה ב-getTVDetails:", e);
+        return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
+    }
+}
     function getDramaticModelDetails(model) {
         if (!model || model.length < 5) {
             return `<div class="dramatic-card">שגיאה: קוד דגם לא תקין (${model.length} תווים, נדרש לפחות 5).</div>`;
@@ -1241,65 +1244,64 @@
         setTimeout(() => confettiContainer.remove(), 5000);
     }
 
-    function lookupSerial() {
-        try {
-            var serial = document.getElementById("serialInput").value.trim().toUpperCase();
-            var resultDiv = document.getElementById("serial-result");
-            var loader = document.getElementById("loader-serial");
+   function lookupSerial() {
+    try {
+        var serial = document.getElementById("serialInput").value.trim().toUpperCase();
+        var resultDiv = document.getElementById("serial-result");
+        var loader = document.getElementById("loader-serial");
 
-            if (!serial || (serial.length !== 11 && serial.length !== 15)) {
-                resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי (11 או 15 תווים).</div>';
-                resultDiv.style.display = "block";
-                return;
+        if (!serial || (serial.length !== 11 && serial.length !== 15)) {
+            resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי (11 או 15 תווים).</div>';
+            resultDiv.style.display = "block";
+            return;
+        }
+
+        loader.style.display = "block";
+        resultDiv.style.display = "none";
+
+        setTimeout(() => {
+            let year, month, productionDate, warrantyStatus;
+
+            if (serial.length === 15) {
+                year = serialYearCodes[serial[7]] || 'לא ידוע';
+                month = monthCodes[serial[8]] || 'לא ידוע';
+                productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
+            } else if (serial.length === 11) {
+                year = serialYearCodes[serial[3]] || 'לא ידוע';
+                month = monthCodes[serial[4]] || 'לא ידוע';
+                productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
             }
 
-            loader.style.display = "block";
-            resultDiv.style.display = "none";
+            const monthIndex = Object.keys(monthCodes).indexOf(serial[serial.length === 15 ? 8 : 4]);
+            const productionYear = parseInt(year) || 0;
+            const productionDateObj = productionYear ? new Date(productionYear, monthIndex) : null;
+            const currentDate = new Date('2025-03-14');
 
-            setTimeout(() => {
-                let year, month, productionDate, warrantyStatus;
+            if (!productionDateObj || productionDateObj <= new Date('2024-03-31')) {
+                warrantyStatus = 'לא באחריות';
+            } else if (productionDateObj <= new Date('2024-11-30')) {
+                warrantyStatus = 'באחריות סמליין';
+            } else {
+                warrantyStatus = 'באחריות סמסונג ישראל';
+            }
 
-                if (serial.length === 15) {
-                    year = yearCodes[serial[7]] || 'לא ידוע';
-                    month = monthCodes[serial[8]] || 'לא ידוע';
-                    productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
-                } else if (serial.length === 11) {
-                    year = yearCodes[serial[3]] || 'לא ידוע';
-                    month = monthCodes[serial[4]] || 'לא ידוע';
-                    productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
-                }
-
-                const monthIndex = Object.keys(monthCodes).indexOf(serial[serial.length === 15 ? 8 : 4]);
-                const productionYear = parseInt(year) || 0;
-                const productionDateObj = productionYear ? new Date(productionYear, monthIndex) : null;
-                const currentDate = new Date('2025-03-14');
-
-                if (!productionDateObj || productionDateObj <= new Date('2024-03-31')) {
-                    warrantyStatus = 'לא באחריות';
-                } else if (productionDateObj <= new Date('2024-12-31')) {
-                    warrantyStatus = 'באחריות סמליין';
-                } else {
-                    warrantyStatus = 'באחריות סמסונג ישראל';
-                }
-
-                resultDiv.innerHTML = `<div class="card">
-                                        מספר סיריאלי: ${serial}<br>
-                                        תאריך ייצור: ${productionDate}<br>
-                                        סטטוס אחריות: ${warrantyStatus}<br>
-                                        הערה: למידע נוסף יש לבדוק לפי קוד דגם.
-                                      </div>`;
-                resultDiv.style.display = "block";
-                loader.style.display = "none";
-                showPopup();
-            }, 1000);
-        } catch (e) {
-            console.error("שגיאה ב-lookupSerial:", e);
-            resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד המספר הסיריאלי: ${e.message}</div>`;
+            resultDiv.innerHTML = `<div class="card">
+                                    מספר סיריאלי: ${serial}<br>
+                                    תאריך ייצור: ${productionDate}<br>
+                                    סטטוס אחריות: ${warrantyStatus}<br>
+                                    הערה: למידע נוסף יש לבדוק לפי קוד דגם.
+                                  </div>`;
             resultDiv.style.display = "block";
             loader.style.display = "none";
-        }
+            showPopup();
+        }, 1000);
+    } catch (e) {
+        console.error("שגיאה ב-lookupSerial:", e);
+        resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד המספר הסיריאלי: ${e.message}</div>`;
+        resultDiv.style.display = "block";
+        loader.style.display = "none";
     }
-
+}
     // פונקציות ממשק משתמש
     function showPopup() {
         document.getElementById("popup").style.display = "block";
