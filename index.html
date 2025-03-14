@@ -1472,8 +1472,7 @@ const teamLocations = {
         alert(`נוסף לקבוצה: ${model} כ${role} עם דירוג ${rating}`);
         document.querySelector('.dramatic-card button').disabled = true;
     }
-
-   function openTeamPopup() {
+    function openTeamPopup() {
     const username = localStorage.getItem("currentUser");
     let teamData = initTeamData();
     if (!username) {
@@ -1484,7 +1483,7 @@ const teamLocations = {
 
     let cardsHtml = '<ul>';
     teamData.cards.forEach((card, index) => {
-        cardsHtml += `<li>${card.model} - ${card.role} (${card.rating}) <button onclick="removeCard(${index})">הסר</button></li>`;
+        cardsHtml += `<li>${card.model} - ${card.role} (${card.rating}) <button class="remove-btn" data-index="${index}">הסר</button></li>`;
     });
     cardsHtml += '</ul>';
 
@@ -1500,42 +1499,60 @@ const teamLocations = {
         });
     }
 
-    document.getElementById("team-popup").innerHTML = `
+    const popup = document.getElementById("team-popup");
+    popup.innerHTML = `
         <h3>ניהול קבוצה</h3>
         <div class="team-field">
             <input type="text" id="teamNameInput" value="${teamData.teamName}" readonly style="background-color: #e9ecef;">
-            <button onclick="toggleEdit('teamNameInput')">ערוך</button>
+            <button id="editTeamNameBtn">ערוך</button>
         </div>
         <div class="team-field">
             <input type="text" id="coachNameInput" value="${teamData.coachName}" readonly style="background-color: #e9ecef;">
-            <button onclick="toggleEdit('coachNameInput')">ערוך</button>
+            <button id="editCoachNameBtn">ערוך</button>
         </div>
         <div class="team-field">
             <input type="text" id="stadiumNameInput" value="${teamData.stadiumName}" readonly style="background-color: #e9ecef;">
-            <button onclick="toggleEdit('stadiumNameInput')">ערוך</button>
+            <button id="editStadiumNameBtn">ערוך</button>
         </div>
         <div class="team-field">
-            <select id="countrySelect" onchange="updateCities()">
+            <select id="countrySelect">
                 ${countryOptions}
             </select>
             <select id="citySelect">
                 ${cityOptions}
             </select>
-            ${teamData.country ? `<img src="${teamLocations[teamData.country].flag}" alt="דגל ${teamData.country}" class="country-flag">` : ''}
+            ${teamData.country && teamLocations[teamData.country] ? `<img src="${teamLocations[teamData.country].flag}" alt="דגל ${teamData.country}" class="country-flag">` : ''}
         </div>
-        <button onclick="saveTeamDetails()" style="margin-top: 15px;">שמור פרטי קבוצה</button>
+        <button id="saveTeamBtn" style="margin-top: 15px;">שמור פרטי קבוצה</button>
         <h4 style="margin-top: 20px;">שחקנים (${teamData.cards.length}/11)</h4>
         <div id="teamCards">${cardsHtml}</div>
         <div class="popup-buttons">
-            <button onclick="openFieldPopup()">תצוגת מגרש</button>
-            <button onclick="closeTeamPopup()">סגור</button>
+            <button id="fieldViewBtn">תצוגת מגרש</button>
+            <button id="closeTeamBtn">סגור</button>
         </div>
         <p style="margin-top: 10px;">חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרו: ${teamData.savesLeft}</p>
     `;
-    document.getElementById("team-popup").style.display = "block";
+
+    // הוספת מאזיני אירועים לכפתורים
+    document.getElementById("editTeamNameBtn").addEventListener("click", () => toggleEdit("teamNameInput"));
+    document.getElementById("editCoachNameBtn").addEventListener("click", () => toggleEdit("coachNameInput"));
+    document.getElementById("editStadiumNameBtn").addEventListener("click", () => toggleEdit("stadiumNameInput"));
+    document.getElementById("countrySelect").addEventListener("change", updateCities);
+    document.getElementById("saveTeamBtn").addEventListener("click", saveTeamDetails);
+    document.getElementById("fieldViewBtn").addEventListener("click", openFieldPopup);
+    document.getElementById("closeTeamBtn").addEventListener("click", closeTeamPopup);
+
+    // הוספת מאזיני אירועים לכפתורי "הסר"
+    document.querySelectorAll(".remove-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const index = parseInt(btn.getAttribute("data-index"));
+            removeCard(index);
+        });
+    });
+
+    popup.style.display = "block";
     document.getElementById("team-overlay").style.display = "block";
 }
-
 // פונקציה חדשה לעדכון ערים
 function updateCities() {
     const countrySelect = document.getElementById("countrySelect");
