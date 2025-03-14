@@ -1512,27 +1512,36 @@
             teamName: '',
             coachName: '',
             stadiumName: '',
-            stadiumLevel: 1, // תמיד מתחיל מ-1
+            stadiumLevel: 1, // רמת אצטדיון התחלתית
             country: '',
             city: '',
             cards: [],
-            searchesLeft: 10,
-            savesLeft: 11,
-            coins: 30,
+            searchesLeft: 10, // חיפושים התחלתיים
+            savesLeft: 11, // שמירות התחלתיות
+            coins: 150, // 150 מטבעות התחלתיים
             lastCoinUpdate: new Date().toISOString().split('T')[0]
         };
         localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
     } else {
-        // תיקון נתונים ישנים: אם stadiumLevel חסר או לא תקין, הגדר אותו ל-1
+        // תיקון נתונים ישנים
         if (!teamData.stadiumLevel || !Number.isInteger(teamData.stadiumLevel) || teamData.stadiumLevel < 1 || teamData.stadiumLevel > 4) {
             teamData.stadiumLevel = 1;
-            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
         }
+        if (!Number.isInteger(teamData.searchesLeft) || teamData.searchesLeft < 0) {
+            teamData.searchesLeft = 10;
+        }
+        if (!Number.isInteger(teamData.savesLeft) || teamData.savesLeft < 0) {
+            teamData.savesLeft = 11;
+        }
+        if (!Number.isInteger(teamData.coins) || teamData.coins === null || teamData.coins === undefined) {
+            teamData.coins = 150;
+        }
+        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
     }
 
     const today = new Date().toISOString().split('T')[0];
     if (teamData.lastCoinUpdate !== today) {
-        teamData.coins += 30;
+        teamData.coins += 30; // תוספת יומית של 30 מטבעות
         teamData.lastCoinUpdate = today;
         localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
     }
@@ -1589,13 +1598,12 @@
     }
 
     const stadiumLevels = {
-        1: { capacity: 1000, image: 'https://thumbs.dreamstime.com/b/amateur-soccer-field-illuminated-night-small-football-lit-lanterns-evening-green-spotlight-image252808480.jpg' },
-        2: { capacity: 5000, image: 'https://integralspor.com/uploads/facility/detail/5000-seats-stadium-10631.jpg' },
-        3: { capacity: 10000, image: 'https://javiergarciaalda.com/wp-content/uploads/2021/11/JavierGAlda_Libia_3-escorzo-pepon.jpg' },
-        4: { capacity: 20000, image: 'https://stadiumdb.com/img/news/2022/02/09Ord2.jpg' }
+        1: { capacity: 1000 },
+        2: { capacity: 5000 },
+        3: { capacity: 10000 },
+        4: { capacity: 20000 }
     };
 
-    // תיקון: ודא ש-stadiumLevel תקין, אם לא - השתמש ב-1 כברירת מחדל
     const validStadiumLevel = teamData.stadiumLevel && stadiumLevels[teamData.stadiumLevel] ? teamData.stadiumLevel : 1;
     const currentStadium = stadiumLevels[validStadiumLevel];
     const nextLevel = validStadiumLevel < 4 ? validStadiumLevel + 1 : null;
@@ -1605,21 +1613,26 @@
     popup.innerHTML = `
         <h3>ניהול קבוצה</h3>
         <div class="team-field">
-            <input type="text" id="teamNameInput" value="${teamData.teamName}" readonly style="background-color: #e9ecef;">
+            <label for="teamNameInput">שם הקבוצה:</label>
+            <input type="text" id="teamNameInput" value="${teamData.teamName || ''}" readonly style="background-color: #e9ecef;">
             <button id="editTeamNameBtn" class="active">ערוך</button>
         </div>
         <div class="team-field">
-            <input type="text" id="coachNameInput" value="${teamData.coachName}" readonly style="background-color: #e9ecef;">
+            <label for="coachNameInput">שם המאמן:</label>
+            <input type="text" id="coachNameInput" value="${teamData.coachName || ''}" readonly style="background-color: #e9ecef;">
             <button id="editCoachNameBtn" class="active">ערוך</button>
         </div>
         <div class="team-field">
-            <input type="text" id="stadiumNameInput" value="${teamData.stadiumName}" readonly style="background-color: #e9ecef;">
+            <label for="stadiumNameInput">שם האצטדיון:</label>
+            <input type="text" id="stadiumNameInput" value="${teamData.stadiumName || ''}" readonly style="background-color: #e9ecef;">
             <button id="editStadiumNameBtn" class="active">ערוך</button>
         </div>
         <div class="team-field">
+            <label for="countrySelect">מדינה:</label>
             <select id="countrySelect">
                 ${countryOptions}
             </select>
+            <label for="citySelect">עיר:</label>
             <select id="citySelect">
                 ${cityOptions}
             </select>
@@ -1627,7 +1640,6 @@
         </div>
         <button id="saveTeamBtn" style="margin-top: 15px;">שמור פרטי קבוצה</button>
         <h4 style="margin-top: 20px;">אצטדיון: ${teamData.stadiumName || 'ללא שם'} (${currentStadium.capacity} מקומות)</h4>
-        <img src="${currentStadium.image}" alt="אצטדיון" style="width: 200px; height: auto; border-radius: 10px; margin: 10px auto; display: block;">
         ${nextLevel ? `<button id="upgradeStadiumBtn" ${teamData.coins < upgradeCost ? 'disabled' : ''}>שדרג ל-${stadiumLevels[nextLevel].capacity} מקומות (${upgradeCost} מטבעות)</button>` : '<p>אצטדיון ברמה מקסימלית!</p>'}
         <h4 style="margin-top: 20px;">שחקנים (${teamData.cards.length}/11)</h4>
         <div id="teamCards">${cardsHtml}</div>
