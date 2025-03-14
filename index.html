@@ -344,6 +344,10 @@
             0% { opacity: 0; transform: scale(0.5); }
             100% { opacity: 1; transform: scale(1); }
         }
+        #dramaticModeBtn.active {
+    background: rgba(69, 123, 157, 0.8);
+    opacity: 1;
+}
         /* עיצוב מחודש לאייקון ההגדרות */
         #dramaticModeBtn {
             position: fixed;
@@ -567,7 +571,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-   <button id="dramaticModeBtn" onclick="openUltimateMenu()" title="תפריט Ultimate">⚙️</button>
+ <button id="dramaticModeBtn" onclick="toggleUltimateMode()" title="הפעל/כבה מצב Ultimate">⚙️</button>
     <div class="navbar">
         <a href="#" onclick="showPage('model')" class="active">חיפוש לפי קוד דגם</a>
         <a href="#" onclick="showPage('serial')">בדיקה לפי מספר סיריאלי</a>
@@ -666,21 +670,39 @@
     <script>
         console.log("הדף נטען בהצלחה");
 
-        let ultimateMode = false;
+       let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
 
-        function toggleUltimateMode() {
-            const username = localStorage.getItem("username");
-            if (!username) {
-                openLoginPopup();
-            } else {
-                ultimateMode = !ultimateMode;
-                const btn = document.getElementById('dramaticModeBtn');
-                btn.style.background = ultimateMode ? 'rgba(69, 123, 157, 0.5)' : 'rgba(255, 255, 255, 0.1)';
-                if (document.getElementById('result').style.display === 'block') {
-                    lookupModel();
-                }
-            }
-        }
+document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("dramaticModeBtn");
+    btn.style.opacity = "1"; // הכפתור תמיד גלוי
+    btn.classList.toggle("active", ultimateMode); // עדכון ויזואלי לפי המצב
+});
+
+      function toggleUltimateMode() {
+    const username = localStorage.getItem("username");
+    const btn = document.getElementById("dramaticModeBtn");
+
+    if (!username) {
+        openLoginPopup();
+        return;
+    }
+
+    ultimateMode = !ultimateMode;
+    localStorage.setItem("ultimateMode", ultimateMode); // שמירה ב-localStorage
+    btn.classList.toggle("active", ultimateMode); // עדכון ויזואלי
+
+    if (ultimateMode) {
+        alert("מצב Ultimate הופעל!");
+        openUltimateMenu(); // פתיחת התפריט מיד עם ההפעלה
+    } else {
+        alert("מצב Ultimate כובה.");
+        closeUltimateMenu(); // סגירת התפריט אם פתוח
+    }
+
+    if (document.getElementById("result").style.display === "block") {
+        lookupModel(); // עדכון התוצאה אם מוצגת
+    }
+}
 
         function showPage(pageId) {
             try {
@@ -1279,17 +1301,20 @@
             document.getElementById("login-overlay").style.display = "none";
         }
 
-        function login() {
-            const username = document.getElementById("usernameInput").value.trim();
-            if (!username) {
-                alert("אנא הזן שם משתמש!");
-                return;
-            }
-            localStorage.setItem("username", username);
-            closeLoginPopup();
-            alert(`ברוך הבא, ${username}! אתה במצב Ultimate.`);
-            toggleUltimateMode();
-        }
+       function login() {
+    const username = document.getElementById("usernameInput").value.trim();
+    if (!username) {
+        alert("אנא הזן שם משתמש!");
+        return;
+    }
+    localStorage.setItem("username", username);
+    closeLoginPopup();
+    ultimateMode = true; // הפעלת מצב Ultimate עם התחברות
+    localStorage.setItem("ultimateMode", "true");
+    document.getElementById("dramaticModeBtn").classList.add("active");
+    alert(`ברוך הבא, ${username}! אתה במצב Ultimate.`);
+    openUltimateMenu(); // פתיחת התפריט לאחר התחברות
+}
 
         function initTeamData() {
             const username = localStorage.getItem("username");
@@ -1392,9 +1417,10 @@ function openUltimateMenu() {
     } else if (ultimateMode) {
         document.getElementById("ultimate-menu").style.display = "block";
         document.getElementById("ultimate-menu-overlay").style.display = "block";
+    } else {
+        alert("אנא הפעל מצב Ultimate תחילה!");
     }
 }
-
 // סגירת תפריט Ultimate
 function closeUltimateMenu() {
     document.getElementById("ultimate-menu").style.display = "none";
