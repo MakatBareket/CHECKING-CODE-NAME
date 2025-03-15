@@ -901,6 +901,129 @@
     0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
     100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
 }
+    /* חלון ניהול קבוצה */
+#team-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    width: 90%;
+    max-width: 600px;
+}
+
+.team-management-container {
+    max-height: 70vh; /* גובה מקסימלי יחסית למסך */
+    overflow-y: auto; /* הוספת גלילה אנכית */
+    padding-right: 10px; /* מרווח לגלילה */
+}
+
+.team-field {
+    margin-bottom: 15px;
+    transition: transform 0.2s ease;
+}
+
+.team-field:hover {
+    transform: scale(1.02); /* אנימציה קלה להוספת אינטראקטיביות */
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+input, select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.edit-btn, .save-btn, .upgrade-btn, .action-btn {
+    padding: 8px 15px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.edit-btn { background: #007bff; color: #fff; }
+.edit-btn:hover { background: #0056b3; transform: scale(1.05); }
+.save-btn { background: #28a745; color: #fff; }
+.save-btn:hover { background: #218838; transform: scale(1.05); }
+.upgrade-btn { background: #ffc107; color: #000; }
+.upgrade-btn:hover { background: #e0a800; transform: scale(1.05); }
+.action-btn { background: #6c757d; color: #fff; }
+.action-btn:hover { background: #5a6268; transform: scale(1.05); }
+
+/* רשימת שחקנים */
+.player-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px 0;
+}
+
+.player-item {
+    background: #f8f9fa;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.3s;
+}
+
+.player-item:hover {
+    background: #e9ecef; /* אפקט hover לשחקנים */
+}
+
+.remove-btn {
+    background: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.remove-btn:hover {
+    background: #c82333;
+}
+
+/* כפתור חזור למעלה */
+.scroll-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    transition: background 0.3s, transform 0.2s;
+}
+
+.scroll-btn:hover {
+    background: #0056b3;
+    transform: scale(1.1);
+}
+
+.stats {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #555;
+}
 </style>
     <script>
     console.log("הדף נטען בהצלחה");
@@ -1700,7 +1823,7 @@
         document.querySelector('.dramatic-card button').disabled = true;
     }
 
-   function openTeamPopup() {
+  function openTeamPopup() {
     const username = localStorage.getItem("currentUser");
     let teamData = initTeamData();
     if (!username) {
@@ -1709,9 +1832,9 @@
     }
     if (!teamData) return;
 
-    let cardsHtml = '<ul>';
+    let cardsHtml = '<ul class="player-list">';
     teamData.cards.forEach((card, index) => {
-        cardsHtml += `<li>${card.model} - ${card.role} (${card.rating}) <button class="remove-btn" data-index="${index}">הסר</button></li>`;
+        cardsHtml += `<li class="player-item">${card.model} - ${card.role} (${card.rating}) <button class="remove-btn" data-index="${index}">הסר</button></li>`;
     });
     cardsHtml += '</ul>';
 
@@ -1741,43 +1864,46 @@
 
     const popup = document.getElementById("team-popup");
     popup.innerHTML = `
-        <h3>ניהול קבוצה</h3>
-        <div class="team-field">
-            <label for="teamNameInput">שם הקבוצה:</label>
-            <input type="text" id="teamNameInput" value="${teamData.teamName || ''}" readonly style="background-color: #e9ecef;">
-            <button id="editTeamNameBtn" class="active">ערוך</button>
+        <div class="team-management-container">
+            <h3>ניהול קבוצה</h3>
+            <div class="team-field">
+                <label for="teamNameInput">שם הקבוצה:</label>
+                <input type="text" id="teamNameInput" value="${teamData.teamName || ''}" readonly style="background-color: #e9ecef;">
+                <button id="editTeamNameBtn" class="active edit-btn">ערוך</button>
+            </div>
+            <div class="team-field">
+                <label for="coachNameInput">שם המאמן:</label>
+                <input type="text" id="coachNameInput" value="${teamData.coachName || ''}" readonly style="background-color: #e9ecef;">
+                <button id="editCoachNameBtn" class="active edit-btn">ערוך</button>
+            </div>
+            <div class="team-field">
+                <label for="stadiumNameInput">שם האצטדיון:</label>
+                <input type="text" id="stadiumNameInput" value="${teamData.stadiumName || ''}" readonly style="background-color: #e9ecef;">
+                <button id="editStadiumNameBtn" class="active edit-btn">ערוך</button>
+            </div>
+            <div class="team-field">
+                <label for="countrySelect">מדינה:</label>
+                <select id="countrySelect">
+                    ${countryOptions}
+                </select>
+                <label for="citySelect">עיר:</label>
+                <select id="citySelect">
+                    ${cityOptions}
+                </select>
+                ${teamData.country && teamLocations[teamData.country] ? `<img src="${teamLocations[teamData.country].flag}" alt="דגל ${teamData.country}" class="country-flag">` : ''}
+            </div>
+            <button id="saveTeamBtn" class="save-btn">שמור פרטי קבוצה</button>
+            <h4>אצטדיון: ${teamData.stadiumName || 'ללא שם'} (${currentStadium.capacity} מקומות)</h4>
+            ${nextLevel ? `<button id="upgradeStadiumBtn" class="upgrade-btn" ${teamData.coins < upgradeCost ? 'disabled' : ''}>שדרג ל-${stadiumLevels[nextLevel].capacity} מקומות (${upgradeCost} מטבעות)</button>` : '<p>אצטדיון ברמה מקסימלית!</p>'}
+            <h4>שחקנים (${teamData.cards.length}/11)</h4>
+            <div id="teamCards">${cardsHtml}</div>
+            <div class="popup-buttons">
+                <button id="fieldViewBtn" class="action-btn">תצוגת מגרש</button>
+                <button id="closeTeamBtn" class="action-btn">סגור</button>
+            </div>
+            <p class="stats">חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרו: ${teamData.savesLeft} | מטבעות: ${teamData.coins}</p>
+            <button id="scrollToTopBtn" class="scroll-btn" style="display: none;">חזור למעלה</button>
         </div>
-        <div class="team-field">
-            <label for="coachNameInput">שם המאמן:</label>
-            <input type="text" id="coachNameInput" value="${teamData.coachName || ''}" readonly style="background-color: #e9ecef;">
-            <button id="editCoachNameBtn" class="active">ערוך</button>
-        </div>
-        <div class="team-field">
-            <label for="stadiumNameInput">שם האצטדיון:</label>
-            <input type="text" id="stadiumNameInput" value="${teamData.stadiumName || ''}" readonly style="background-color: #e9ecef;">
-            <button id="editStadiumNameBtn" class="active">ערוך</button>
-        </div>
-        <div class="team-field">
-            <label for="countrySelect">מדינה:</label>
-            <select id="countrySelect">
-                ${countryOptions}
-            </select>
-            <label for="citySelect">עיר:</label>
-            <select id="citySelect">
-                ${cityOptions}
-            </select>
-            ${teamData.country && teamLocations[teamData.country] ? `<img src="${teamLocations[teamData.country].flag}" alt="דגל ${teamData.country}" class="country-flag">` : ''}
-        </div>
-        <button id="saveTeamBtn" style="margin-top: 15px;">שמור פרטי קבוצה</button>
-        <h4 style="margin-top: 20px;">אצטדיון: ${teamData.stadiumName || 'ללא שם'} (${currentStadium.capacity} מקומות)</h4>
-        ${nextLevel ? `<button id="upgradeStadiumBtn" ${teamData.coins < upgradeCost ? 'disabled' : ''}>שדרג ל-${stadiumLevels[nextLevel].capacity} מקומות (${upgradeCost} מטבעות)</button>` : '<p>אצטדיון ברמה מקסימלית!</p>'}
-        <h4 style="margin-top: 20px;">שחקנים (${teamData.cards.length}/11)</h4>
-        <div id="teamCards">${cardsHtml}</div>
-        <div class="popup-buttons">
-            <button id="fieldViewBtn">תצוגת מגרש</button>
-            <button id="closeTeamBtn">סגור</button>
-        </div>
-        <p style="margin-top: 10px;">חיפושים נותרים: ${teamData.searchesLeft} | שמירות נותרו: ${teamData.savesLeft} | מטבעות: ${teamData.coins}</p>
     `;
 
     const toggleEditButton = (btnId, inputId) => {
@@ -1794,7 +1920,6 @@
                 input.style.backgroundColor = "#e9ecef";
                 btn.textContent = "ערוך";
                 btn.classList.add("active");
-                // שמור את הערך ב-localStorage בלי להפעיל פופ-אפ
                 teamData[inputId.replace('Input', '')] = input.value.trim();
                 localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
             }
@@ -1816,6 +1941,16 @@
             const index = parseInt(btn.getAttribute("data-index"));
             removeCard(index);
         });
+    });
+
+    // הוספת גלילה וכפתור "חזור למעלה"
+    const container = popup.querySelector(".team-management-container");
+    container.addEventListener("scroll", () => {
+        const scrollBtn = document.getElementById("scrollToTopBtn");
+        scrollBtn.style.display = container.scrollTop > 100 ? "block" : "none";
+    });
+    document.getElementById("scrollToTopBtn").addEventListener("click", () => {
+        container.scrollTo({ top: 0, behavior: "smooth" });
     });
 
     popup.style.display = "block";
