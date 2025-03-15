@@ -902,101 +902,172 @@
     100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
 }
     /* חלון ניהול קבוצה */
+/* תיקון חלון ניהול קבוצה */
 #team-popup {
+    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    width: 90%;
+    background: linear-gradient(135deg, #1d3557, #457b9d); /* שחזור העיצוב המקורי */
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
     max-width: 600px;
+    width: 90%;
+    text-align: center;
+    z-index: 2000;
+    animation: popIn 0.4s ease-out;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .team-management-container {
-    max-height: 70vh; /* גובה מקסימלי יחסית למסך */
-    overflow-y: auto; /* הוספת גלילה אנכית */
+    max-height: 70vh; /* גובה מקסימלי לגלילה */
+    overflow-y: auto; /* גלילה אנכית */
     padding-right: 10px; /* מרווח לגלילה */
 }
 
 .team-field {
-    margin-bottom: 15px;
-    transition: transform 0.2s ease;
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    align-items: center;
+    transition: transform 0.2s ease; /* אנימציה קלה */
 }
 
 .team-field:hover {
-    transform: scale(1.02); /* אנימציה קלה להוספת אינטראקטיביות */
+    transform: scale(1.02); /* אפקט אינטראקטיבי */
 }
 
-label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
+.team-field input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 2px solid #00d4ff;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background 0.3s;
 }
 
-input, select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
+.team-field input[readonly] {
+    background: rgba(255, 255, 255, 0.1);
+    cursor: default;
+}
+
+.team-field input:not([readonly]) {
+    background: #fff;
+    color: #1d3557;
+}
+
+.team-field select {
+    padding: 10px;
+    border: 2px solid #00d4ff;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+    transition: border-color 0.3s;
+}
+
+.team-field select:focus {
+    border-color: #f4a261;
+    outline: none;
 }
 
 .edit-btn, .save-btn, .upgrade-btn, .action-btn {
     padding: 8px 15px;
-    margin: 5px 0;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background 0.3s, transform 0.2s;
+    color: #fff;
+    font-weight: 500;
 }
 
-.edit-btn { background: #007bff; color: #fff; }
-.edit-btn:hover { background: #0056b3; transform: scale(1.05); }
-.save-btn { background: #28a745; color: #fff; }
-.save-btn:hover { background: #218838; transform: scale(1.05); }
-.upgrade-btn { background: #ffc107; color: #000; }
-.upgrade-btn:hover { background: #e0a800; transform: scale(1.05); }
-.action-btn { background: #6c757d; color: #fff; }
-.action-btn:hover { background: #5a6268; transform: scale(1.05); }
+.edit-btn.active {
+    background: #f4a261;
+}
+
+.edit-btn:not(.active) {
+    background: #28a745;
+}
+
+.save-btn {
+    background: #28a745;
+    margin: 15px 0;
+    width: 100%;
+}
+
+.save-btn:hover {
+    background: #218838;
+    transform: scale(1.05);
+}
+
+.upgrade-btn {
+    background: #ffc107;
+    color: #000;
+}
+
+.upgrade-btn:hover {
+    background: #e0a800;
+    transform: scale(1.05);
+}
+
+.upgrade-btn:disabled {
+    background: #666;
+    cursor: not-allowed;
+}
+
+.action-btn {
+    background: #a8dadc;
+    color: #1d3557;
+}
+
+.action-btn:hover {
+    background: #ffffff;
+    transform: scale(1.05);
+}
 
 /* רשימת שחקנים */
 .player-list {
     list-style: none;
     padding: 0;
-    margin: 0 0 15px 0;
+    margin: 10px 0;
 }
 
 .player-item {
-    background: #f8f9fa;
-    padding: 10px;
-    margin-bottom: 5px;
-    border-radius: 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    color: #ffffff;
     transition: background 0.3s;
 }
 
 .player-item:hover {
-    background: #e9ecef; /* אפקט hover לשחקנים */
+    background: rgba(255, 255, 255, 0.2); /* אפקט hover */
 }
 
 .remove-btn {
-    background: #dc3545;
-    color: #fff;
-    border: none;
+    background: #f4a261;
     padding: 5px 10px;
+    border: none;
     border-radius: 5px;
+    color: #1d3557;
+    font-weight: 500;
     cursor: pointer;
     transition: background 0.3s;
 }
 
 .remove-btn:hover {
-    background: #c82333;
+    background: #ffffff;
 }
 
 /* כפתור חזור למעלה */
@@ -1004,25 +1075,25 @@ input, select {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background: #007bff;
-    color: #fff;
+    background: #00d4ff;
+    color: #0d1b2a;
     padding: 10px 15px;
     border: none;
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
     transition: background 0.3s, transform 0.2s;
 }
 
 .scroll-btn:hover {
-    background: #0056b3;
+    background: #00ffcc;
     transform: scale(1.1);
 }
 
 .stats {
     margin-top: 15px;
     font-size: 14px;
-    color: #555;
+    color: #e0e1dd;
 }
 </style>
     <script>
@@ -1823,7 +1894,7 @@ input, select {
         document.querySelector('.dramatic-card button').disabled = true;
     }
 
-  function openTeamPopup() {
+ function openTeamPopup() {
     const username = localStorage.getItem("currentUser");
     let teamData = initTeamData();
     if (!username) {
@@ -1867,29 +1938,20 @@ input, select {
         <div class="team-management-container">
             <h3>ניהול קבוצה</h3>
             <div class="team-field">
-                <label for="teamNameInput">שם הקבוצה:</label>
-                <input type="text" id="teamNameInput" value="${teamData.teamName || ''}" readonly style="background-color: #e9ecef;">
-                <button id="editTeamNameBtn" class="active edit-btn">ערוך</button>
+                <input type="text" id="teamNameInput" value="${teamData.teamName || ''}" readonly placeholder="שם הקבוצה">
+                <button id="editTeamNameBtn" class="edit-btn active">ערוך</button>
             </div>
             <div class="team-field">
-                <label for="coachNameInput">שם המאמן:</label>
-                <input type="text" id="coachNameInput" value="${teamData.coachName || ''}" readonly style="background-color: #e9ecef;">
-                <button id="editCoachNameBtn" class="active edit-btn">ערוך</button>
+                <input type="text" id="coachNameInput" value="${teamData.coachName || ''}" readonly placeholder="שם המאמן">
+                <button id="editCoachNameBtn" class="edit-btn active">ערוך</button>
             </div>
             <div class="team-field">
-                <label for="stadiumNameInput">שם האצטדיון:</label>
-                <input type="text" id="stadiumNameInput" value="${teamData.stadiumName || ''}" readonly style="background-color: #e9ecef;">
-                <button id="editStadiumNameBtn" class="active edit-btn">ערוך</button>
+                <input type="text" id="stadiumNameInput" value="${teamData.stadiumName || ''}" readonly placeholder="שם האצטדיון">
+                <button id="editStadiumNameBtn" class="edit-btn active">ערוך</button>
             </div>
             <div class="team-field">
-                <label for="countrySelect">מדינה:</label>
-                <select id="countrySelect">
-                    ${countryOptions}
-                </select>
-                <label for="citySelect">עיר:</label>
-                <select id="citySelect">
-                    ${cityOptions}
-                </select>
+                <select id="countrySelect">${countryOptions}</select>
+                <select id="citySelect">${cityOptions}</select>
                 ${teamData.country && teamLocations[teamData.country] ? `<img src="${teamLocations[teamData.country].flag}" alt="דגל ${teamData.country}" class="country-flag">` : ''}
             </div>
             <button id="saveTeamBtn" class="save-btn">שמור פרטי קבוצה</button>
@@ -1909,7 +1971,8 @@ input, select {
     const toggleEditButton = (btnId, inputId) => {
         const btn = document.getElementById(btnId);
         const input = document.getElementById(inputId);
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation(); // למנוע סגירה של החלון
             if (input.hasAttribute("readonly")) {
                 input.removeAttribute("readonly");
                 input.style.backgroundColor = "#fff";
@@ -1917,7 +1980,7 @@ input, select {
                 btn.classList.remove("active");
             } else {
                 input.setAttribute("readonly", true);
-                input.style.backgroundColor = "#e9ecef";
+                input.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
                 btn.textContent = "ערוך";
                 btn.classList.add("active");
                 teamData[inputId.replace('Input', '')] = input.value.trim();
@@ -1930,26 +1993,40 @@ input, select {
     toggleEditButton("editStadiumNameBtn", "stadiumNameInput");
 
     document.getElementById("countrySelect").addEventListener("change", updateCities);
-    document.getElementById("saveTeamBtn").addEventListener("click", saveTeamDetails);
-    document.getElementById("fieldViewBtn").addEventListener("click", openFieldPopup);
-    document.getElementById("closeTeamBtn").addEventListener("click", closeTeamPopup);
+    document.getElementById("saveTeamBtn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        saveTeamDetails();
+    });
+    document.getElementById("fieldViewBtn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        openFieldPopup();
+    });
+    document.getElementById("closeTeamBtn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        closeTeamPopup();
+    });
     if (nextLevel) {
-        document.getElementById("upgradeStadiumBtn").addEventListener("click", () => upgradeStadium(teamData, nextLevel, upgradeCost));
+        document.getElementById("upgradeStadiumBtn").addEventListener("click", (e) => {
+            e.stopPropagation();
+            upgradeStadium(teamData, nextLevel, upgradeCost);
+        });
     }
     document.querySelectorAll(".remove-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
             const index = parseInt(btn.getAttribute("data-index"));
             removeCard(index);
         });
     });
 
-    // הוספת גלילה וכפתור "חזור למעלה"
+    // גלילה וכפתור "חזור למעלה"
     const container = popup.querySelector(".team-management-container");
     container.addEventListener("scroll", () => {
         const scrollBtn = document.getElementById("scrollToTopBtn");
         scrollBtn.style.display = container.scrollTop > 100 ? "block" : "none";
     });
-    document.getElementById("scrollToTopBtn").addEventListener("click", () => {
+    document.getElementById("scrollToTopBtn").addEventListener("click", (e) => {
+        e.stopPropagation();
         container.scrollTo({ top: 0, behavior: "smooth" });
     });
 
