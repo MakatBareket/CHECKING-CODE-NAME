@@ -1095,6 +1095,32 @@
     font-size: 14px;
     color: #e0e1dd;
 }
+    #league-table-popup table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    color: #1d3557;
+}
+
+#league-table-popup th, #league-table-popup td {
+    padding: 10px;
+    border: 1px solid #457b9d;
+    text-align: center;
+}
+
+#league-table-popup th {
+    background: #457b9d;
+    color: white;
+    font-weight: 600;
+}
+
+#league-table-popup tr:nth-child(even) {
+    background: #edf2f4;
+}
+
+#league-table-popup tr:nth-child(odd) {
+    background: #f9f9f9;
+}
 </style>
     <script>
     console.log("הדף נטען בהצלחה");
@@ -2053,11 +2079,10 @@
         }
     }
 
-    function saveTeamDetails() {
+  function saveTeamDetails() {
     const username = localStorage.getItem("currentUser");
     let teamData = initTeamData();
 
-    // שמור את כל הפרטים
     teamData.teamName = document.getElementById("teamNameInput").value.trim();
     teamData.coachName = document.getElementById("coachNameInput").value.trim();
     teamData.stadiumName = document.getElementById("stadiumNameInput").value.trim();
@@ -2065,20 +2090,19 @@
     teamData.city = document.getElementById("citySelect").value;
 
     localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+    addTeamToLeague(); // הוסף לליגה
 
-    // שלב 1: פופ-אפ חדשותי
     const newsPopup = document.getElementById("team-save-popup");
     newsPopup.innerHTML = `
         <div class="news-container">
             <div class="news-ticker">חדשות חמות</div>
             <h2 class="news-headline">העיר ${teamData.city || 'החדשה'} מברכת את ${teamData.coachName || 'המאמן החדש'}</h2>
-            <p class="news-text">על כניסתו לתפקיד בקבוצה "${teamData.teamName || 'הקבוצה החדשה'}". המאמן מגיע עם שאיפות גדולות ומצפה להוביל את הקבוצה להצלחה מסחררת בעונת המשחקים הקרובה!</p>
+            <p class="news-text">על כניסתו לתפקיד בקבוצה "${teamData.teamName || 'הקבוצה החדשה'}". המאמן מגיע עם שאיפות גדולות ומצפה להוביל את הקבוצה להצלחה בליגה!</p>
         </div>
     `;
     newsPopup.style.display = "block";
     document.getElementById("team-save-overlay").style.display = "block";
 
-    // סגור את החדשות לאחר 3 שניות והפעל את התצוגה ההוליוודית
     setTimeout(() => {
         newsPopup.style.display = "none";
         showHollywoodPopup(teamData);
@@ -2170,11 +2194,19 @@ function showHollywoodPopup(teamData) {
         document.getElementById("field-overlay").style.display = "none";
     }
 
-    function openUltimateMenu() {
-        document.getElementById("ultimate-menu").style.display = "block";
-        document.getElementById("ultimate-menu-overlay").style.display = "block";
-    }
-
+   function openUltimateMenu() {
+    document.getElementById("ultimate-menu").innerHTML = `
+        <h3>תפריט Ultimate</h3>
+        <div class="popup-buttons" style="flex-direction: column; gap: 15px;">
+            <button class="futuristic-btn" onclick="openTeamManagement()">ניהול קבוצה</button>
+            <button class="futuristic-btn" onclick="openLeagueTable()">טבלת ליגה</button>
+            <button class="futuristic-btn" onclick="toggleUltimateMode()">חזרה למצב רגיל</button>
+            <button class="futuristic-btn" onclick="closeUltimateMenu()">סגור</button>
+        </div>
+    `;
+    document.getElementById("ultimate-menu").style.display = "block";
+    document.getElementById("ultimate-menu-overlay").style.display = "block";
+}
     function closeUltimateMenu() {
         document.getElementById("ultimate-menu").style.display = "none";
         document.getElementById("ultimate-menu-overlay").style.display = "none";
@@ -2206,6 +2238,82 @@ function showHollywoodPopup(teamData) {
     window.onload = () => {
         updateUltimateButtonState();
     };
+        // פונקציה לקבלת נתוני הליגה
+function getLeagueData() {
+    return JSON.parse(localStorage.getItem("leagueData")) || {
+        teams: [],
+        schedule: [],
+        lastUpdate: null
+    };
+}
+
+// פונקציה לשמירת נתוני הליגה
+function saveLeagueData(leagueData) {
+    localStorage.setItem("leagueData", JSON.stringify(leagueData));
+}
+
+// פונקציה לחישוב דירוג ממוצע של קבוצה
+function calculateTeamRating(teamData) {
+    if (!teamData.cards || teamData.cards.length === 0) return 0;
+    const totalRating = teamData.cards.reduce((sum, card) => sum + card.rating, 0);
+    return Math.round(totalRating / teamData.cards.length);
+}
+
+// פונקציה להוספת קבוצה לליגה (נקרא כאשר שומרים פרטי קבוצה)
+function addTeamToLeague() {
+    const username = localStorage.getItem("currentUser");
+    const teamData = initTeamData();
+    if (!teamData || !teamData.teamName) return;
+
+    let leagueData = getLeagueData();
+    const teamExists = leagueData.teams.some(team => team.username === username);
+
+    if (!teamExists) {
+        const teamRating = calculateTeamRating(teamData);
+        leagueData.teams.push({
+            username: username,
+            teamName: teamData.teamName,
+            rating: teamRating,
+            points: 0,
+            wins: 0,
+            losses: 0
+        });
+        saveLeagueData(leagueData);
+    }
+}
+
+        // פונקציה ליצירת משחקים יומיים
+function runDailyMatches() {
+    const leagueData = getLeagueData();
+    const today = new Date().toISOString().split('T')[0];
+
+    if (leagueData.lastUpdate === today || leagueData.teams.length < 2) return;
+
+    // יצירת זוגות משחקים (כל קבוצה משחקת פעם אחת ביום)
+    const matches = [];
+    const shuffledTeams = [...leagueData.teams].sort(() => 0.5 - Math.random());
+    for (let i = 0; i < shuffledTeams.length - 1; i += 2) {
+        matches.push([shuffledTeams[i], shuffledTeams[i + 1]]);
+    }
+
+    // חישוב תוצאות
+    matches.forEach(([team1, team2]) => {
+        const ratingDiff = team1.rating - team2.rating;
+        const randomFactor = Math.random() * 10 - 5; // אלמנט אקראי קל
+        const winner = ratingDiff + randomFactor > 0 ? team1 : team2;
+        const loser = winner === team1 ? team2 : team1;
+
+        winner.points += 3;
+        winner.wins += 1;
+        loser.losses += 1;
+    });
+
+    leagueData.lastUpdate = today;
+    saveLeagueData(leagueData);
+    alert("משחקי היום עודכנו!");
+}
+
+        
 </script>
 </body>
 </html>
