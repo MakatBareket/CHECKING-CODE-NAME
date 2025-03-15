@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>הזן קוד דגם</title>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js"></script>
 </head>
 <body>
     <button id="dramaticModeBtn" onclick="toggleUltimateMode()" title="הפעל/כבה מצב Ultimate"><span style="font-size: 20px;">🏆</span></button>
@@ -1126,28 +1123,19 @@
 }
 </style>
     <script>
-        // אתחול Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyA0AUnVVxkM0Tf4DjoHFBw1hNjcClNrKJQ",
-    authDomain: "checking-code-name.firebaseapp.com",
-    projectId: "checking-code-name",
-    storageBucket: "checking-code-name.firebasestorage.app",
-    messagingSenderId: "462729704594",
-    appId: "1:462729704594:web:920e8da7009a3fc4d2624b",
-    measurementId: "G-QKDP4L709L"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// שאר הקוד שלך ממשיך כאן...
-console.log("הדף נטען בהצלחה");
-let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
-// ...
     console.log("הדף נטען בהצלחה");
 
     let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
-    
+
+    // פונקציות עזר לניהול משתמשים וקבוצות
+    function getUsers() {
+        return JSON.parse(localStorage.getItem("users")) || {};
+    }
+
+    function saveUsers(users) {
+        localStorage.setItem("users", JSON.stringify(users));
+    }
+
     function toggleUltimateMode() {
         const username = localStorage.getItem("currentUser");
         const btn = document.getElementById("dramaticModeBtn");
@@ -1383,41 +1371,41 @@ let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
         }
     }
 
-   async function lookupModel() {
-    try {
-        var model = document.getElementById("modelInput").value.trim().toUpperCase();
-        var resultDiv = document.getElementById("result");
-        var loader = document.getElementById("loader");
+    function lookupModel() {
+        try {
+            var model = document.getElementById("modelInput").value.trim().toUpperCase();
+            var resultDiv = document.getElementById("result");
+            var loader = document.getElementById("loader");
 
-        if (!model || model.length < 5) {
-            resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין קוד דגם חוקי (מינימום 5 תווים).</div>';
-            resultDiv.style.display = "block";
-            return;
-        }
-
-        loader.style.display = "block";
-        resultDiv.style.display = "none";
-
-        setTimeout(async () => {
-            try {
-                var details = ultimateMode ? await getDramaticModelDetails(model) : getModelDetails(model);
-                resultDiv.innerHTML = details;
+            if (!model || model.length < 5) {
+                resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין קוד דגם חוקי (מינימום 5 תווים).</div>';
                 resultDiv.style.display = "block";
-                loader.style.display = "none";
-            } catch (e) {
-                console.error("שגיאה בתוך setTimeout של lookupModel:", e);
-                resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
-                resultDiv.style.display = "block";
-                loader.style.display = "none";
+                return;
             }
-        }, 1000);
-    } catch (e) {
-        console.error("שגיאה ב-lookupModel:", e);
-        resultDiv.innerHTML = `<div class="card">שגיאה כללית: ${e.message}</div>`;
-        resultDiv.style.display = "block";
-        loader.style.display = "none";
+
+            loader.style.display = "block";
+            resultDiv.style.display = "none";
+
+            setTimeout(() => {
+                try {
+                    var details = ultimateMode ? getDramaticModelDetails(model) : getModelDetails(model);
+                    resultDiv.innerHTML = details;
+                    resultDiv.style.display = "block";
+                    loader.style.display = "none";
+                } catch (e) {
+                    console.error("שגיאה בתוך setTimeout של lookupModel:", e);
+                    resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
+                    resultDiv.style.display = "block";
+                    loader.style.display = "none";
+                }
+            }, 1000);
+        } catch (e) {
+            console.error("שגיאה ב-lookupModel:", e);
+            resultDiv.innerHTML = `<div class="card">שגיאה כללית: ${e.message}</div>`;
+            resultDiv.style.display = "block";
+            loader.style.display = "none";
+        }
     }
-}
 
     function suggestRandomModel() {
         try {
@@ -1590,132 +1578,132 @@ let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
         }
     }
 
-   async function getDramaticModelDetails(model) {
-    if (!model || model.length < 5) {
-        return `<div class="dramatic-card">שגיאה: קוד דגם לא תקין (${model.length} תווים, נדרש לפחות 5).</div>`;
-    }
+    function getDramaticModelDetails(model) {
+        if (!model || model.length < 5) {
+            return `<div class="dramatic-card">שגיאה: קוד דגם לא תקין (${model.length} תווים, נדרש לפחות 5).</div>`;
+        }
 
-    const username = localStorage.getItem("currentUser");
-    let teamData = await initTeamData();
+        const username = localStorage.getItem("currentUser");
+        let teamData = initTeamData();
 
-    if (teamData && teamData.searchesLeft <= 0) {
-        return `<div class="dramatic-card">שגיאה: נגמרו לך החיפושים להיום!</div>`;
-    }
+        if (teamData && teamData.searchesLeft <= 0) {
+            return `<div class="dramatic-card">שגיאה: נגמרו לך החיפושים להיום!</div>`;
+        }
 
-    let displayType = '';
-    let image = '';
-    let size = parseInt(model[2] + model[3]) || 0;
-    let yearCode = '';
-    for (let i = 4; i < model.length; i++) {
-        if (modelYearCodes[model[i]]) {
-            yearCode = model[i];
-            break;
+        let displayType = '';
+        let image = '';
+        let size = parseInt(model[2] + model[3]) || 0;
+        let yearCode = '';
+        for (let i = 4; i < model.length; i++) {
+            if (modelYearCodes[model[i]]) {
+                yearCode = model[i];
+                break;
+            }
+        }
+        let year = modelYearCodes[yearCode] || 'לא ידוע';
+        let overallScore = 0;
+        let stars = '';
+        let celebrationEffect = '';
+        let countryCode = model.length >= 13 ? model.slice(-2) : 'לא ידוע';
+        let countryFlag = '';
+
+        const countryFlags = {
+            'IL': 'https://flagcdn.com/w80/il.png',
+            'SQ': 'https://flagcdn.com/w80/il.png',
+            'ZA': 'https://flagcdn.com/w80/za.png',
+            'RU': 'https://flagcdn.com/w80/ru.png',
+            'UA': 'https://flagcdn.com/w80/ua.png',
+            '2C': 'https://flagcdn.com/w80/cn.png',
+            'XU': 'https://flagcdn.com/w80/gb.png',
+            'XY': 'https://flagcdn.com/w80/au.png',
+            'AA': 'https://flagcdn.com/w80/us.png',
+            'WT': 'https://flagcdn.com/w80/hk.png',
+            'EC': 'https://flagcdn.com/w80/kr.png',
+            'TL': 'https://flagcdn.com/w80/in.png',
+            'EM': 'https://flagcdn.com/w80/mx.png',
+            'US': 'https://flagcdn.com/w80/us.png',
+            'LP': 'https://flagcdn.com/w80/hk.png',
+            'AH': 'https://flagcdn.com/w80/kr.png',
+            'T1': 'https://flagcdn.com/w80/in.png',
+            'AX': 'https://flagcdn.com/w80/mx.png',
+            'KJ': 'https://flagcdn.com/w80/il.png'
+        };
+
+        const defaultImage = 'https://via.placeholder.com/300x200?text=מוצר+סמסונג';
+
+        if (/^R[FSBTL]/.test(model)) {
+            displayType = fridgeConfig[model[1]] || 'מקרר לא ידוע';
+            overallScore = Math.floor(Math.random() * (85 - 70 + 1)) + 70;
+            if (size >= 60 && year >= '2023') overallScore += 5;
+            image = productImages[displayType] || defaultImage;
+        } else if (/^W[WD]|^DV/.test(model)) {
+            displayType = washerTech[model.slice(0, 2)] || 'מכונת כביסה לא ידועה';
+            overallScore = Math.floor(Math.random() * (80 - 65 + 1)) + 65;
+            image = productImages['מכונת כביסה'] || defaultImage;
+        } else if (/^[QULPK][NEA]/.test(model)) {
+            let isFrame = model.includes('LS03');
+            let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
+            let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
+
+            if (isFrame) displayType = 'The Frame';
+            else if (isOLED) displayType = 'OLED';
+            else if (isNseries) displayType = 'N4000-N5500 Series';
+            else if (model[0] === 'U' && year >= '2018') displayType = 'CRYSTAL UHD';
+            else if (model[0] === 'U' && year < '2018') displayType = 'LED';
+            else displayType = tvDisplay[model[0]] || 'טלוויזיה לא ידועה';
+
+            if (isFrame && size >= 85 && year === '2024') overallScore = 94;
+            else if (model[0] === 'Q' && size >= 85 && year === '2024') overallScore = 94;
+            else if (isFrame) overallScore = Math.min(88 + Math.floor((size - 43) / 10), 93);
+            else if (isOLED) overallScore = Math.min(82 + Math.floor((size - 55) / 10), 91);
+            else if (model[0] === 'Q') overallScore = Math.min(85 + Math.floor((size - 55) / 10), 93);
+            else overallScore = Math.min(75 + Math.floor((size - 43) / 10), 88);
+            image = productImages[displayType] || defaultImage;
+        } else {
+            displayType = 'מוצר לא מזוהה';
+            overallScore = Math.floor(Math.random() * (80 - 60 + 1)) + 60;
+            image = defaultImage;
+        }
+
+        countryFlag = countryFlags[countryCode] || '';
+
+        if (overallScore >= 90) stars = '★★★★★';
+        else if (overallScore >= 80) stars = '★★★★☆';
+        else if (overallScore >= 70) stars = '★★★☆☆';
+        else if (overallScore >= 60) stars = '★★☆☆☆';
+        else stars = '★☆☆☆☆';
+
+        if (overallScore >= 88) {
+            celebrationEffect = ' celebration';
+            setTimeout(() => triggerConfetti(), 2000);
+        }
+
+        let flagHtml = countryFlag ? `<img src="${countryFlag}" alt="דגל המדינה" class="country-flag">` : '';
+
+        if (teamData) {
+            teamData.searchesLeft--;
+            localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+            const roles = ['שוער', 'מגן', 'קשר', 'חלוץ'];
+            const randomRole = roles[Math.floor(Math.random() * roles.length)];
+            return `<div class="dramatic-card hollywood${celebrationEffect}">
+                        <img src="${image}" alt="${displayType}">
+                        <div class="tv-name">${model} - ${displayType}</div>
+                        ${flagHtml}
+                        <div class="stars">${stars}</div>
+                        <div class="overall">${overallScore}</div>
+                        <button onclick="saveCard('${model}', '${randomRole}', ${overallScore})" ${teamData.savesLeft <= 0 ? 'disabled' : ''}>שמור לקבוצה (${teamData.savesLeft} נותרו)</button>
+                    </div>`;
+        } else {
+            return `<div class="dramatic-card hollywood${celebrationEffect}">
+                        <img src="${image}" alt="${displayType}">
+                        <div class="tv-name">${model} - ${displayType}</div>
+                        ${flagHtml}
+                        <div class="stars">${stars}</div>
+                        <div class="overall">${overallScore}</div>
+                    </div>`;
         }
     }
-    let year = modelYearCodes[yearCode] || 'לא ידוע';
-    let overallScore = 0;
-    let stars = '';
-    let celebrationEffect = '';
-    let countryCode = model.length >= 13 ? model.slice(-2) : 'לא ידוע';
-    let countryFlag = '';
 
-    const countryFlags = {
-        'IL': 'https://flagcdn.com/w80/il.png',
-        'SQ': 'https://flagcdn.com/w80/il.png',
-        'ZA': 'https://flagcdn.com/w80/za.png',
-        'RU': 'https://flagcdn.com/w80/ru.png',
-        'UA': 'https://flagcdn.com/w80/ua.png',
-        '2C': 'https://flagcdn.com/w80/cn.png',
-        'XU': 'https://flagcdn.com/w80/gb.png',
-        'XY': 'https://flagcdn.com/w80/au.png',
-        'AA': 'https://flagcdn.com/w80/us.png',
-        'WT': 'https://flagcdn.com/w80/hk.png',
-        'EC': 'https://flagcdn.com/w80/kr.png',
-        'TL': 'https://flagcdn.com/w80/in.png',
-        'EM': 'https://flagcdn.com/w80/mx.png',
-        'US': 'https://flagcdn.com/w80/us.png',
-        'LP': 'https://flagcdn.com/w80/hk.png',
-        'AH': 'https://flagcdn.com/w80/kr.png',
-        'T1': 'https://flagcdn.com/w80/in.png',
-        'AX': 'https://flagcdn.com/w80/mx.png',
-        'KJ': 'https://flagcdn.com/w80/il.png'
-    };
-
-    const defaultImage = 'https://via.placeholder.com/300x200?text=מוצר+סמסונג';
-
-    if (/^R[FSBTL]/.test(model)) {
-        displayType = fridgeConfig[model[1]] || 'מקרר לא ידוע';
-        overallScore = Math.floor(Math.random() * (85 - 70 + 1)) + 70;
-        if (size >= 60 && year >= '2023') overallScore += 5;
-        image = productImages[displayType] || defaultImage;
-    } else if (/^W[WD]|^DV/.test(model)) {
-        displayType = washerTech[model.slice(0, 2)] || 'מכונת כביסה לא ידועה';
-        overallScore = Math.floor(Math.random() * (80 - 65 + 1)) + 65;
-        image = productImages['מכונת כביסה'] || defaultImage;
-    } else if (/^[QULPK][NEA]/.test(model)) {
-        let isFrame = model.includes('LS03');
-        let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
-        let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
-
-        if (isFrame) displayType = 'The Frame';
-        else if (isOLED) displayType = 'OLED';
-        else if (isNseries) displayType = 'N4000-N5500 Series';
-        else if (model[0] === 'U' && year >= '2018') displayType = 'CRYSTAL UHD';
-        else if (model[0] === 'U' && year < '2018') displayType = 'LED';
-        else displayType = tvDisplay[model[0]] || 'טלוויזיה לא ידועה';
-
-        if (isFrame && size >= 85 && year === '2024') overallScore = 94;
-        else if (model[0] === 'Q' && size >= 85 && year === '2024') overallScore = 94;
-        else if (isFrame) overallScore = Math.min(88 + Math.floor((size - 43) / 10), 93);
-        else if (isOLED) overallScore = Math.min(82 + Math.floor((size - 55) / 10), 91);
-        else if (model[0] === 'Q') overallScore = Math.min(85 + Math.floor((size - 55) / 10), 93);
-        else overallScore = Math.min(75 + Math.floor((size - 43) / 10), 88);
-        image = productImages[displayType] || defaultImage;
-    } else {
-        displayType = 'מוצר לא מזוהה';
-        overallScore = Math.floor(Math.random() * (80 - 60 + 1)) + 60;
-        image = defaultImage;
-    }
-
-    countryFlag = countryFlags[countryCode] || '';
-
-    if (overallScore >= 90) stars = '★★★★★';
-    else if (overallScore >= 80) stars = '★★★★☆';
-    else if (overallScore >= 70) stars = '★★★☆☆';
-    else if (overallScore >= 60) stars = '★★☆☆☆';
-    else stars = '★☆☆☆☆';
-
-    if (overallScore >= 88) {
-        celebrationEffect = ' celebration';
-        setTimeout(() => triggerConfetti(), 2000);
-    }
-
-    let flagHtml = countryFlag ? `<img src="${countryFlag}" alt="דגל המדינה" class="country-flag">` : '';
-
-    if (teamData) {
-        const teamRef = db.collection("teams").doc(username);
-        teamData.searchesLeft--;
-        await teamRef.set(teamData);
-        const roles = ['שוער', 'מגן', 'קשר', 'חלוץ'];
-        const randomRole = roles[Math.floor(Math.random() * roles.length)];
-        return `<div class="dramatic-card hollywood${celebrationEffect}">
-                    <img src="${image}" alt="${displayType}">
-                    <div class="tv-name">${model} - ${displayType}</div>
-                    ${flagHtml}
-                    <div class="stars">${stars}</div>
-                    <div class="overall">${overallScore}</div>
-                    <button onclick="saveCard('${model}', '${randomRole}', ${overallScore})" ${teamData.savesLeft <= 0 ? 'disabled' : ''}>שמור לקבוצה (${teamData.savesLeft} נותרו)</button>
-                </div>`;
-    } else {
-        return `<div class="dramatic-card hollywood${celebrationEffect}">
-                    <img src="${image}" alt="${displayType}">
-                    <div class="tv-name">${model} - ${displayType}</div>
-                    ${flagHtml}
-                    <div class="stars">${stars}</div>
-                    <div class="overall">${overallScore}</div>
-                </div>`;
-    }
-}
     function triggerConfetti() {
         const confettiContainer = document.createElement('div');
         confettiContainer.className = 'confetti';
@@ -1817,19 +1805,12 @@ let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
         document.getElementById("login-overlay").style.display = "none";
     }
 
-   async function login() {
-    try {
+    function login() {
         let username = document.getElementById("usernameInput").value.trim();
         let password = document.getElementById("passwordInput").value.trim();
+        let users = getUsers();
 
-        if (!username || !password) {
-            alert("יש למלא את כל השדות!");
-            return;
-        }
-
-        const userRef = db.collection("users").doc(username);
-        const doc = await userRef.get();
-        if (doc.exists && doc.data().password === password) {
+        if (users[username] && users[username].password === password) {
             localStorage.setItem("currentUser", username);
             alert("התחברת בהצלחה!");
             closeLoginPopup();
@@ -1838,39 +1819,30 @@ let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
         } else {
             alert("שם משתמש או סיסמה שגויים.");
         }
-    } catch (e) {
-        console.error("שגיאה בהתחברות:", e);
-        alert("שגיאה בהתחברות: " + e.message);
     }
-}
 
-   async function register() {
-    try {
+    function register() {
         let username = document.getElementById("usernameInput").value.trim();
         let password = document.getElementById("passwordInput").value.trim();
+        let users = getUsers();
 
         if (!username || !password) {
             alert("יש למלא את כל השדות!");
             return;
         }
 
-        const userRef = db.collection("users").doc(username);
-        const doc = await userRef.get();
-        if (doc.exists) {
+        if (users[username]) {
             alert("שם המשתמש כבר קיים!");
         } else {
-            await userRef.set({ password: password });
+            users[username] = { password: password };
+            saveUsers(users);
             localStorage.setItem("currentUser", username);
             alert("נרשמת והתחברת בהצלחה!");
             closeLoginPopup();
-            await initTeamData(); // אתחול נתוני קבוצה
+            initTeamData();
             updateUltimateButtonState();
         }
-    } catch (e) {
-        console.error("שגיאה ברישום:", e);
-        alert("שגיאה ברישום: " + e.message);
     }
-}
 
     function updateUltimateButtonState() {
         const username = localStorage.getItem("currentUser");
@@ -1880,59 +1852,58 @@ let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
         teamBtn.style.display = ultimateMode ? "block" : "none";
     }
 
-   async function initTeamData() {
-    try {
-        const username = localStorage.getItem("currentUser");
-        if (!username) return null;
+   function initTeamData() {
+    const username = localStorage.getItem("currentUser");
+    if (!username) return null;
 
-        const teamRef = db.collection("teams").doc(username);
-        const doc = await teamRef.get();
-        let teamData;
-
-        if (!doc.exists) {
-            teamData = {
-                teamName: '',
-                coachName: '',
-                stadiumName: '',
-                stadiumLevel: 1,
-                country: '',
-                city: '',
-                cards: [],
-                searchesLeft: 10,
-                savesLeft: 11,
-                coins: 150,
-                lastCoinUpdate: new Date().toISOString().split('T')[0]
-            };
-            await teamRef.set(teamData);
-        } else {
-            teamData = doc.data();
-            const today = new Date().toISOString().split('T')[0];
-            if (teamData.lastCoinUpdate !== today) {
-                teamData.coins += 30;
-                teamData.lastCoinUpdate = today;
-                await teamRef.update({ coins: teamData.coins, lastCoinUpdate: today });
-            }
+    let teamData = JSON.parse(localStorage.getItem(`team_${username}`));
+    if (!teamData) {
+        teamData = {
+            teamName: '',
+            coachName: '',
+            stadiumName: '',
+            stadiumLevel: 1, // רמת אצטדיון התחלתית
+            country: '',
+            city: '',
+            cards: [],
+            searchesLeft: 10, // חיפושים התחלתיים
+            savesLeft: 11, // שמירות התחלתיות
+            coins: 150, // 150 מטבעות התחלתיים
+            lastCoinUpdate: new Date().toISOString().split('T')[0]
+        };
+        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+    } else {
+        // תיקון נתונים ישנים
+        if (!teamData.stadiumLevel || !Number.isInteger(teamData.stadiumLevel) || teamData.stadiumLevel < 1 || teamData.stadiumLevel > 4) {
+            teamData.stadiumLevel = 1;
         }
-        return teamData;
-    } catch (e) {
-        console.error("שגיאה ב-initTeamData:", e);
-        alert("שגיאה בטעינת נתוני הקבוצה: " + e.message);
-        return null;
+        if (!Number.isInteger(teamData.searchesLeft) || teamData.searchesLeft < 0) {
+            teamData.searchesLeft = 10;
+        }
+        if (!Number.isInteger(teamData.savesLeft) || teamData.savesLeft < 0) {
+            teamData.savesLeft = 11;
+        }
+        if (!Number.isInteger(teamData.coins) || teamData.coins === null || teamData.coins === undefined) {
+            teamData.coins = 150;
+        }
+        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
     }
+
+    const today = new Date().toISOString().split('T')[0];
+    if (teamData.lastCoinUpdate !== today) {
+        teamData.coins += 30; // תוספת יומית של 30 מטבעות
+        teamData.lastCoinUpdate = today;
+        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+    }
+
+    return teamData;
 }
-    async function saveCard(model, role, rating) {
-    try {
+
+    function saveCard(model, role, rating) {
         const username = localStorage.getItem("currentUser");
-        const teamRef = db.collection("teams").doc(username);
-        const doc = await teamRef.get();
+        let teamData = initTeamData();
 
-        if (!doc.exists) {
-            alert("שגיאה: נתוני הקבוצה לא נמצאו!");
-            return;
-        }
-
-        let teamData = doc.data();
-        if (teamData.savesLeft <= 0) {
+        if (!teamData || teamData.savesLeft <= 0) {
             alert("לא נותרו שמירות!");
             return;
         }
@@ -1944,22 +1915,18 @@ let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
 
         teamData.cards.push({ model, role, rating });
         teamData.savesLeft--;
-        await teamRef.set(teamData);
+        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
         alert(`נוסף לקבוצה: ${model} כ${role} עם דירוג ${rating}`);
         document.querySelector('.dramatic-card button').disabled = true;
-    } catch (e) {
-        console.error("שגיאה ב-saveCard:", e);
-        alert("שגיאה בשמירת הכרטיס: " + e.message);
     }
-}
-        
- async function openTeamPopup() {
+
+ function openTeamPopup() {
     const username = localStorage.getItem("currentUser");
+    let teamData = initTeamData();
     if (!username) {
         openLoginPopup();
         return;
     }
-    let teamData = await initTeamData();
     if (!teamData) return;
 
     let cardsHtml = '<ul class="player-list">';
@@ -2015,7 +1982,7 @@ let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
             </div>
             <button id="saveTeamBtn" class="save-btn">שמור פרטי קבוצה</button>
             <h4>אצטדיון: ${teamData.stadiumName || 'ללא שם'} (${currentStadium.capacity} מקומות)</h4>
-            ${nextLevel ? `<button id="upgradeStadiumBtn" class="upgrade-btn" ${teamData.co SIX <= upgradeCost ? 'disabled' : ''}>שדרג ל-${stadiumLevels[nextLevel].capacity} מקומות (${upgradeCost} מטבעות)</button>` : '<p>אצטדיון ברמה מקסימלית!</p>'}
+            ${nextLevel ? `<button id="upgradeStadiumBtn" class="upgrade-btn" ${teamData.coins < upgradeCost ? 'disabled' : ''}>שדרג ל-${stadiumLevels[nextLevel].capacity} מקומות (${upgradeCost} מטבעות)</button>` : '<p>אצטדיון ברמה מקסימלית!</p>'}
             <h4>שחקנים (${teamData.cards.length}/11)</h4>
             <div id="teamCards">${cardsHtml}</div>
             <div class="popup-buttons">
@@ -2031,7 +1998,7 @@ let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
         const btn = document.getElementById(btnId);
         const input = document.getElementById(inputId);
         btn.addEventListener("click", (e) => {
-            e.stopPropagation();
+            e.stopPropagation(); // למנוע סגירה של החלון
             if (input.hasAttribute("readonly")) {
                 input.removeAttribute("readonly");
                 input.style.backgroundColor = "#fff";
@@ -2042,6 +2009,8 @@ let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
                 input.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
                 btn.textContent = "ערוך";
                 btn.classList.add("active");
+                teamData[inputId.replace('Input', '')] = input.value.trim();
+                localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
             }
         });
     };
@@ -2050,32 +2019,33 @@ let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
     toggleEditButton("editStadiumNameBtn", "stadiumNameInput");
 
     document.getElementById("countrySelect").addEventListener("change", updateCities);
-document.getElementById("saveTeamBtn").addEventListener("click", async (e) => {
-    e.stopPropagation();
-    await saveTeamDetails();
-});
-document.getElementById("fieldViewBtn").addEventListener("click", async (e) => {
-    e.stopPropagation();
-    await openFieldPopup();
-});
-document.getElementById("closeTeamBtn").addEventListener("click", (e) => {
-    e.stopPropagation();
-    closeTeamPopup();
-});
-if (nextLevel) {
-    document.getElementById("upgradeStadiumBtn").addEventListener("click", async (e) => {
+    document.getElementById("saveTeamBtn").addEventListener("click", (e) => {
         e.stopPropagation();
-        await upgradeStadium(teamData, nextLevel, upgradeCost);
+        saveTeamDetails();
     });
-}
-document.querySelectorAll(".remove-btn").forEach(btn => {
-    btn.addEventListener("click", async (e) => {
+    document.getElementById("fieldViewBtn").addEventListener("click", (e) => {
         e.stopPropagation();
-        const index = parseInt(btn.getAttribute("data-index"));
-        await removeCard(index);
+        openFieldPopup();
     });
-});
+    document.getElementById("closeTeamBtn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        closeTeamPopup();
+    });
+    if (nextLevel) {
+        document.getElementById("upgradeStadiumBtn").addEventListener("click", (e) => {
+            e.stopPropagation();
+            upgradeStadium(teamData, nextLevel, upgradeCost);
+        });
+    }
+    document.querySelectorAll(".remove-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const index = parseInt(btn.getAttribute("data-index"));
+            removeCard(index);
+        });
+    });
 
+    // גלילה וכפתור "חזור למעלה"
     const container = popup.querySelector(".team-management-container");
     container.addEventListener("scroll", () => {
         const scrollBtn = document.getElementById("scrollToTopBtn");
@@ -2109,46 +2079,34 @@ document.querySelectorAll(".remove-btn").forEach(btn => {
         }
     }
 
-  async function saveTeamDetails() {
-    try {
-        const username = localStorage.getItem("currentUser");
-        const teamRef = db.collection("teams").doc(username);
-        const doc = await teamRef.get();
+  function saveTeamDetails() {
+    const username = localStorage.getItem("currentUser");
+    let teamData = initTeamData();
 
-        if (!doc.exists) {
-            alert("שגיאה: נתוני הקבוצה לא נמצאו!");
-            return;
-        }
+    teamData.teamName = document.getElementById("teamNameInput").value.trim();
+    teamData.coachName = document.getElementById("coachNameInput").value.trim();
+    teamData.stadiumName = document.getElementById("stadiumNameInput").value.trim();
+    teamData.country = document.getElementById("countrySelect").value;
+    teamData.city = document.getElementById("citySelect").value;
 
-        let teamData = doc.data();
-        teamData.teamName = document.getElementById("teamNameInput").value.trim();
-        teamData.coachName = document.getElementById("coachNameInput").value.trim();
-        teamData.stadiumName = document.getElementById("stadiumNameInput").value.trim();
-        teamData.country = document.getElementById("countrySelect").value;
-        teamData.city = document.getElementById("citySelect").value;
+    localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+    addTeamToLeague(); // הוסף לליגה
 
-        await teamRef.set(teamData);
-        await addTeamToLeague(); // הוסף לליגה
+    const newsPopup = document.getElementById("team-save-popup");
+    newsPopup.innerHTML = `
+        <div class="news-container">
+            <div class="news-ticker">חדשות חמות</div>
+            <h2 class="news-headline">העיר ${teamData.city || 'החדשה'} מברכת את ${teamData.coachName || 'המאמן החדש'}</h2>
+            <p class="news-text">על כניסתו לתפקיד בקבוצה "${teamData.teamName || 'הקבוצה החדשה'}". המאמן מגיע עם שאיפות גדולות ומצפה להוביל את הקבוצה להצלחה בליגה!</p>
+        </div>
+    `;
+    newsPopup.style.display = "block";
+    document.getElementById("team-save-overlay").style.display = "block";
 
-        const newsPopup = document.getElementById("team-save-popup");
-        newsPopup.innerHTML = `
-            <div class="news-container">
-                <div class="news-ticker">חדשות חמות</div>
-                <h2 class="news-headline">העיר ${teamData.city || 'החדשה'} מברכת את ${teamData.coachName || 'המאמן החדש'}</h2>
-                <p class="news-text">על כניסתו לתפקיד בקבוצה "${teamData.teamName || 'הקבוצה החדשה'}". המאמן מגיע עם שאיפות גדולות ומצפה להוביל את הקבוצה להצלחה בליגה!</p>
-            </div>
-        `;
-        newsPopup.style.display = "block";
-        document.getElementById("team-save-overlay").style.display = "block";
-
-        setTimeout(() => {
-            newsPopup.style.display = "none";
-            showHollywoodPopup(teamData);
-        }, 3000);
-    } catch (e) {
-        console.error("שגיאה ב-saveTeamDetails:", e);
-        alert("שגיאה בשמירת פרטי הקבוצה: " + e.message);
-    }
+    setTimeout(() => {
+        newsPopup.style.display = "none";
+        showHollywoodPopup(teamData);
+    }, 3000);
 }
 
 function showHollywoodPopup(teamData) {
@@ -2181,57 +2139,55 @@ function showHollywoodPopup(teamData) {
         }
     }
 
-    async function removeCard(index) {
-    const username = localStorage.getItem("currentUser");
-    const teamRef = db.collection("teams").doc(username);
-    const doc = await teamRef.get();
+    function removeCard(index) {
+        const username = localStorage.getItem("currentUser");
+        let teamData = initTeamData();
 
-    if (!doc.exists) {
-        alert("שגיאה: נתוני הקבוצה לא נמצאו!");
-        return;
+        teamData.cards.splice(index, 1);
+        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+        openTeamPopup();
     }
 
-    let teamData = doc.data();
-    teamData.cards.splice(index, 1);
-    await teamRef.set(teamData);
-    openTeamPopup();
-}
+    function closeTeamPopup() {
+        document.getElementById("team-popup").style.display = "none";
+        document.getElementById("team-overlay").style.display = "none";
+    }
 
-    async function openFieldPopup() {
-    const username = localStorage.getItem("currentUser");
-    let teamData = await initTeamData();
-    if (!teamData) return;
+    function openFieldPopup() {
+        const username = localStorage.getItem("currentUser");
+        let teamData = initTeamData();
+        if (!teamData) return;
 
-    const field = document.getElementById("field");
-    field.innerHTML = '';
+        const field = document.getElementById("field");
+        field.innerHTML = '';
 
-    const positions = [
-        { role: 'שוער', top: '45%', left: '5%' },
-        { role: 'מגן', top: '20%', left: '20%' },
-        { role: 'מגן', top: '70%', left: '20%' },
-        { role: 'מגן', top: '35%', left: '30%' },
-        { role: 'מגן', top: '55%', left: '30%' },
-        { role: 'קשר', top: '25%', left: '50%' },
-        { role: 'קשר', top: '45%', left: '55%' },
-        { role: 'קשר', top: '65%', left: '50%' },
-        { role: 'חלוץ', top: '20%', left: '75%' },
-        { role: 'חלוץ', top: '45%', left: '85%' },
-        { role: 'חלוץ', top: '70%', left: '75%' }
-    ];
+        const positions = [
+            { role: 'שוער', top: '45%', left: '5%' },
+            { role: 'מגן', top: '20%', left: '20%' },
+            { role: 'מגן', top: '70%', left: '20%' },
+            { role: 'מגן', top: '35%', left: '30%' },
+            { role: 'מגן', top: '55%', left: '30%' },
+            { role: 'קשר', top: '25%', left: '50%' },
+            { role: 'קשר', top: '45%', left: '55%' },
+            { role: 'קשר', top: '65%', left: '50%' },
+            { role: 'חלוץ', top: '20%', left: '75%' },
+            { role: 'חלוץ', top: '45%', left: '85%' },
+            { role: 'חלוץ', top: '70%', left: '75%' }
+        ];
 
-    teamData.cards.forEach((card, index) => {
-        const pos = positions[index];
-        const playerDiv = document.createElement('div');
-        playerDiv.className = 'player';
-        playerDiv.style.top = pos.top;
-        playerDiv.style.left = pos.left;
-        playerDiv.textContent = `${card.model}\n${card.role} (${card.rating})`;
-        field.appendChild(playerDiv);
-    });
+        teamData.cards.forEach((card, index) => {
+            const pos = positions[index];
+            const playerDiv = document.createElement('div');
+            playerDiv.className = 'player';
+            playerDiv.style.top = pos.top;
+            playerDiv.style.left = pos.left;
+            playerDiv.textContent = `${card.model}\n${card.role} (${card.rating})`;
+            field.appendChild(playerDiv);
+        });
 
-    document.getElementById("field-popup").style.display = "block";
-    document.getElementById("field-overlay").style.display = "block";
-}
+        document.getElementById("field-popup").style.display = "block";
+        document.getElementById("field-overlay").style.display = "block";
+    }
 
     function closeFieldPopup() {
         document.getElementById("field-popup").style.display = "none";
@@ -2256,118 +2212,111 @@ function showHollywoodPopup(teamData) {
         document.getElementById("ultimate-menu-overlay").style.display = "none";
     }
 
-    async function openTeamManagement() {
-    closeUltimateMenu();
-    await openTeamPopup();
-}
+    function openTeamManagement() {
+        closeUltimateMenu();
+        openTeamPopup();
+    }
+
     function closeTeamSavePopup() {
         document.getElementById("team-save-popup").style.display = "none";
         document.getElementById("team-save-overlay").style.display = "none";
     }
 
-    async function upgradeStadium(teamData, nextLevel, cost) {
-    if (teamData.coins < cost) {
-        alert("אין לך מספיק מטבעות לשדרוג!");
-        return;
+    function upgradeStadium(teamData, nextLevel, cost) {
+        if (teamData.coins < cost) {
+            alert("אין לך מספיק מטבעות לשדרוג!");
+            return;
+        }
+
+        teamData.coins -= cost;
+        teamData.stadiumLevel = nextLevel;
+        localStorage.setItem(`team_${localStorage.getItem("currentUser")}`, JSON.stringify(teamData));
+        alert(`האצטדיון שודרג ל-${nextLevel * 5000 || 1000} מקומות!`);
+        openTeamPopup();
     }
 
-    const username = localStorage.getItem("currentUser");
-    const teamRef = db.collection("teams").doc(username);
-    teamData.coins -= cost;
-    teamData.stadiumLevel = nextLevel;
-    await teamRef.set(teamData);
-    alert(`האצטדיון שודרג ל-${nextLevel * 5000 || 1000} מקומות!`);
-    openTeamPopup();
-}
+    window.onload = () => {
+        updateUltimateButtonState();
+    };
         // פונקציה לקבלת נתוני הליגה
-async function getLeagueData() {
-    try {
-        const leagueRef = db.collection("league").doc("currentLeague");
-        const doc = await leagueRef.get();
-        if (!doc.exists) {
-            const defaultLeague = { teams: [], schedule: [], lastUpdate: null };
-            await leagueRef.set(defaultLeague);
-            return defaultLeague;
-        }
-        return doc.data();
-    } catch (e) {
-        console.error("שגיאה ב-getLeagueData:", e);
-        return { teams: [], schedule: [], lastUpdate: null };
-    }
+function getLeagueData() {
+    return JSON.parse(localStorage.getItem("leagueData")) || {
+        teams: [],
+        schedule: [],
+        lastUpdate: null
+    };
 }
 
-async function saveLeagueData(leagueData) {
-    try {
-        const leagueRef = db.collection("league").doc("currentLeague");
-        await leagueRef.set(leagueData);
-    } catch (e) {
-        console.error("שגיאה ב-saveLeagueData:", e);
-    }
+// פונקציה לשמירת נתוני הליגה
+function saveLeagueData(leagueData) {
+    localStorage.setItem("leagueData", JSON.stringify(leagueData));
 }
 
-async function addTeamToLeague() {
-    try {
-        const username = localStorage.getItem("currentUser");
-        const teamRef = db.collection("teams").doc(username);
-        const teamDoc = await teamRef.get();
-        if (!teamDoc.exists || !teamDoc.data().teamName) return;
-
-        let leagueData = await getLeagueData();
-        const teamExists = leagueData.teams.some(team => team.username === username);
-
-        if (!teamExists) {
-            const teamData = teamDoc.data();
-            const teamRating = calculateTeamRating(teamData);
-            leagueData.teams.push({
-                username: username,
-                teamName: teamData.teamName,
-                rating: teamRating,
-                points: 0,
-                wins: 0,
-                losses: 0
-            });
-            await saveLeagueData(leagueData);
-        }
-    } catch (e) {
-        console.error("שגיאה ב-addTeamToLeague:", e);
-    }
+// פונקציה לחישוב דירוג ממוצע של קבוצה
+function calculateTeamRating(teamData) {
+    if (!teamData.cards || teamData.cards.length === 0) return 0;
+    const totalRating = teamData.cards.reduce((sum, card) => sum + card.rating, 0);
+    return Math.round(totalRating / teamData.cards.length);
 }
-        // פונקציה ליצירת משחקים יומיים
-async function runDailyMatches() {
-    try {
-        const leagueData = await getLeagueData();
-        const today = new Date().toISOString().split('T')[0];
 
-        if (leagueData.lastUpdate === today || leagueData.teams.length < 2) return;
+// פונקציה להוספת קבוצה לליגה (נקרא כאשר שומרים פרטי קבוצה)
+function addTeamToLeague() {
+    const username = localStorage.getItem("currentUser");
+    const teamData = initTeamData();
+    if (!teamData || !teamData.teamName) return;
 
-        const matches = [];
-        const shuffledTeams = [...leagueData.teams].sort(() => 0.5 - Math.random());
-        for (let i = 0; i < shuffledTeams.length - 1; i += 2) {
-            matches.push([shuffledTeams[i], shuffledTeams[i + 1]]);
-        }
+    let leagueData = getLeagueData();
+    const teamExists = leagueData.teams.some(team => team.username === username);
 
-        matches.forEach(([team1, team2]) => {
-            const ratingDiff = team1.rating - team2.rating;
-            const randomFactor = Math.random() * 10 - 5;
-            const winner = ratingDiff + randomFactor > 0 ? team1 : team2;
-            const loser = winner === team1 ? team2 : team1;
-
-            winner.points += 3;
-            winner.wins += 1;
-            loser.losses += 1;
+    if (!teamExists) {
+        const teamRating = calculateTeamRating(teamData);
+        leagueData.teams.push({
+            username: username,
+            teamName: teamData.teamName,
+            rating: teamRating,
+            points: 0,
+            wins: 0,
+            losses: 0
         });
-
-        leagueData.lastUpdate = today;
-        await saveLeagueData(leagueData);
-        alert("משחקי היום עודכנו!");
-    } catch (e) {
-        console.error("שגיאה ב-runDailyMatches:", e);
-        alert("שגיאה בריצת המשחקים: " + e.message);
+        saveLeagueData(leagueData);
     }
+}
+
+        // פונקציה ליצירת משחקים יומיים
+function runDailyMatches() {
+    const leagueData = getLeagueData();
+    const today = new Date().toISOString().split('T')[0];
+
+    if (leagueData.lastUpdate === today || leagueData.teams.length < 2) return;
+
+    // יצירת זוגות משחקים (כל קבוצה משחקת פעם אחת ביום)
+    const matches = [];
+    const shuffledTeams = [...leagueData.teams].sort(() => 0.5 - Math.random());
+    for (let i = 0; i < shuffledTeams.length - 1; i += 2) {
+        matches.push([shuffledTeams[i], shuffledTeams[i + 1]]);
+    }
+
+    // חישוב תוצאות
+    matches.forEach(([team1, team2]) => {
+        const ratingDiff = team1.rating - team2.rating;
+        const randomFactor = Math.random() * 10 - 5; // אלמנט אקראי קל
+        const winner = ratingDiff + randomFactor > 0 ? team1 : team2;
+        const loser = winner === team1 ? team2 : team1;
+
+        winner.points += 3;
+        winner.wins += 1;
+        loser.losses += 1;
+    });
+
+    leagueData.lastUpdate = today;
+    saveLeagueData(leagueData);
+    alert("משחקי היום עודכנו!");
 }
 
         
 </script>
 </body>
 </html>
+
+
 
