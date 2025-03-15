@@ -772,7 +772,137 @@
     background: #666;
     cursor: not-allowed;
 }
-</style><script>
+    /* פופ-אפ חדשותי */
+.news-container {
+    background: linear-gradient(135deg, #ff3333, #ff6666);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+    animation: newsFadeIn 0.5s ease-in;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.news-ticker {
+    background: #000;
+    color: #fff;
+    padding: 5px 10px;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    animation: tickerMove 2s infinite;
+}
+
+.news-headline {
+    font-size: 24px;
+    margin: 10px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.news-text {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+@keyframes newsFadeIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes tickerMove {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(10px); }
+    100% { transform: translateX(0); }
+}
+
+/* פופ-אפ הוליוודי */
+.hollywood-container {
+    background: linear-gradient(135deg, #1a1a1a, #4a4a4a);
+    color: gold;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+    animation: hollywoodZoom 1s ease-in-out;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.hollywood-title {
+    font-size: 48px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px gold, 0 0 20px gold;
+    animation: glow 2s infinite alternate;
+}
+
+.hollywood-subtitle {
+    font-size: 24px;
+    margin: 10px 0;
+    color: #fff;
+}
+
+.hollywood-flag {
+    width: 80px;
+    height: auto;
+    margin: 10px 0;
+    animation: flagWave 3s infinite;
+}
+
+.hollywood-coach, .hollywood-stadium {
+    font-size: 20px;
+    color: #fff;
+    margin: 10px 0;
+    text-shadow: 0 0 5px gold;
+}
+
+@keyframes hollywoodZoom {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 10px gold, 0 0 20px gold; }
+    to { text-shadow: 0 0 20px gold, 0 0 40px gold; }
+}
+
+@keyframes flagWave {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+}
+
+/* קונפטי */
+.confetti {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: gold;
+    opacity: 0.8;
+    animation: fall 3s linear infinite;
+}
+
+@keyframes fall {
+    0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+</style>
+    <script>
     console.log("הדף נטען בהצלחה");
 
     let ultimateMode = localStorage.getItem("ultimateMode") === "true" || false;
@@ -1664,7 +1794,9 @@
                 input.style.backgroundColor = "#e9ecef";
                 btn.textContent = "ערוך";
                 btn.classList.add("active");
-                saveTeamDetails();
+                // שמור את הערך ב-localStorage בלי להפעיל פופ-אפ
+                teamData[inputId.replace('Input', '')] = input.value.trim();
+                localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
             }
         });
     };
@@ -1710,37 +1842,55 @@
     }
 
     function saveTeamDetails() {
-        const username = localStorage.getItem("currentUser");
-        let teamData = initTeamData();
+    const username = localStorage.getItem("currentUser");
+    let teamData = initTeamData();
 
-        teamData.teamName = document.getElementById("teamNameInput").value.trim();
-        teamData.coachName = document.getElementById("coachNameInput").value.trim();
-        teamData.stadiumName = document.getElementById("stadiumNameInput").value.trim();
-        teamData.country = document.getElementById("countrySelect").value;
-        teamData.city = document.getElementById("citySelect").value;
+    // שמור את כל הפרטים
+    teamData.teamName = document.getElementById("teamNameInput").value.trim();
+    teamData.coachName = document.getElementById("coachNameInput").value.trim();
+    teamData.stadiumName = document.getElementById("stadiumNameInput").value.trim();
+    teamData.country = document.getElementById("countrySelect").value;
+    teamData.city = document.getElementById("citySelect").value;
 
-        localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
+    localStorage.setItem(`team_${username}`, JSON.stringify(teamData));
 
-        const stadiumLevels = {
-            1: { image: 'https://thumbs.dreamstime.com/b/amateur-soccer-field-illuminated-night-small-football-lit-lanterns-evening-green-spotlight-image252808480.jpg' },
-            2: { image: 'https://integralspor.com/uploads/facility/detail/5000-seats-stadium-10631.jpg' },
-            3: { image: 'https://javiergarciaalda.com/wp-content/uploads/2021/11/JavierGAlda_Libia_3-escorzo-pepon.jpg' },
-            4: { image: 'https://stadiumdb.com/img/news/2022/02/09Ord2.jpg' }
-        };
-        const stadiumImage = stadiumLevels[teamData.stadiumLevel].image;
+    // שלב 1: פופ-אפ חדשותי
+    const newsPopup = document.getElementById("team-save-popup");
+    newsPopup.innerHTML = `
+        <div class="news-container">
+            <div class="news-ticker">חדשות חמות</div>
+            <h2 class="news-headline">העיר ${teamData.city || 'החדשה'} מברכת את ${teamData.coachName || 'המאמן החדש'}</h2>
+            <p class="news-text">על כניסתו לתפקיד בקבוצה "${teamData.teamName || 'הקבוצה החדשה'}". המאמן מגיע עם שאיפות גדולות ומצפה להוביל את הקבוצה להצלחה מסחררת בעונת המשחקים הקרובה!</p>
+        </div>
+    `;
+    newsPopup.style.display = "block";
+    document.getElementById("team-save-overlay").style.display = "block";
 
-        const popup = document.getElementById("team-save-popup");
-        popup.innerHTML = `
-            <div class="team-save-item"><h3>${teamData.teamName || 'קבוצה ללא שם'}</h3></div>
-            <div class="team-save-item"><p>${teamData.city || 'ללא עיר'}, ${teamData.country || 'ללא מדינה'} ${teamData.country && teamLocations[teamData.country] ? `<img src="${teamLocations[teamData.country].flag}" alt="דגל ${teamData.country}" class="country-flag">` : ''}</p></div>
-            <div class="team-save-item"><p>מאמן: ${teamData.coachName || 'ללא מאמן'}</p></div>
-            <div class="team-save-item"><img src="${stadiumImage}" alt="אצטדיון ${teamData.stadiumName || 'ללא שם'}"></div>
-        `;
-        popup.style.display = "block";
-        document.getElementById("team-save-overlay").style.display = "block";
+    // סגור את החדשות לאחר 3 שניות והפעל את התצוגה ההוליוודית
+    setTimeout(() => {
+        newsPopup.style.display = "none";
+        showHollywoodPopup(teamData);
+    }, 3000);
+}
 
-        setTimeout(closeTeamSavePopup, 5000);
-    }
+function showHollywoodPopup(teamData) {
+    const hollywoodPopup = document.getElementById("team-save-popup");
+    hollywoodPopup.innerHTML = `
+        <div class="hollywood-container">
+            <div class="hollywood-title">${teamData.teamName || 'קבוצה ללא שם'}</div>
+            <div class="hollywood-subtitle">${teamData.city || 'ללא עיר'}, ${teamData.country || 'ללא מדינה'}</div>
+            ${teamData.country && teamLocations[teamData.country] ? `<img src="${teamLocations[teamData.country].flag}" alt="דגל ${teamData.country}" class="hollywood-flag">` : ''}
+            <div class="hollywood-coach">מאמן: ${teamData.coachName || 'ללא מאמן'}</div>
+            <div class="hollywood-stadium">אצטדיון: ${teamData.stadiumName || 'ללא שם'}</div>
+        </div>
+    `;
+    hollywoodPopup.style.display = "block";
+    document.getElementById("team-save-overlay").style.display = "block";
+
+    // הפעל אנימציות וקונפטי
+    triggerConfetti();
+    setTimeout(closeTeamSavePopup, 5000); // סגור אחרי 5 שניות
+}
 
     function toggleEdit(inputId) {
         const input = document.getElementById(inputId);
