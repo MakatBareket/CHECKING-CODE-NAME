@@ -148,6 +148,17 @@
         margin-right: auto;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
+    .image-note {
+        font-size: 14px;
+        color: #457b9d;
+        font-weight: 500;
+        margin-top: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid #a8dadc;
+        display: inline-block;
+    }
     .card a {
         display: block;
         margin: 20px auto 0;
@@ -672,7 +683,7 @@
                     סדרת דגם: ${series}<br>
                     גימור: ${finish}<br>
                     מדינה: ${country}<br>
-                    ${image ? `<img src="${image}" alt="${config}">` : ''}
+                    ${image ? `<div class="image-note">תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${config}">` : ''}
                     <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
                 </div>`;
     }
@@ -706,7 +717,7 @@
                     עיצוב: ${design}<br>
                     צבע: ${color}<br>
                     מדינה: ${country}<br>
-                    ${image ? `<img src="${image}" alt="${tech}">` : ''}
+                    ${image ? `<div class="image-note">תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${tech}">` : ''}
                     <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
                 </div>`;
     }
@@ -788,7 +799,7 @@
                         מקלט שידור: ${broadcast}<br>
                         מערכת הפעלה: ${os}<br>
                         מדינה: ${country}${countryNote}<br>
-                        ${image ? `<img src="${image}" alt="${display}">` : ''}
+                        ${image ? `<div class="image-note">תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${display}">` : ''}
                         ${featuresHtml}
                         <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
                     </div>`;
@@ -817,7 +828,7 @@
                     סדרת דגם: ${series}<br>
                     צבע: ${color}<br>
                     מדינה: ${country}<br>
-                    ${image ? `<img src="${image}" alt="${type}">` : ''}
+                    ${image ? `<div class="image-note">תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${type}">` : ''}
                     <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
                 </div>`;
     }
@@ -841,7 +852,7 @@
                     סדרת דגם: ${series}<br>
                     צבע: ${color}<br>
                     מדינה: ${country}<br>
-                    ${image ? `<img src="${image}" alt="${type}">` : ''}
+                    ${image ? `<div class="image-note">תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${type}">` : ''}
                     <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
                 </div>`;
     }
@@ -865,7 +876,7 @@
                     עיצוב: ${design}<br>
                     צבע: ${color}<br>
                     מדינה: ${country}<br>
-                    ${image ? `<img src="${image}" alt="מדיח כלים">` : ''}
+                    ${image ? `<div class="image-note">תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="מדיח כלים">` : ''}
                     <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
                 </div>`;
     }
