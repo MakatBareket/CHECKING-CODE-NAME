@@ -386,7 +386,7 @@
     };
 
     const washerTech = {
-        'WW': 'מכונת כביסה פתח קידמי', 'WD': 'מייבש כביסה עם משאבת חום', 'DV': 'מייבש סטנדרטי'
+        'WW': 'מכונת כביסה פתח קידמי', 'WD': 'מייבש כביסה', 'DV': 'מייבש כביסה'
     };
 
     const washerColor = {
@@ -414,9 +414,8 @@
         'F': 'ATSC/QAM', 'U': 'DVB', 'G': 'ISDB-T', 'T': '2xDVB'
     };
 
-    // הגדרות למייבשי כביסה
     const dryerTech = {
-        'DV': 'מייבש עם מעבה (Condenser)'
+        'DV': 'מייבש כביסה'
     };
 
     const dryerDesign = {
@@ -431,9 +430,8 @@
         'KJ': 'ישראל', 'AH': 'אמריקה', 'LP': 'דרום אמריקה'
     };
 
-    // הגדרות למיקרוגלים ותנורים
     const microwaveType = {
-        'MC': 'מיקרוגל משולב אפייה', 'MG': 'מיקרוגל משולב גריל', 'MS': 'מיקרוגל בלבד', 'NV': 'תנור בילד-אין'
+        'MC': 'מיקרוגל משולב אפייה', 'MG': 'מיקרוגל משולב גריל', 'MS': 'מיקרוגל', 'NV': 'תנור בילד-אין'
     };
 
     const microwaveColor = {
@@ -444,7 +442,6 @@
         'LI': 'ישראל', 'EO': 'אירופה', 'AH': 'אמריקה'
     };
 
-    // הגדרות לכיריים
     const cooktopType = {
         'NZ': 'כיריים אינדוקציה'
     };
@@ -457,7 +454,6 @@
         'EO': 'ישראל/אירופה', 'E1': 'אירופה'
     };
 
-    // הגדרות למדיחי כלים
     const dishwasherDesign = {
         'U': 'עיצוב כללי'
     };
@@ -482,7 +478,7 @@
         'Top Freezer (מקפיא עליון)': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSO7r_kWY7GuXsXmU--f7VKVVBmm40A8FInjQ&s',
         'מכונת כביסה': 'https://images.samsung.com/is/image/samsung/il_WF1802WPC-YKJ_002_Front_white?$624_624_PNG$',
         'מייבש כביסה': 'https://images.samsung.com/is/image/samsung/p6pim/il/dv80cgc0b0aekj/gallery/il-dv5000c-dv80cgc0b0aekj-thumb-541329433?$UX_EXT2_PNG$',
-        'מיקרוגל': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxHx8Cceal4QfJNiKzE9lEmW9ktQlL2ETfsg&s',
+        'מיקרוגל': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2Kw4LIiEbeFJ-NrS89kITF1uZSHSdmCeLCg&s',
         'מיקרוגל משולב אפייה': 'https://images.samsung.com/is/image/samsung/il-microwave-oven-mc28m6035cs-mc28m6035cs-li-frontsilver-thumb-266046635?$UX_EXT2_PNG$',
         'מיקרוגל משולב גריל': 'https://images.samsung.com/is/image/samsung/p6pim/il/mg32dg4524atli/gallery/il-mw4000d-mg32dg4524atli-541276090?$684_547_PNG$',
         'תנור בילד-אין': 'https://images.samsung.com/is/image/samsung/p6pim/ph/mc35r8088lc-tc/gallery/ph-bespoke-mw8000r-mc35r8088lc-tc-530525040?$684_547_PNG$',
@@ -498,7 +494,8 @@
         'UE32N4400UXSQ', 'UE32N4500UXSQ', 'UE32N5000UXSQ', 'UE32N5100UXSQ',
         'UE32N5200UXSQ', 'UE32N5300UXSQ', 'UE32N5400UXSQ', 'UE32N5500UXSQ',
         'DV90B9445GBKJ', 'MC35R8088LPLI', 'MG32DG4524ATLI', 'MS28J5255AWLI',
-        'NZ84J9770EKEO', 'DW80R7060UGA'
+        'NZ84J9770EKEO', 'DW80R7060UGA', 'NZ70J9770EKEO', 'MC28DA046AX',
+        'MC30DA046AX', 'MS30DA046AX'
     ];
 
     const productFeatures = {
@@ -703,7 +700,7 @@
         let color = model.length >= 10 ? (washerColor[model[9]] || dryerColor[model[10]] || 'לא ידוע') : 'לא זמין';
         let countryCode = model.length >= 12 ? model.slice(-2) : '';
         let country = countryCode ? (countryCodesWasher[countryCode] || countryCodesDryer[countryCode] || 'לא ידוע') : 'לא זמין';
-        let image = productImages[tech === 'מכונת כביסה פתח קידמי' ? 'מכונת כביסה' : 'מייבש כביסה'] || '';
+        let image = productImages[tech] || '';
 
         return `<div class="card">
                     ${tech} סמסונג - דגם: ${model}<br>
@@ -807,8 +804,8 @@
 
     function getMicrowaveOvenDetails(model) {
         let type = microwaveType[model.slice(0, 2)] || 'לא ידוע';
-        let capacity = model[2] + model[3];
-        let capacityLiters = capacity === '28' ? '28 ליטר' : capacity === '35' ? '35 ליטר' : capacity === '75' ? '75 ליטר' : 'לא זמין';
+        let capacity = parseInt(model[2] + model[3]) || 0;
+        let capacityLiters = capacity >= 20 ? `${capacity} ליטר` : 'לא זמין';
         let year = modelYearCodes[model[4]] || 'לא ידוע';
         let series = model.slice(5, 9) || 'לא ידוע';
         let colorCode = model.length >= 11 ? model.slice(9, 11) : '';
@@ -831,8 +828,8 @@
 
     function getCooktopDetails(model) {
         let type = cooktopType[model.slice(0, 2)] || 'לא ידוע';
-        let width = model[2] + model[3];
-        let widthCm = width === '60' ? '60 ס"מ' : width === '84' ? '84 ס"מ' : 'לא זמין';
+        let width = parseInt(model[2] + model[3]) || 0;
+        let widthCm = (width >= 60 && width <= 90) ? `${width} ס"מ` : 'לא זמין';
         let year = modelYearCodes[model[4]] || 'לא ידוע';
         let series = model.slice(5, 9) || 'לא ידוע';
         let colorCode = model.length >= 11 ? model.slice(9, 11) : '';
