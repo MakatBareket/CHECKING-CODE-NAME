@@ -407,6 +407,62 @@
         'F': 'ATSC/QAM', 'U': 'DVB', 'G': 'ISDB-T', 'T': '2xDVB'
     };
 
+    // הגדרות למייבשי כביסה
+    const dryerTech = {
+        'DV': 'מייבש עם מעבה (Condenser)'
+    };
+
+    const dryerDesign = {
+        'G': 'עיצוב כללי', 'B': 'Bespoke'
+    };
+
+    const dryerColor = {
+        'B': 'שחור', 'W': 'לבן', 'S': 'כסוף'
+    };
+
+    const countryCodesDryer = {
+        'KJ': 'ישראל', 'AH': 'אמריקה', 'LP': 'דרום אמריקה'
+    };
+
+    // הגדרות למיקרוגלים ותנורים
+    const microwaveType = {
+        'MC': 'מיקרוגל משולב אפייה', 'MG': 'מיקרוגל משולב גריל', 'MS': 'מיקרוגל בלבד', 'NV': 'תנור בילד-אין'
+    };
+
+    const microwaveColor = {
+        'RS': 'כסוף', 'LP': 'לבן', 'AN': 'שחור'
+    };
+
+    const countryCodesMicrowave = {
+        'LI': 'ישראל', 'EO': 'אירופה', 'AH': 'אמריקה'
+    };
+
+    // הגדרות לכיריים
+    const cooktopType = {
+        'NZ': 'כיריים אינדוקציה'
+    };
+
+    const cooktopColor = {
+        'EK': 'שחור', 'GK': 'לבן'
+    };
+
+    const countryCodesCooktop = {
+        'EO': 'ישראל/אירופה', 'E1': 'אירופה'
+    };
+
+    // הגדרות למדיחי כלים
+    const dishwasherDesign = {
+        'U': 'עיצוב כללי'
+    };
+
+    const dishwasherColor = {
+        'G': 'כסוף', 'W': 'לבן', 'B': 'שחור'
+    };
+
+    const countryCodesDishwasher = {
+        'A': 'אמריקה', 'ML': 'ישראל'
+    };
+
     const productImages = {
         'QLED': 'https://images.samsung.com/is/image/samsung/p6pim/my/qa65q70dakxxm/gallery/my-qled-tv-qa65q70dakxxm-front-gray-540854235?$684_547_PNG$',
         'NEO QLED': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBlPyKp_atLUlx5rg7cEpI-XhH9t9MM3-wmg&s',
@@ -418,6 +474,12 @@
         'Bottom Freezer (מקפיא תחתון)': 'https://res.cloudinary.com/shufersal/image/upload/f_auto,q_auto/v1551800922/prod/product_images/products_zoom/WKW52_Z_P_8806090184161_2.png',
         'Top Freezer (מקפיא עליון)': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSO7r_kWY7GuXsXmU--f7VKVVBmm40A8FInjQ&s',
         'מכונת כביסה': 'https://images.samsung.com/is/image/samsung/il_WF1802WPC-YKJ_002_Front_white?$624_624_PNG$',
+        'מייבש כביסה': 'https://images.samsung.com/is/image/samsung/p6pim/il/dv80cgc0b0aekj/gallery/il-dv5000c-dv80cgc0b0aekj-thumb-541329433?$UX_EXT2_PNG$',
+        'מיקרוגל': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxHx8Cceal4QfJNiKzE9lEmW9ktQlL2ETfsg&s',
+        'מיקרוגל משולב אפייה': 'https://images.samsung.com/is/image/samsung/il-microwave-oven-mc28m6035cs-mc28m6035cs-li-frontsilver-thumb-266046635?$UX_EXT2_PNG$',
+        'מיקרוגל משולב גריל': 'https://images.samsung.com/is/image/samsung/p6pim/il/mg32dg4524atli/gallery/il-mw4000d-mg32dg4524atli-541276090?$684_547_PNG$',
+        'תנור בילד-אין': 'https://images.samsung.com/is/image/samsung/p6pim/ph/mc35r8088lc-tc/gallery/ph-bespoke-mw8000r-mc35r8088lc-tc-530525040?$684_547_PNG$',
+        'כיריים אינדוקציה': 'https://image-us.samsung.com/SamsungUS/home/home-appliances/cooktops-and-hoods/hoods/072619-gallery-updates/NZ36K7880UG.jpg?$product-details-jpg$',
         'N4000-N5500 Series': 'https://www.eplus.co.il/images/itempics/UE32T5300_18032022102312_large.jpg'
     };
 
@@ -427,7 +489,9 @@
         'QE85LS03C', 'QE85LS03B', 'QE65S95D', 'QE65S90A', 'QE65S85T',
         'UE32N4000UXSQ', 'UE32N4100UXSQ', 'UE32N4200UXSQ', 'UE32N4300UXSQ',
         'UE32N4400UXSQ', 'UE32N4500UXSQ', 'UE32N5000UXSQ', 'UE32N5100UXSQ',
-        'UE32N5200UXSQ', 'UE32N5300UXSQ', 'UE32N5400UXSQ', 'UE32N5500UXSQ'
+        'UE32N5200UXSQ', 'UE32N5300UXSQ', 'UE32N5400UXSQ', 'UE32N5500UXSQ',
+        'DV90B9445GBKJ', 'MC35R8088LPLI', 'MG32DG4524ATLI', 'MS28J5255AWLI',
+        'NZ84J9770EKEO', 'DW80R7060UGA'
     ];
 
     const productFeatures = {
@@ -570,9 +634,15 @@
             if (/^R[FSBTL]/.test(model)) {
                 return getFridgeDetails(model);
             } else if (/^W[WD]|^DV/.test(model)) {
-                return getWasherDetails(model);
+                return getWasherDryerDetails(model);
             } else if (/^[QULPK][NEA]/.test(model)) {
                 return getTVDetails(model);
+            } else if (/^M[CSG]|^NV/.test(model)) {
+                return getMicrowaveOvenDetails(model);
+            } else if (/^NZ/.test(model)) {
+                return getCooktopDetails(model);
+            } else if (/^DW/.test(model)) {
+                return getDishwasherDetails(model);
             } else {
                 return `<div class="card">שגיאה: הדגם שהוזן אינו מזוהה. אנא ודא שהקוד תקין ונסה שוב.</div>`;
             }
@@ -607,8 +677,8 @@
                 </div>`;
     }
 
-    function getWasherDetails(model) {
-        let tech = washerTech[model.slice(0, 2)] || 'לא ידוע';
+    function getWasherDryerDetails(model) {
+        let tech = washerTech[model.slice(0, 2)] || dryerTech[model.slice(0, 2)] || 'לא ידוע';
         let capacityCode = model[2];
         let capacity = '';
         switch (capacityCode) {
@@ -622,19 +692,21 @@
         }
         let year = modelYearCodes[model[4]] || 'לא ידוע';
         let month = model.length >= 6 ? model[5] || 'לא ידוע' : 'לא זמין';
-        let color = model.length >= 10 ? washerColor[model[9]] || 'לא ידוע' : 'לא זמין';
+        let design = dryerDesign[model[9]] || 'לא זמין';
+        let color = model.length >= 10 ? (washerColor[model[9]] || dryerColor[model[10]] || 'לא ידוע') : 'לא זמין';
         let countryCode = model.length >= 12 ? model.slice(-2) : '';
-        let country = countryCode ? countryCodesWasher[countryCode] || 'לא ידוע' : 'לא זמין';
-        let image = productImages['מכונת כביסה'] || '';
+        let country = countryCode ? (countryCodesWasher[countryCode] || countryCodesDryer[countryCode] || 'לא ידוע') : 'לא זמין';
+        let image = productImages[tech === 'מכונת כביסה פתח קידמי' ? 'מכונת כביסה' : 'מייבש כביסה'] || '';
 
         return `<div class="card">
                     ${tech} סמסונג - דגם: ${model}<br>
                     קיבולת: ${capacity}<br>
                     שנת ייצור: ${year}<br>
                     חודש ייצור: ${month}<br>
+                    עיצוב: ${design}<br>
                     צבע: ${color}<br>
                     מדינה: ${country}<br>
-                    ${image ? `<img src="${image}" alt="מכונת כביסה">` : ''}
+                    ${image ? `<img src="${image}" alt="${tech}">` : ''}
                     <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
                 </div>`;
     }
@@ -724,6 +796,78 @@
             console.error("שגיאה ב-getTVDetails:", e);
             return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
         }
+    }
+
+    function getMicrowaveOvenDetails(model) {
+        let type = microwaveType[model.slice(0, 2)] || 'לא ידוע';
+        let capacity = model[2] + model[3];
+        let capacityLiters = capacity === '28' ? '28 ליטר' : capacity === '35' ? '35 ליטר' : capacity === '75' ? '75 ליטר' : 'לא זמין';
+        let year = modelYearCodes[model[4]] || 'לא ידוע';
+        let series = model.slice(5, 9) || 'לא ידוע';
+        let colorCode = model.length >= 11 ? model.slice(9, 11) : '';
+        let color = colorCode ? microwaveColor[colorCode] || 'לא ידוע' : 'לא זמין';
+        let countryCode = model.length >= 13 ? model.slice(-2) : '';
+        let country = countryCode ? countryCodesMicrowave[countryCode] || 'לא ידוע' : 'לא זמין';
+        let image = productImages[type] || '';
+
+        return `<div class="card">
+                    ${type} סמסונג - דגם: ${model}<br>
+                    נפח: ${capacityLiters}<br>
+                    שנת ייצור: ${year}<br>
+                    סדרת דגם: ${series}<br>
+                    צבע: ${color}<br>
+                    מדינה: ${country}<br>
+                    ${image ? `<img src="${image}" alt="${type}">` : ''}
+                    <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                </div>`;
+    }
+
+    function getCooktopDetails(model) {
+        let type = cooktopType[model.slice(0, 2)] || 'לא ידוע';
+        let width = model[2] + model[3];
+        let widthCm = width === '60' ? '60 ס"מ' : width === '84' ? '84 ס"מ' : 'לא זמין';
+        let year = modelYearCodes[model[4]] || 'לא ידוע';
+        let series = model.slice(5, 9) || 'לא ידוע';
+        let colorCode = model.length >= 11 ? model.slice(9, 11) : '';
+        let color = colorCode ? cooktopColor[colorCode] || 'לא ידוע' : 'לא זמין';
+        let countryCode = model.length >= 13 ? model.slice(-2) : '';
+        let country = countryCode ? countryCodesCooktop[countryCode] || 'לא ידוע' : 'לא זמין';
+        let image = productImages[type] || '';
+
+        return `<div class="card">
+                    ${type} סמסונג - דגם: ${model}<br>
+                    רוחב: ${widthCm}<br>
+                    שנת ייצור: ${year}<br>
+                    סדרת דגם: ${series}<br>
+                    צבע: ${color}<br>
+                    מדינה: ${country}<br>
+                    ${image ? `<img src="${image}" alt="${type}">` : ''}
+                    <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                </div>`;
+    }
+
+    function getDishwasherDetails(model) {
+        let width = model[2] + model[3];
+        let widthCm = width === '60' ? '60 ס"מ' : width === '45' ? '45 ס"מ' : 'לא זמין';
+        let year = modelYearCodes[model[4]] || 'לא ידוע';
+        let series = model.slice(5, 9) || 'לא ידוע';
+        let design = dishwasherDesign[model[9]] || 'לא זמין';
+        let color = model.length >= 11 ? dishwasherColor[model[10]] || 'לא ידוע' : 'לא זמין';
+        let countryCode = model.length >= 12 ? model.slice(-1) : '';
+        let country = countryCode ? countryCodesDishwasher[countryCode] || 'לא ידוע' : 'לא זמין';
+        let image = productImages['מדיח כלים'] || '';
+
+        return `<div class="card">
+                    מדיח כלים סמסונג - דגם: ${model}<br>
+                    רוחב: ${widthCm}<br>
+                    שנת ייצור: ${year}<br>
+                    סדרת דגם: ${series}<br>
+                    עיצוב: ${design}<br>
+                    צבע: ${color}<br>
+                    מדינה: ${country}<br>
+                    ${image ? `<img src="${image}" alt="מדיח כלים">` : ''}
+                    <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                </div>`;
     }
 
     function lookupSerial() {
