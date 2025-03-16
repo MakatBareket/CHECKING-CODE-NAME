@@ -476,14 +476,15 @@
         'Side by Side (דלת ליד דלת)': 'https://www.electricshop.co.il/images/itempics/RF27T5001S92_12012023195056.jpg',
         'Bottom Freezer (מקפיא תחתון)': 'https://res.cloudinary.com/shufersal/image/upload/f_auto,q_auto/v1551800922/prod/product_images/products_zoom/WKW52_Z_P_8806090184161_2.png',
         'Top Freezer (מקפיא עליון)': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSO7r_kWY7GuXsXmU--f7VKVVBmm40A8FInjQ&s',
-        'מכונת כביסה': 'https://images.samsung.com/is/image/samsung/il_WF1802WPC-YKJ_002_Front_white?$624_624_PNG$',
+        'מכונת כביסה פתח קידמי': 'https://images.samsung.com/is/image/samsung/assets/ru/support/home-appliances/what-to-do-if-my-washing-machine-turns-off-during-washing/washer-turns-off.png?$ORIGIN_PNG$',
         'מייבש כביסה': 'https://images.samsung.com/is/image/samsung/p6pim/il/dv80cgc0b0aekj/gallery/il-dv5000c-dv80cgc0b0aekj-thumb-541329433?$UX_EXT2_PNG$',
         'מיקרוגל': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2Kw4LIiEbeFJ-NrS89kITF1uZSHSdmCeLCg&s',
         'מיקרוגל משולב אפייה': 'https://images.samsung.com/is/image/samsung/il-microwave-oven-mc28m6035cs-mc28m6035cs-li-frontsilver-thumb-266046635?$UX_EXT2_PNG$',
         'מיקרוגל משולב גריל': 'https://images.samsung.com/is/image/samsung/p6pim/il/mg32dg4524atli/gallery/il-mw4000d-mg32dg4524atli-541276090?$684_547_PNG$',
         'תנור בילד-אין': 'https://images.samsung.com/is/image/samsung/p6pim/ph/mc35r8088lc-tc/gallery/ph-bespoke-mw8000r-mc35r8088lc-tc-530525040?$684_547_PNG$',
         'כיריים אינדוקציה': 'https://image-us.samsung.com/SamsungUS/home/home-appliances/cooktops-and-hoods/hoods/072619-gallery-updates/NZ36K7880UG.jpg?$product-details-jpg$',
-        'N4000-N5500 Series': 'https://www.eplus.co.il/images/itempics/UE32T5300_18032022102312_large.jpg'
+        'N4000-N5500 Series': 'https://www.eplus.co.il/images/itempics/UE32T5300_18032022102312_large.jpg',
+        'מדיח כלים': 'https://images.samsung.com/is/image/samsung/levant-dw60m5070fs-dw60m5070fs-fh-rperspectiveopensilver-thumb-210032233?$UX_EXT2_PNG$'
     };
 
     const sampleModels = [
@@ -495,7 +496,7 @@
         'UE32N5200UXSQ', 'UE32N5300UXSQ', 'UE32N5400UXSQ', 'UE32N5500UXSQ',
         'DV90B9445GBKJ', 'MC35R8088LPLI', 'MG32DG4524ATLI', 'MS28J5255AWLI',
         'NZ84J9770EKEO', 'DW80R7060UGA', 'NZ70J9770EKEO', 'MC28DA046AX',
-        'MC30DA046AX', 'MS30DA046AX'
+        'MC30DA046AX', 'MS30DA046AX', 'DW70DA046AX', 'DW40DA046AX'
     ];
 
     const productFeatures = {
@@ -695,7 +696,7 @@
             default: capacity = 'לא זמין';
         }
         let year = modelYearCodes[model[4]] || 'לא ידוע';
-        let month = model.length >= 6 ? model[5] || 'לא ידוע' : 'לא זמין';
+        let series = model.length >= 9 ? model.slice(5, 9) || 'לא ידוע' : 'לא זמין';
         let design = dryerDesign[model[9]] || 'לא זמין';
         let color = model.length >= 10 ? (washerColor[model[9]] || dryerColor[model[10]] || 'לא ידוע') : 'לא זמין';
         let countryCode = model.length >= 12 ? model.slice(-2) : '';
@@ -706,7 +707,7 @@
                     ${tech} סמסונג - דגם: ${model}<br>
                     קיבולת: ${capacity}<br>
                     שנת ייצור: ${year}<br>
-                    חודש ייצור: ${month}<br>
+                    סדרת דגם: ${series}<br>
                     עיצוב: ${design}<br>
                     צבע: ${color}<br>
                     קוד מדינה: ${country}<br>
@@ -851,8 +852,8 @@
     }
 
     function getDishwasherDetails(model) {
-        let width = model[2] + model[3];
-        let widthCm = width === '60' ? '60 ס"מ' : width === '45' ? '45 ס"מ' : 'לא זמין';
+        let size = parseInt(model[2] + model[3]) || 0;
+        let sizeDisplay = (size >= 45 && size <= 80) ? `רוחב: ${size} ס"מ` : (size > 0 ? `נפח: ${size} ליטר` : 'לא זמין');
         let year = modelYearCodes[model[4]] || 'לא ידוע';
         let series = model.slice(5, 9) || 'לא ידוע';
         let design = dishwasherDesign[model[9]] || 'לא זמין';
@@ -863,7 +864,7 @@
 
         return `<div class="card">
                     מדיח כלים סמסונג - דגם: ${model}<br>
-                    רוחב: ${widthCm}<br>
+                    ${sizeDisplay}<br>
                     שנת ייצור: ${year}<br>
                     סדרת דגם: ${series}<br>
                     עיצוב: ${design}<br>
