@@ -55,6 +55,7 @@
 <div id="troubleshooting-page" class="container content">
     <h2>מדריכים לתקלות</h2>
     <input type="text" id="troubleshootingInput" placeholder="הכנס תיאור תקלה (למשל: טלוויזיה לא נדלקת)">
+    <div class="troubleshooting-note">* שימו לב, לחיפוש מדריכים לתקלות מומלץ להיעזר במערכת ידע, חיפוש המדריכים מתבצע באתר סמסונג ועלול להחזיר תוצאות ריקות.</div>
     <button onclick="searchTroubleshooting()">חפש</button>
     <div id="troubleshooting-result"></div>
 </div>
@@ -493,6 +494,24 @@
     max-width: 650px;
     margin-left: auto;
     margin-right: auto;
+}
+    .troubleshooting-note {
+    font-size: 12px; /* גודל זהה ל-search-note בדסקטופ */
+    color: #457b9d; /* צבע תואם לעיצוב */
+    margin-top: 8px; /* מרווח קטן מה-input */
+    margin-bottom: 12px; /* מרווח לפני הכפתור */
+    text-align: right; /* יישור לימין כמו שאר הטקסט */
+    line-height: 1.4; /* שיפור קריאות */
+    direction: rtl;
+}
+
+/* התאמה למובייל */
+@media only screen and (max-width: 768px) {
+    .troubleshooting-note {
+        font-size: 10px; /* גודל זהה ל-search-note במובייל */
+        margin-top: 6px; /* מרווח קטן יותר */
+        margin-bottom: 10px;
+    }
 }
 </style>
 
