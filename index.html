@@ -7,10 +7,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="navbar">
-    <a href="#" onclick="showPage('model')" class="active">חיפוש לפי קוד דגם</a>
-    <a href="#" onclick="showPage('serial')">בדיקה לפי מספר סיריאלי</a>
-    <a href="#" onclick="showPage('troubleshooting')">מדריכים לתקלות</a>
+<div id="troubleshooting-page" class="container content">
+    <h2>מדריכים לתקלות</h2>
+    <input type="text" id="troubleshootingInput" placeholder="הכנס תיאור תקלה (למשל: טלוויזיה לא נדלקת)">
+    <div class="troubleshooting-note">* שימו לב, לחיפוש מדריכים לתקלות מומלץ להיעזר במערכת ידע, חיפוש המדריכים מתבצע באתר סמסונג ועלול להחזיר תוצאות ריקות.</div>
+    <div class="troubleshooting-buttons">
+        <button onclick="searchTroubleshootingSamsung()">מדריכים לתקלות באתר סמסונג</button>
+        <button onclick="searchTroubleshootingWyze()">מדריכים לתקלות במערכת הידע</button>
+    </div>
+    <div id="troubleshooting-result"></div>
 </div>
 
     <div id="model-page" class="container content active">
@@ -521,6 +526,43 @@
         font-size: 10px; /* גודל זהה ל-search-note במובייל */
         margin-top: 6px; /* מרווח קטן יותר */
         margin-bottom: 10px;
+    }
+}
+    .troubleshooting-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* מרווח בין הכפתורים, תואם לעיצוב הכללי */
+    margin-top: 20px; /* מרווח מהכוכבית */
+}
+
+.troubleshooting-buttons button {
+    width: 100%;
+    padding: 14px; /* תואם לכפתורים אחרים */
+    background: linear-gradient(90deg, #457b9d, #a8dadc); /* צבע תואם */
+    color: #ffffff;
+    border: none;
+    border-radius: 8px; /* תואם לעיצוב */
+    font-size: 16px; /* תואם לגודל הגופן */
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+    font-family: 'Rubik', sans-serif;
+}
+
+.troubleshooting-buttons button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(69, 123, 157, 0.6); /* אפקט hover תואם */
+}
+
+/* התאמה למובייל */
+@media only screen and (max-width: 768px) {
+    .troubleshooting-buttons {
+        gap: 8px; /* מרווח קטן יותר במובייל */
+        margin-top: 15px;
+    }
+    .troubleshooting-buttons button {
+        padding: 10px; /* תואם לכפתורים במובייל */
+        font-size: 14px;
     }
 }
 </style>
@@ -1202,27 +1244,49 @@ function getTVDetails(model) {
             alert("שגיאה בפתיחת אתר המדריכים. אנא נסה שוב.");
         }
     }
-   function searchTroubleshooting() {
+   function searchTroubleshootingSamsung() {
     try {
         var query = document.getElementById("troubleshootingInput").value.trim();
+        var resultDiv = document.getElementById("troubleshooting-result");
         if (!query) {
-            document.getElementById("troubleshooting-result").innerHTML = '<div class="card">שגיאה: יש להזין תיאור תקלה לחיפוש.</div>';
-            document.getElementById("troubleshooting-result").style.display = "block";
+            resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין תיאור תקלה לחיפוש.</div>';
+            resultDiv.style.display = "block";
             return;
         }
         var url = `https://www.samsung.com/il/search/?searchvalue=${encodeURIComponent(query)}`;
         window.open(url, '_blank');
+        resultDiv.style.display = "none"; // מנקה תוצאות קודמות אם יש
     } catch (e) {
-        console.error("שגיאה ב-searchTroubleshooting:", e);
-        document.getElementById("troubleshooting-result").innerHTML = `<div class="card">שגיאה בחיפוש: ${e.message}</div>`;
-        document.getElementById("troubleshooting-result").style.display = "block";
+        console.error("שגיאה ב-searchTroubleshootingSamsung:", e);
+        resultDiv.innerHTML = `<div class="card">שגיאה בחיפוש: ${e.message}</div>`;
+        resultDiv.style.display = "block";
     }
 }
-// הוספת Enter לחיפוש
+
+function searchTroubleshootingWyze() {
+    try {
+        var query = document.getElementById("troubleshootingInput").value.trim();
+        var resultDiv = document.getElementById("troubleshooting-result");
+        if (!query) {
+            resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין תיאור תקלה לחיפוש.</div>';
+            resultDiv.style.display = "block";
+            return;
+        }
+        var url = `https://samsung.wyze1.info/#/search/2/?searchvalue=${encodeURIComponent(query)}`;
+        window.open(url, '_blank');
+        resultDiv.style.display = "none"; // מנקה תוצאות קודמות אם יש
+    } catch (e) {
+        console.error("שגיאה ב-searchTroubleshootingWyze:", e);
+        resultDiv.innerHTML = `<div class="card">שגיאה בחיפוש: ${e.message}</div>`;
+        resultDiv.style.display = "block";
+    }
+}
+
+// עדכון ה-Enter כדי שיפעיל את החיפוש באתר סמסונג כברירת מחדל
 document.getElementById('troubleshootingInput').addEventListener('keypress', function(event) {
     if (event.key === 'Enter') {
         event.preventDefault();
-        searchTroubleshooting();
+        searchTroubleshootingSamsung(); // ברירת מחדל לאתר סמסונג
     }
 });
 </script>
