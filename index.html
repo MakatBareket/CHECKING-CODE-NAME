@@ -1161,63 +1161,66 @@ function getTVDetails(model) {
     }
 
     function lookupSerial() {
-        try {
-            var serial = document.getElementById("serialInput").value.trim().toUpperCase();
-            var resultDiv = document.getElementById("serial-result");
-            var loader = document.getElementById("loader-serial");
+    try {
+        var serial = document.getElementById("serialInput").value.trim().toUpperCase();
+        var resultDiv = document.getElementById("serial-result");
+        var loader = document.getElementById("loader-serial");
 
-            if (!serial || (serial.length !== 11 && serial.length !== 15)) {
-                resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי (11 או 15 תווים).</div>';
-                resultDiv.style.display = "block";
-                return;
+        if (!serial || (serial.length !== 11 && serial.length !== 15)) {
+            resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי (11 או 15 תווים).</div>';
+            resultDiv.style.display = "block";
+            return;
+        }
+
+        loader.style.display = "block";
+        resultDiv.style.display = "none";
+
+        setTimeout(() => {
+            let year, month, productionDate, warrantyStatus;
+
+            if (serial.length === 15) {
+                year = serialYearCodes[serial[7]] || 'לא ידוע';
+                month = monthCodes[serial[8]] || 'לא ידוע';
+                productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
+            } else if (serial.length === 11) {
+                year = serialYearCodes[serial[3]] || 'לא ידוע';
+                month = monthCodes[serial[4]] || 'לא ידוע';
+                productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
             }
 
-            loader.style.display = "block";
-            resultDiv.style.display = "none";
+            const monthIndex = Object.keys(monthCodes).indexOf(serial[serial.length === 15 ? 8 : 4]);
+            const productionYear = parseInt(year) || 0;
+            const productionDateObj = productionYear ? new Date(productionYear, monthIndex) : null;
+            const currentDate = new Date('2025-03-17'); // תאריך נוכחי לפי ההגדרה שלך
 
-            setTimeout(() => {
-                let year, month, productionDate, warrantyStatus;
+            // בדיקה ספציפית לדצמבר 2024 (XC)
+            if (year === '2024' && month === 'דצמבר') {
+                warrantyStatus = 'עלול להיות באחריות סמסונג ישראל, יש לבדוק לפי החשבונית';
+            } else if (!productionDateObj || productionDateObj <= new Date('2024-03-31')) {
+                warrantyStatus = 'לא באחריות';
+            } else if (productionDateObj <= new Date('2024-11-30')) {
+                warrantyStatus = 'באחריות סמליין';
+            } else {
+                warrantyStatus = 'באחריות סמסונג ישראל';
+            }
 
-                if (serial.length === 15) {
-                    year = serialYearCodes[serial[7]] || 'לא ידוע';
-                    month = monthCodes[serial[8]] || 'לא ידוע';
-                    productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
-                } else if (serial.length === 11) {
-                    year = serialYearCodes[serial[3]] || 'לא ידוע';
-                    month = monthCodes[serial[4]] || 'לא ידוע';
-                    productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
-                }
-
-                const monthIndex = Object.keys(monthCodes).indexOf(serial[serial.length === 15 ? 8 : 4]);
-                const productionYear = parseInt(year) || 0;
-                const productionDateObj = productionYear ? new Date(productionYear, monthIndex) : null;
-                const currentDate = new Date('2025-03-14');
-
-                if (!productionDateObj || productionDateObj <= new Date('2024-03-31')) {
-                    warrantyStatus = 'לא באחריות';
-                } else if (productionDateObj <= new Date('2024-11-30')) {
-                    warrantyStatus = 'באחריות סמליין';
-                } else {
-                    warrantyStatus = 'באחריות סמסונג ישראל';
-                }
-
-                resultDiv.innerHTML = `<div class="card">
-                                        מספר סיריאלי: ${serial}<br>
-                                        תאריך ייצור: ${productionDate}<br>
-                                        סטטוס אחריות: ${warrantyStatus}<br>
-                                        הערה: למידע נוסף יש לבדוק לפי קוד דגם.
-                                      </div>`;
-                resultDiv.style.display = "block";
-                loader.style.display = "none";
-                showPopup();
-            }, 1000);
-        } catch (e) {
-            console.error("שגיאה ב-lookupSerial:", e);
-            resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד המספר הסיריאלי: ${e.message}</div>`;
+            resultDiv.innerHTML = `<div class="card">
+                                    מספר סיריאלי: ${serial}<br>
+                                    תאריך ייצור: ${productionDate}<br>
+                                    סטטוס אחריות: ${warrantyStatus}<br>
+                                    הערה: למידע נוסף יש לבדוק לפי קוד דגם.
+                                  </div>`;
             resultDiv.style.display = "block";
             loader.style.display = "none";
-        }
+            showPopup();
+        }, 1000);
+    } catch (e) {
+        console.error("שגיאה ב-lookupSerial:", e);
+        resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד המספר הסיריאלי: ${e.message}</div>`;
+        resultDiv.style.display = "block";
+        loader.style.display = "none";
     }
+}
 
     // פונקציות ממשק משתמש
     function showPopup() {
