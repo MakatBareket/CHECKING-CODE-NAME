@@ -7,10 +7,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="navbar">
-        <a href="#" onclick="showPage('model')" class="active">חיפוש לפי קוד דגם</a>
-        <a href="#" onclick="showPage('serial')">בדיקה לפי מספר סיריאלי</a>
-    </div>
+  <div class="navbar">
+    <a href="#" onclick="showPage('model')" class="active">חיפוש לפי קוד דגם</a>
+    <a href="#" onclick="showPage('serial')">בדיקה לפי מספר סיריאלי</a>
+    <a href="#" onclick="showPage('troubleshooting')">מדריכים לתקלות</a>
+</div>
 
     <div id="model-page" class="container content active">
         <h2>הזן קוד דגם</h2>
@@ -51,7 +52,13 @@
             <button onclick="closePopup()">סגור</button>
         </div>
     </div>
-
+<div id="troubleshooting-page" class="container content">
+    <h2>מדריכים לתקלות</h2>
+    <input type="text" id="troubleshootingInput" placeholder="הכנס תיאור תקלה (למשל: טלוויזיה לא נדלקת)">
+    <button onclick="searchTroubleshooting()">חפש</button>
+    <div id="troubleshooting-result"></div>
+</div>
+    
 <style>
     body {
         font-family: 'Rubik', Arial, sans-serif;
@@ -478,6 +485,15 @@
             font-size: 12px;
         }
     }
+    #troubleshooting-result {
+    margin-top: 30px;
+    display: none;
+    text-align: center;
+    direction: rtl;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+}
 </style>
 
 <script>
@@ -864,7 +880,7 @@
                 </div>`;
     }
 
-   function getTVDetails(model) {
+  function getTVDetails(model) {
     try {
         let display = tvDisplay[model[0]] || 'לא ידוע';
         let isFrame = model.includes('LS03');
@@ -876,7 +892,7 @@
         else if (isNseries) display = 'N4000-N5500 Series';
         else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) >= 2018) display = 'CRYSTAL UHD';
         else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) < 2018) display = 'LED';
-        else if (model.includes('QN')) display = 'QLED'; // QLED עבור דגמי QN
+        else if (model.includes('QN')) display = 'QLED';
 
         let market = tvMarket[model[1]] || 'לא ידוע';
         let size = model.length >= 4 ? model[2] + model[3] : 'לא זמין';
@@ -885,17 +901,26 @@
         let series = '';
         let seriesStart = 4;
 
-        // זיהוי תבנית כללית: Q[NEA] + 2 ספרות + (QN|S|LS03) + 2 ספרות + שנה
-        if (/^Q[NEA]\d{2}(QN|S|LS03)\d{2}/.test(model)) {
-            let seriesMatch = model.match(/(QN|S|LS03)\d{2}/);
+        // זיהוי דגמי The Frame (LS03)
+        if (isFrame) {
+            let frameIndex = model.indexOf('LS03');
+            if (frameIndex !== -1) {
+                series = 'LS03';
+                yearCode = model[frameIndex + 4] || ''; // השנה אחרי LS03
+                seriesStart = frameIndex + 5;
+            }
+        }
+        // זיהוי תבנית: Q[NEA] + 2 ספרות + (QN|S) + 2 ספרות + שנה
+        else if (/^Q[NEA]\d{2}(QN|S)\d{2}/.test(model)) {
+            let seriesMatch = model.match(/(QN|S)\d{2}/);
             if (seriesMatch) {
                 let seriesIndex = seriesMatch.index;
-                series = seriesMatch[0]; // לוקח QN80, S85, או LS03
-                yearCode = model[seriesIndex + series.length] || ''; // השנה מיד אחרי
+                series = seriesMatch[0];
+                yearCode = model[seriesIndex + series.length] || '';
                 seriesStart = seriesIndex + series.length + 1;
             }
         }
-        // זיהוי דגמי Neo QLED או NU ישנים יותר (למשל QN85C)
+        // זיהוי דגמי Neo QLED או NU ישנים יותר
         else if (model.includes('QN') || model.includes('NU')) {
             let seriesMatch = model.match(/QN\d{2}|NU\d{4}/);
             if (seriesMatch) {
@@ -905,7 +930,7 @@
                 seriesStart = seriesIndex + series.length + 1;
             }
         }
-        // ברירת מחדל לדגמים רגילים (למשל UE65RU8000)
+        // ברירת מחדל לדגמים רגילים
         else {
             yearCode = model[4] || '';
             seriesStart = 5;
@@ -987,7 +1012,6 @@
         return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
     }
 }
-
     function getMicrowaveOvenDetails(model) {
         let type = microwaveType[model.slice(0, 2)] || 'לא ידוע';
         let capacity = parseInt(model[2] + model[3]) || 0;
@@ -1156,6 +1180,30 @@
             alert("שגיאה בפתיחת אתר המדריכים. אנא נסה שוב.");
         }
     }
+    function searchTroubleshooting() {
+    try {
+        var query = document.getElementById("troubleshootingInput").value.trim();
+        if (!query) {
+            document.getElementById("troubleshooting-result").innerHTML = '<div class="card">שגיאה: יש להזין תיאור תקלה לחיפוש.</div>';
+            document.getElementById("troubleshooting-result").style.display = "block";
+            return;
+        }
+        var url = `https://www.samsung.com/il/support/?searchvalue=${encodeURIComponent(query)}`;
+        window.open(url, '_blank');
+    } catch (e) {
+        console.error("שגיאה ב-searchTroubleshooting:", e);
+        document.getElementById("troubleshooting-result").innerHTML = `<div class="card">שגיאה בחיפוש: ${e.message}</div>`;
+        document.getElementById("troubleshooting-result").style.display = "block";
+    }
+}
+
+// הוספת Enter לחיפוש
+document.getElementById('troubleshootingInput').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        searchTroubleshooting();
+    }
+});
 </script>
 </body>
 </html>
