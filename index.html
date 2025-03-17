@@ -7,6 +7,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="navbar">
+    <a href="#" onclick="showPage('model')" class="active">חיפוש לפי קוד דגם</a>
+    <a href="#" onclick="showPage('serial')">בדיקת מוצר לפי מספר סיריאלי</a>
+    <a href="#" onclick="showPage('troubleshooting')">מדריכים לתקלות</a>
+</div>
+    
 <div id="troubleshooting-page" class="container content">
     <h2>מדריכים לתקלות</h2>
     <input type="text" id="troubleshootingInput" placeholder="הכנס תיאור תקלה (למשל: טלוויזיה לא נדלקת)">
@@ -57,13 +63,7 @@
             <button onclick="closePopup()">סגור</button>
         </div>
     </div>
-<div id="troubleshooting-page" class="container content">
-    <h2>מדריכים לתקלות</h2>
-    <input type="text" id="troubleshootingInput" placeholder="הכנס תיאור תקלה (למשל: טלוויזיה לא נדלקת)">
-    <div class="troubleshooting-note">* שימו לב, לחיפוש מדריכים לתקלות מומלץ להיעזר במערכת ידע, חיפוש המדריכים מתבצע באתר סמסונג ועלול להחזיר תוצאות ריקות.</div>
-    <button onclick="searchTroubleshooting()">חפש</button>
-    <div id="troubleshooting-result"></div>
-</div>
+
     
 <style>
     body {
