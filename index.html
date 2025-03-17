@@ -352,6 +352,117 @@
     position: relative;
     padding-top: 80px;
 }
+
+@media only screen and (max-width: 768px) {
+    /* התאמת הגוף והקונטיינר */
+    body {
+        padding: 20px; /* הקטנת הריפוד מסביב */
+    }
+    .container {
+        max-width: 100%; /* שימוש בכל הרוחב הזמין */
+        padding: 15px; /* הקטנת הריפוד הפנימי */
+        margin: 0 0 20px; /* הסרת מרווחים צדדיים */
+    }
+
+    /* התאמת הניווט */
+    .navbar {
+        flex-direction: column; /* שינוי לכיוון אנכי */
+        gap: 10px; /* הקטנת המרווח בין הקישורים */
+        padding: 10px;
+    }
+    .navbar a {
+        font-size: 14px; /* הקטנת גודל הטקסט */
+        padding: 6px 12px;
+    }
+
+    /* התאמת קלט וכפתורים */
+    input {
+        width: calc(100% - 20px); /* התאמה לרוחב מלא עם ריפוד קטן יותר */
+        padding: 10px;
+        font-size: 14px;
+    }
+    button {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    /* התאמת הכרטיסייה */
+    .card {
+        padding: 15px; /* הקטנת הריפוד */
+        padding-top: 120px; /* הגדלת הריפוד למעלה כדי להתאים לכפתורים */
+        font-size: 14px; /* הקטנת גודל הטקסט */
+        line-height: 1.4;
+    }
+    .card-buttons {
+        top: 10px; /* החזרה למיקום עליון יותר כי 50px גבוה מדי במובייל */
+        left: 10px;
+        width: calc(100% - 20px); /* התאמה לרוחב הכרטיסייה */
+    }
+    .card-buttons a {
+        font-size: 12px; /* הקטנת גודל הטקסט של הכפתורים */
+        padding: 8px 15px; /* הקטנת הריפוד של הכפתורים */
+        margin: 0; /* הסרת מרווחים חיצוניים */
+    }
+    .card img {
+        max-width: 100%; /* וידוא שהתמונה לא חורגת מהרוחב */
+        height: auto;
+    }
+    .image-asterisk {
+        font-size: 12px; /* הקטנת הטקסט של ההערה */
+    }
+    .card ul {
+        padding-right: 10px; /* הקטנת הריפוד של הרשימות */
+    }
+
+    /* התאמת ההודעה על חיפוש ידני */
+    .card div[style*="font-size: 14px"] {
+        font-size: 12px; /* הקטנת הטקסט של ההודעה */
+        margin-top: 5px;
+    }
+
+    /* התאמת ההצעות */
+    .suggestions {
+        width: calc(100% - 20px); /* התאמה לרוחב הקלט */
+        max-height: 120px;
+    }
+    .suggestion-item {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    /* התאמת הפופאפ */
+    .popup {
+        max-width: 90%; /* הקטנת הרוחב ל-90% מהמסך */
+        padding: 15px;
+    }
+    .popup h3 {
+        font-size: 18px;
+    }
+    .popup p {
+        font-size: 14px;
+    }
+    .popup-buttons {
+        flex-direction: column; /* שינוי לכיוון אנכי */
+        gap: 10px;
+    }
+    .popup button {
+        min-width: 100px; /* הקטנת רוחב מינימלי */
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+
+    /* התאמת הטוען */
+    #loader, #loader-serial {
+        width: 60px;
+        height: 60px;
+    }
+    .loader-circle {
+        border-width: 3px;
+    }
+    .loader-text {
+        font-size: 12px;
+    }
+}
 </style>
 
 <script>
