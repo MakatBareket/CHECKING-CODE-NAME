@@ -679,8 +679,8 @@
                     קוד מדינה: ${country}<br>
                     ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${config}">` : ''}
                     <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                    <button onclick="searchManual('${model}')">חפש מדריך למשתמש</button>
-                </div>`;
+<a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>          
+</div>`;
     }
 
     function getWasherDryerDetails(model) {
@@ -714,7 +714,7 @@
                     קוד מדינה: ${country}<br>
                     ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${tech}">` : ''}
                     <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                    <button onclick="searchManual('${model}')">חפש מדריך למשתמש</button>
+                   <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
                 </div>`;
     }
 
@@ -813,7 +813,7 @@
                     ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${display}">` : ''}
                     ${featuresHtml}
                     <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                    <button onclick="searchManual('${model}')">חפש מדריך למשתמש</button>
+                   <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
                 </div>`;
     } catch (e) {
         console.error("שגיאה ב-getTVDetails:", e);
@@ -841,7 +841,7 @@
                     קוד מדינה: ${country}<br>
                     ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${type}">` : ''}
                     <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                    <button onclick="searchManual('${model}')">חפש מדריך למשתמש</button>
+                   <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
                 </div>`;
     }
 
@@ -866,7 +866,7 @@
                     קוד מדינה: ${country}<br>
                     ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${type}">` : ''}
                     <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                    <button onclick="searchManual('${model}')">חפש מדריך למשתמש</button>
+                   <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
                 </div>`;
     }
 
@@ -968,9 +968,9 @@
         closePopup();
         showPage('model');
     }
-    function searchManual(model) {
+  function searchManual(model) {
     try {
-        const url = `https://www.samsung.com/il/support/user-manuals-and-guide/?searchvalue=${encodeURIComponent(model)}`;
+        const url = `https://www.samsung.com/il/support/search/?keyword=${encodeURIComponent(model)}`;
         window.open(url, '_blank');
     } catch (e) {
         console.error("שגיאה ב-searchManual:", e);
