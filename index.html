@@ -968,13 +968,34 @@
         closePopup();
         showPage('model');
     }
-  function searchManual(model) {
+ function searchManual(model) {
     try {
-        const url = `https://www.samsung.com/il/support/search/?keyword=${encodeURIComponent(model)}`;
-        window.open(url, '_blank');
+        const url = 'https://www.samsung.com/il/support/user-manuals-and-guide/';
+        const newWindow = window.open(url, '_blank');
+        
+        // המתנה קצרה לטעינת הדף ואז הזרקת הסקריפט
+        setTimeout(() => {
+            if (newWindow) {
+                newWindow.document.write(`
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // מציאת שדה החיפוש לפי ה-ID שלו
+                            const searchInput = document.getElementById('search-input');
+                            const searchButton = document.querySelector('.search-button');
+                            if (searchInput && searchButton) {
+                                searchInput.value = '${model}';
+                                searchButton.click();
+                            } else {
+                                console.error('שדה חיפוש או כפתור לא נמצאו');
+                            }
+                        });
+                    </script>
+                `);
+            }
+        }, 1000); // המתנה של שנייה לטעינת הדף
     } catch (e) {
         console.error("שגיאה ב-searchManual:", e);
-        alert("שגיאה בפתיחת אתר המדריכים. אנא נסה שוב.");
+        alert("שגיאה בפתיחת אתר המדריכים או בביצוע החיפוש. אנא נסה שוב.");
     }
 }
 </script>
