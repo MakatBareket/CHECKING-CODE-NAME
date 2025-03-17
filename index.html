@@ -164,37 +164,10 @@
         margin-top: 20px;
         text-align: center;
     }
-   .card-buttons {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px; /* הקטנה מ-8px ל-6px למרווח קטן יותר בין הכפתורים */
-}
-
-.card-buttons a {
-    display: block;
-    padding: 6px 12px; /* הקטנה מ-8px 15px ל-6px 12px */
-    background: #1d3557;
-    color: #ffffff;
-    text-decoration: none;
-    border-radius: 5px; /* הקטנה מ-6px ל-5px למראה עדין יותר */
-    transition: background 0.3s;
-    font-weight: 500;
-    text-align: center;
-    font-size: 13px; /* הקטנה מ-14px ל-13px */
-}
-
-.card-buttons a:hover {
-    background: #457b9d;
-}
-
-.card {
+  .card {
     position: relative;
     background: #ffffff;
-    padding: 20px;
-    padding-top: 120px; /* הגדלה מ-100px ל-120px כדי לפנות מקום לכפתורים */
+    padding: 20px; /* הסרת padding-top גדול, הכל אחיד */
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     font-size: 16px;
@@ -205,22 +178,56 @@
     margin: 0 auto 20px auto;
 }
 
+.card-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* מרווח קטן בין הכפתורים */
+    margin-bottom: 15px; /* מרווח מתחת לכפתורים לפני הטקסט */
+}
+
+.card-buttons a {
+    display: inline-block; /* שינוי מ-block ל-inline-block להתאמה לזרימה */
+    padding: 5px 10px; /* הקטנה נוספת למראה עדין */
+    background: #1d3557;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 4px; /* הקטנה מ-5px ל-4px */
+    transition: background 0.3s;
+    font-weight: 500;
+    text-align: center;
+    font-size: 12px; /* הקטנה מ-13px ל-12px */
+}
+
+.card-buttons a:hover {
+    background: #457b9d;
+}
+
+.search-note {
+    font-size: 11px; /* הקטנה מ-12px ל-11px למראה עדין יותר */
+    color: #457b9d;
+    margin-top: 4px;
+    text-align: right;
+    line-height: 1.3; /* הקטנה מ-1.4 ל-1.3 לפרופורציה טובה יותר */
+}
+
 /* התאמה למובייל */
 @media only screen and (max-width: 768px) {
     .card {
         padding: 15px;
-        padding-top: 100px; /* הגדלה מ-100px ל-100px (כבר מותאם, נשאר כך) */
         font-size: 14px;
         line-height: 1.4;
     }
     .card-buttons {
-        top: 10px;
-        left: 10px;
-        width: calc(100% - 20px);
+        gap: 5px; /* מרווח קטן יותר במובייל */
+        margin-bottom: 10px;
     }
     .card-buttons a {
-        font-size: 11px; /* הקטנה מ-12px ל-11px */
-        padding: 5px 10px; /* הקטנה מ-6px 12px ל-5px 10px */
+        padding: 4px 8px; /* הקטנה נוספת במובייל */
+        font-size: 10px; /* הקטנה מ-11px ל-10px */
+    }
+    .search-note {
+        font-size: 9px; /* הקטנה מ-10px ל-9px */
+        margin-top: 3px;
     }
 }
     #loader, #loader-serial {
@@ -906,13 +913,12 @@ function getTVDetails(model) {
     try {
         let display = tvDisplay[model[0]] || 'לא ידוע';
         let isFrame = model.includes('LS03');
-        // זיהוי OLED רק אם S95, S90, S85, או S80 מופיעים לאחר שתי ספרות (גודל)
         let isOLED = /^Q[NEA]\d{2}S(95|90|85|80)/.test(model);
         let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
 
         if (isFrame) display = 'The Frame';
         else if (isOLED) display = 'OLED';
-        else if (isNseries) display = 'Full HD'; // שינוי ל-Full HD עבור N4000-N5500
+        else if (isNseries) display = 'Full HD';
         else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) >= 2018) display = 'CRYSTAL UHD';
         else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) < 2018) display = 'LED';
         else if (model.includes('QN')) display = 'QLED';
@@ -924,7 +930,6 @@ function getTVDetails(model) {
         let series = '';
         let seriesStart = 4;
 
-        // זיהוי דגמי The Frame (LS03)
         if (isFrame) {
             let frameIndex = model.indexOf('LS03');
             if (frameIndex !== -1) {
@@ -932,9 +937,7 @@ function getTVDetails(model) {
                 yearCode = model[frameIndex + 4] || '';
                 seriesStart = frameIndex + 5;
             }
-        }
-        // זיהוי תבנית: Q[NEA] + 2 ספרות + (QN|S) + 2 ספרות + שנה
-        else if (/^Q[NEA]\d{2}(QN|S)\d{2}/.test(model)) {
+        } else if (/^Q[NEA]\d{2}(QN|S)\d{2}/.test(model)) {
             let seriesMatch = model.match(/(QN|S)\d{2}/);
             if (seriesMatch) {
                 let seriesIndex = seriesMatch.index;
@@ -942,9 +945,7 @@ function getTVDetails(model) {
                 yearCode = model[seriesIndex + series.length] || '';
                 seriesStart = seriesIndex + series.length + 1;
             }
-        }
-        // זיהוי דגמי Neo QLED או NU ישנים יותר
-        else if (model.includes('QN') || model.includes('NU')) {
+        } else if (model.includes('QN') || model.includes('NU')) {
             let seriesMatch = model.match(/QN\d{2}|NU\d{4}/);
             if (seriesMatch) {
                 let seriesIndex = seriesMatch.index;
@@ -952,9 +953,7 @@ function getTVDetails(model) {
                 yearCode = model[seriesIndex + series.length] || '';
                 seriesStart = seriesIndex + series.length + 1;
             }
-        }
-        // ברירת מחדל לדגמים רגילים
-        else {
+        } else {
             yearCode = model[4] || '';
             seriesStart = 5;
         }
@@ -968,7 +967,7 @@ function getTVDetails(model) {
         if (isNseries) series = model.slice(4, 9);
         if (!series) series = 'לא ידוע';
 
-        let broadcast = (year >= '2018' && year !== 'לא ידוע') ? 'DVB-T2' : 'DVB-T1';
+        let broadcast = (year >= '2018' && year !== ' not ידוע') ? 'DVB-T2' : 'DVB-T1';
 
         let os = 'לא צוינה';
         if (year !== 'לא ידוע') {
