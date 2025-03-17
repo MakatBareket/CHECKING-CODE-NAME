@@ -779,12 +779,12 @@
             return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
         }
     }
-
-   function getFridgeDetails(model) {
+function getFridgeDetails(model) {
     let config = fridgeConfig[model[1]] || 'לא ידוע';
     let capacityCode = parseInt(model[2] + model[3]) || 0;
     let capacityLiters = capacityCode ? capacityCode * 10 + ' ליטר' : 'לא זמין';
-    let year = modelYearCodes[model[4]] || 'לא ידוע';
+    let yearCode = model[4] || ''; // קוד השנה תמיד במיקום 4 במקררים
+    let year = modelYearCodes[yearCode] || 'לא ידוע';
     let series = model[5] || 'לא ידוע';
     let finishCode = model.length >= 8 ? model.slice(6, 8) : '';
     let finish = finishCode ? fridgeFinish[finishCode] || 'לא ידוע' : 'לא זמין';
@@ -799,7 +799,7 @@
                 מקרר סמסונג - דגם: ${model}<br>
                 תצורה: ${config}<br>
                 נפח: ${capacityLiters}<br>
-                שנת ייצור: ${year}<br>
+                שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
                 סדרת דגם: ${series}<br>
                 גימור: ${finish}<br>
                 קוד מדינה: ${country}<br>
@@ -808,7 +808,7 @@
             </div>`;
 }
 
-    function getWasherDryerDetails(model) {
+   function getWasherDryerDetails(model) {
     let tech = washerTech[model.slice(0, 2)] || dryerTech[model.slice(0, 2)] || 'לא ידוע';
     let capacityCode = model[2];
     let capacity = '';
@@ -821,7 +821,8 @@
         case '2': capacity = '12 ק"ג'; break;
         default: capacity = 'לא זמין';
     }
-    let year = modelYearCodes[model[4]] || 'לא ידוע';
+    let yearCode = model[4] || ''; // קוד השנה במיקום 4
+    let year = modelYearCodes[yearCode] || 'לא ידוע';
     let series = model.length >= 9 ? model.slice(5, 9) || 'לא ידוע' : 'לא זמין';
     let design = dryerDesign[model[9]] || 'לא זמין';
     let color = model.length >= 10 ? (washerColor[model[9]] || dryerColor[model[10]] || 'לא ידוע') : 'לא זמין';
@@ -835,7 +836,7 @@
                 </div>
                 ${tech} סמסונג - דגם: ${model}<br>
                 קיבולת: ${capacity}<br>
-                שנת ייצור: ${year}<br>
+                שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
                 סדרת דגם: ${series}<br>
                 עיצוב: ${design}<br>
                 צבע: ${color}<br>
@@ -845,7 +846,7 @@
             </div>`;
 }
 
-   function getTVDetails(model) {
+function getTVDetails(model) {
     try {
         let display = tvDisplay[model[0]] || 'לא ידוע';
         let isFrame = model.includes('LS03');
@@ -940,7 +941,7 @@
                     סוג תצוגה: ${display}<br>
                     אזור שוק: ${market}<br>
                     גודל מסך: ${size} אינץ'<br>
-                    שנת ייצור: ${year}<br>
+                    שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
                     סדרת דגם: ${series}<br>
                     מקלט שידור: ${broadcast}<br>
                     מערכת הפעלה: ${os}<br>
@@ -954,11 +955,12 @@
         return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
     }
 }
-    function getMicrowaveOvenDetails(model) {
+   function getMicrowaveOvenDetails(model) {
     let type = microwaveType[model.slice(0, 2)] || 'לא ידוע';
     let capacity = parseInt(model[2] + model[3]) || 0;
     let capacityLiters = capacity >= 20 ? `${capacity} ליטר` : 'לא זמין';
-    let year = modelYearCodes[model[4]] || 'לא ידוע';
+    let yearCode = model[4] || ''; // קוד השנה במיקום 4
+    let year = modelYearCodes[yearCode] || 'לא ידוע';
     let series = model.slice(5, 9) || 'לא ידוע';
     let colorCode = model.length >= 11 ? model.slice(9, 11) : '';
     let color = colorCode ? microwaveColor[colorCode] || 'לא ידוע' : 'לא זמין';
@@ -972,7 +974,7 @@
                 </div>
                 ${type} סמסונג - דגם: ${model}<br>
                 נפח: ${capacityLiters}<br>
-                שנת ייצור: ${year}<br>
+                שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
                 סדרת דגם: ${series}<br>
                 צבע: ${color}<br>
                 קוד מדינה: ${country}<br>
@@ -981,11 +983,12 @@
             </div>`;
 }
 
-  function getCooktopDetails(model) {
+ function getCooktopDetails(model) {
     let type = cooktopType[model.slice(0, 2)] || 'לא ידוע';
     let width = parseInt(model[2] + model[3]) || 0;
     let widthCm = (width >= 60 && width <= 90) ? `${width} ס"מ` : 'לא זמין';
-    let year = modelYearCodes[model[4]] || 'לא ידוע';
+    let yearCode = model[4] || ''; // קוד השנה במיקום 4
+    let year = modelYearCodes[yearCode] || 'לא ידוע';
     let series = model.slice(5, 9) || 'לא ידוע';
     let colorCode = model.length >= 11 ? model.slice(9, 11) : '';
     let color = colorCode ? cooktopColor[colorCode] || 'לא ידוע' : 'לא זמין';
@@ -999,7 +1002,7 @@
                 </div>
                 ${type} סמסונג - דגם: ${model}<br>
                 רוחב: ${widthCm}<br>
-                שנת ייצור: ${year}<br>
+                שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
                 סדרת דגם: ${series}<br>
                 צבע: ${color}<br>
                 קוד מדינה: ${country}<br>
@@ -1007,10 +1010,11 @@
                 <div style="font-size: 14px; color: #457b9d; margin-top: 10px;">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
             </div>`;
 }
-  function getDishwasherDetails(model) {
+ function getDishwasherDetails(model) {
     let size = parseInt(model[2] + model[3]) || 0;
     let sizeDisplay = (size >= 45 && size <= 80) ? `רוחב: ${size} ס"מ` : (size > 0 ? `נפח: ${size} ליטר` : 'לא זמין');
-    let year = modelYearCodes[model[4]] || 'לא ידוע';
+    let yearCode = model[4] || ''; // קוד השנה במיקום 4
+    let year = modelYearCodes[yearCode] || 'לא ידוע';
     let series = model.slice(5, 9) || 'לא ידוע';
     let design = dishwasherDesign[model[9]] || 'לא זמין';
     let color = model.length >= 11 ? dishwasherColor[model[10]] || 'לא ידוע' : 'לא זמין';
@@ -1024,7 +1028,7 @@
                 </div>
                 מדיח כלים סמסונג - דגם: ${model}<br>
                 ${sizeDisplay}<br>
-                שנת ייצור: ${year}<br>
+                שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
                 סדרת דגם: ${series}<br>
                 עיצוב: ${design}<br>
                 צבע: ${color}<br>
