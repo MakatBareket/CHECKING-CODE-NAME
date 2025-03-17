@@ -1272,7 +1272,7 @@ function searchTroubleshootingWyze() {
             resultDiv.style.display = "block";
             return;
         }
-        var url = `https://samsung.wyze1.info/#/search/2/?searchvalue=${encodeURIComponent(query)}`;
+        var url = `https://samsung.wyze1.info/#/search/2/${encodeURIComponent(query)}`;
         window.open(url, '_blank');
         resultDiv.style.display = "none"; // מנקה תוצאות קודמות אם יש
     } catch (e) {
