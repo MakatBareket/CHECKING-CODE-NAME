@@ -899,16 +899,17 @@
                 </div>`;
     }
 
-  function getTVDetails(model) {
+function getTVDetails(model) {
     try {
         let display = tvDisplay[model[0]] || 'לא ידוע';
         let isFrame = model.includes('LS03');
-        let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85') || model.includes('S80');
+        // זיהוי OLED רק אם S95, S90, S85, או S80 מופיעים לאחר שתי ספרות (גודל)
+        let isOLED = /^Q[NEA]\d{2}S(95|90|85|80)/.test(model);
         let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
 
         if (isFrame) display = 'The Frame';
         else if (isOLED) display = 'OLED';
-        else if (isNseries) display = 'N4000-N5500 Series';
+        else if (isNseries) display = 'Full HD'; // שינוי ל-Full HD עבור N4000-N5500
         else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) >= 2018) display = 'CRYSTAL UHD';
         else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) < 2018) display = 'LED';
         else if (model.includes('QN')) display = 'QLED';
@@ -925,7 +926,7 @@
             let frameIndex = model.indexOf('LS03');
             if (frameIndex !== -1) {
                 series = 'LS03';
-                yearCode = model[frameIndex + 4] || ''; // השנה אחרי LS03
+                yearCode = model[frameIndex + 4] || '';
                 seriesStart = frameIndex + 5;
             }
         }
