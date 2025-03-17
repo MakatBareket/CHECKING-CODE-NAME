@@ -874,6 +874,13 @@ function getTVDetails(model) {
                 yearCode = model[seriesIndex + series.length] || '';
                 seriesStart = seriesIndex + series.length + 1;
             }
+        } else if (isFrame) {
+            let frameIndex = model.indexOf('LS03');
+            if (frameIndex !== -1) {
+                series = 'LS03';
+                yearCode = model[frameIndex + 4] || ''; // השנה נמצאת אחרי LS03 (מיקום 9 ב-QE85LS03B)
+                seriesStart = frameIndex + 5;
+            }
         } else {
             yearCode = model[4] || '';
             seriesStart = 5;
@@ -883,7 +890,7 @@ function getTVDetails(model) {
 
         let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
         if (!series) {
-            series = isFrame ? 'LS03' : (isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd));
+            series = isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd);
         }
         if (isNseries) series = model.slice(4, 9);
         if (!series) series = 'לא ידוע';
