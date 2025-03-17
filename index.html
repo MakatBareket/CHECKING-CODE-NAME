@@ -137,6 +137,7 @@
         color: #1b263b;
         font-size: 16px;
         line-height: 1.6;
+        position: relative; /* כדי ש-card-buttons יוכל להיות absolute ביחס לזה */
     }
     .card img {
         max-width: 100%;
@@ -155,20 +156,33 @@
         margin-top: 20px;
         text-align: center;
     }
-    .card a {
+    .card-buttons {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .card-buttons a {
         display: block;
-        margin: 20px auto 0;
         padding: 10px 25px;
         background: #1d3557;
         color: #ffffff;
         text-decoration: none;
         border-radius: 8px;
-        width: fit-content;
         transition: background 0.3s;
         font-weight: 500;
+        text-align: center;
     }
-    .card a:hover {
+    .card-buttons a:hover {
         background: #457b9d;
+    }
+    .search-note {
+        font-size: 14px;
+        color: #457b9d;
+        margin-top: 5px;
+        text-align: right;
     }
     #loader, #loader-serial {
         display: none;
@@ -340,131 +354,102 @@
         background: rgba(0, 0, 0, 0.6);
         z-index: 1500;
     }
- .card-buttons {
-    position: absolute;
-    top: 50px;
-    left: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.search-note {
-    font-size: 14px;
-    color: #457b9d;
-    margin-top: 5px;
-}
-
-/* התאמה למובייל */
-@media only screen and (max-width: 768px) {
-    .card-buttons {
-        top: 10px;
-        left: 10px;
-        width: calc(100% - 20px);
+    /* התאמה למובייל */
+    @media only screen and (max-width: 768px) {
+        body {
+            padding: 20px;
+        }
+        .container {
+            max-width: 100%;
+            padding: 15px;
+            margin: 0 0 20px;
+        }
+        .navbar {
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+        }
+        .navbar a {
+            font-size: 14px;
+            padding: 6px 12px;
+        }
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            font-size: 14px;
+        }
+        button {
+            padding: 10px;
+            font-size: 14px;
+        }
+        .card {
+            padding: 15px;
+            padding-top: 120px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .card-buttons {
+            top: 10px;
+            left: 10px;
+            width: calc(100% - 20px);
+        }
+        .card-buttons a {
+            font-size: 12px;
+            padding: 8px 15px;
+            margin: 0;
+        }
+        .search-note {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .card img {
+            max-width: 100%;
+            height: auto;
+        }
+        .image-asterisk {
+            font-size: 12px;
+        }
+        .card ul {
+            padding-right: 10px;
+        }
+        .suggestions {
+            width: calc(100% - 20px);
+            max-height: 120px;
+        }
+        .suggestion-item {
+            font-size: 14px;
+            padding: 8px;
+        }
+        .popup {
+            max-width: 90%;
+            padding: 15px;
+        }
+        .popup h3 {
+            font-size: 18px;
+        }
+        .popup p {
+            font-size: 14px;
+        }
+        .popup-buttons {
+            flex-direction: column;
+            gap: 10px;
+        }
+        .popup button {
+            min-width: 100px;
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        #loader, #loader-serial {
+            width: 60px;
+            height: 60px;
+        }
+        .loader-circle {
+            border-width: 3px;
+        }
+        .loader-text {
+            font-size: 12px;
+        }
     }
-    .card-buttons a {
-        font-size: 12px;
-        padding: 8px 15px;
-    }
-    .search-note {
-        font-size: 12px; /* הקטנה למובייל */
-        margin-top: 5px;
-    }
-    /* שאר ה-Media Query נשאר כמו שהיה */
-}
-    .navbar a {
-        font-size: 14px; /* הקטנת גודל הטקסט */
-        padding: 6px 12px;
-    }
-
-    /* התאמת קלט וכפתורים */
-    input {
-        width: calc(100% - 20px); /* התאמה לרוחב מלא עם ריפוד קטן יותר */
-        padding: 10px;
-        font-size: 14px;
-    }
-    button {
-        padding: 10px;
-        font-size: 14px;
-    }
-
-    /* התאמת הכרטיסייה */
-    .card {
-        padding: 15px; /* הקטנת הריפוד */
-        padding-top: 120px; /* הגדלת הריפוד למעלה כדי להתאים לכפתורים */
-        font-size: 14px; /* הקטנת גודל הטקסט */
-        line-height: 1.4;
-    }
-    .card-buttons {
-        top: 10px; /* החזרה למיקום עליון יותר כי 50px גבוה מדי במובייל */
-        left: 10px;
-        width: calc(100% - 20px); /* התאמה לרוחב הכרטיסייה */
-    }
-    .card-buttons a {
-        font-size: 12px; /* הקטנת גודל הטקסט של הכפתורים */
-        padding: 8px 15px; /* הקטנת הריפוד של הכפתורים */
-        margin: 0; /* הסרת מרווחים חיצוניים */
-    }
-    .card img {
-        max-width: 100%; /* וידוא שהתמונה לא חורגת מהרוחב */
-        height: auto;
-    }
-    .image-asterisk {
-        font-size: 12px; /* הקטנת הטקסט של ההערה */
-    }
-    .card ul {
-        padding-right: 10px; /* הקטנת הריפוד של הרשימות */
-    }
-
-    /* התאמת ההודעה על חיפוש ידני */
-    .card div[style*="font-size: 14px"] {
-        font-size: 12px; /* הקטנת הטקסט של ההודעה */
-        margin-top: 5px;
-    }
-
-    /* התאמת ההצעות */
-    .suggestions {
-        width: calc(100% - 20px); /* התאמה לרוחב הקלט */
-        max-height: 120px;
-    }
-    .suggestion-item {
-        font-size: 14px;
-        padding: 8px;
-    }
-
-    /* התאמת הפופאפ */
-    .popup {
-        max-width: 90%; /* הקטנת הרוחב ל-90% מהמסך */
-        padding: 15px;
-    }
-    .popup h3 {
-        font-size: 18px;
-    }
-    .popup p {
-        font-size: 14px;
-    }
-    .popup-buttons {
-        flex-direction: column; /* שינוי לכיוון אנכי */
-        gap: 10px;
-    }
-    .popup button {
-        min-width: 100px; /* הקטנת רוחב מינימלי */
-        padding: 8px 15px;
-        font-size: 14px;
-    }
-
-    /* התאמת הטוען */
-    #loader, #loader-serial {
-        width: 60px;
-        height: 60px;
-    }
-    .loader-circle {
-        border-width: 3px;
-    }
-    .loader-text {
-        font-size: 12px;
-    }
-}
 </style>
 
 <script>
@@ -535,10 +520,6 @@
         'SQ': 'ישראל', 'IL': 'ישראל'
     };
 
-    const broadcastStandards = {
-        'F': 'ATSC/QAM', 'U': 'DVB', 'G': 'ISDB-T', 'T': '2xDVB'
-    };
-
     const dryerTech = {
         'DV': 'מייבש כביסה'
     };
@@ -593,7 +574,6 @@
 
     const productImages = {
         'QLED': 'https://images.samsung.com/is/image/samsung/p6pim/my/qa65q70dakxxm/gallery/my-qled-tv-qa65q70dakxxm-front-gray-540854235?$684_547_PNG$',
-        'NEO QLED': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBlPyKp_atLUlx5rg7cEpI-XhH9t9MM3-wmg&s',
         'CRYSTAL UHD': 'https://images.samsung.com/is/image/samsung/p6pim/il/ue75cu7100uxsq/gallery/il-crystal-uhd-cu7000-ue75cu7100uxsq-536351326?$684_547_PNG$',
         'OLED': 'https://www.electricshop.co.il/images/itempics/QE65S95D_030620241010481.jpg',
         'The Frame': 'https://www.topmarket.co.il/images/detailed/227/16e8949b60f75b0601296b8fe0b488db.jpg',
@@ -712,12 +692,14 @@
             console.error("שגיאה ב-showSuggestions:", e);
         }
     }
-document.getElementById('modelInput').addEventListener('keypress', function(event) {
-    if (event.key === 'Enter') {
-        event.preventDefault(); // מונע פעולות ברירת מחדל של Enter
-        searchModel(); // מפעיל את פונקציית החיפוש
-    }
-});
+
+    document.getElementById('modelInput').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            lookupModel();
+        }
+    });
+
     function lookupModel() {
         try {
             var model = document.getElementById("modelInput").value.trim().toUpperCase();
@@ -786,271 +768,275 @@ document.getElementById('modelInput').addEventListener('keypress', function(even
             return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
         }
     }
-function getFridgeDetails(model) {
-    let config = fridgeConfig[model[1]] || 'לא ידוע';
-    let capacityCode = parseInt(model[2] + model[3]) || 0;
-    let capacityLiters = capacityCode ? capacityCode * 10 + ' ליטר' : 'לא זמין';
-    let yearCode = model[4] || ''; // קוד השנה תמיד במיקום 4 במקררים
-    let year = modelYearCodes[yearCode] || 'לא ידוע';
-    let series = model[5] || 'לא ידוע';
-    let finishCode = model.length >= 8 ? model.slice(6, 8) : '';
-    let finish = finishCode ? fridgeFinish[finishCode] || 'לא ידוע' : 'לא זמין';
-    let countryCode = model.length >= 10 ? model.slice(-2) : '';
-    let country = countryCode ? countryCodesFridge[countryCode] || 'לא ידוע' : 'לא זמין';
-    let image = productImages[config] || '';
-    return `<div class="card-buttons">
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                        <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
-                        <div class="search-note">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
-                    </div>
-                מקרר סמסונג - דגם: ${model}<br>
-                תצורה: ${config}<br>
-                נפח: ${capacityLiters}<br>
-                שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
-                סדרת דגם: ${series}<br>
-                גימור: ${finish}<br>
-                קוד מדינה: ${country}<br>
-                ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${config}">` : ''}
-                <div style="font-size: 14px; color: #457b9d; margin-top: 10px;">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
-            </div>`;
-}
 
-   function getWasherDryerDetails(model) {
-    let tech = washerTech[model.slice(0, 2)] || dryerTech[model.slice(0, 2)] || 'לא ידוע';
-    let capacityCode = model[2];
-    let capacity = '';
-    switch (capacityCode) {
-        case '6': capacity = '6 ק"ג'; break;
-        case '7': capacity = '7 ק"ג'; break;
-        case '8': capacity = '8 ק"ג'; break;
-        case '9': capacity = '9 ק"ג'; break;
-        case '1': capacity = model[3] === '1' ? '11 ק"ג' : '10 ק"ג'; break;
-        case '2': capacity = '12 ק"ג'; break;
-        default: capacity = 'לא זמין';
-    }
-    let yearCode = model[4] || ''; // קוד השנה במיקום 4
-    let year = modelYearCodes[yearCode] || 'לא ידוע';
-    let series = model.length >= 9 ? model.slice(5, 9) || 'לא ידוע' : 'לא זמין';
-    let design = dryerDesign[model[9]] || 'לא זמין';
-    let color = model.length >= 10 ? (washerColor[model[9]] || dryerColor[model[10]] || 'לא ידוע') : 'לא זמין';
-    let countryCode = model.length >= 12 ? model.slice(-2) : '';
-    let country = countryCode ? (countryCodesWasher[countryCode] || countryCodesDryer[countryCode] || 'לא ידוע') : 'לא זמין';
-    let image = productImages[tech] || '';
-    return `<div class="card-buttons">
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                        <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
-                        <div class="search-note">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
-                    </div>
-                ${tech} סמסונג - דגם: ${model}<br>
-                קיבולת: ${capacity}<br>
-                שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
-                סדרת דגם: ${series}<br>
-                עיצוב: ${design}<br>
-                צבע: ${color}<br>
-                קוד מדינה: ${country}<br>
-                ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${tech}">` : ''}
-                <div style="font-size: 14px; color: #457b9d; margin-top: 10px;">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
-            </div>`;
-}
-
-function getTVDetails(model) {
-    try {
-        let display = tvDisplay[model[0]] || 'לא ידוע';
-        let isFrame = model.includes('LS03');
-        let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
-        let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
-
-        if (isFrame) display = 'The Frame';
-        else if (isOLED) display = 'OLED';
-        else if (isNseries) display = 'N4000-N5500 Series';
-        else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) >= 2018) display = 'CRYSTAL UHD';
-        else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) < 2018) display = 'LED';
-
-        let market = tvMarket[model[1]] || 'לא ידוע';
-        let size = model.length >= 4 ? model[2] + model[3] : 'לא זמין';
-
-        let yearCode = '';
-        let series = '';
-        let seriesStart = 4;
-
-        if (model.includes('QN') || model.includes('NU')) {
-            let seriesMatch = model.match(/QN\d{2}|NU\d{4}/);
-            if (seriesMatch) {
-                let seriesIndex = seriesMatch.index;
-                series = seriesMatch[0];
-                yearCode = model[seriesIndex + series.length] || '';
-                seriesStart = seriesIndex + series.length + 1;
-            }
-        } else if (isFrame) {
-            let frameIndex = model.indexOf('LS03');
-            if (frameIndex !== -1) {
-                series = 'LS03';
-                yearCode = model[frameIndex + 4] || ''; // השנה נמצאת אחרי LS03 (מיקום 9 ב-QE85LS03B)
-                seriesStart = frameIndex + 5;
-            }
-        } else {
-            yearCode = model[4] || '';
-            seriesStart = 5;
-        }
-
+    function getFridgeDetails(model) {
+        let config = fridgeConfig[model[1]] || 'לא ידוע';
+        let capacityCode = parseInt(model[2] + model[3]) || 0;
+        let capacityLiters = capacityCode ? capacityCode * 10 + ' ליטר' : 'לא זמין';
+        let yearCode = model[4] || '';
         let year = modelYearCodes[yearCode] || 'לא ידוע';
-
-        let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
-        if (!series) {
-            series = isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd);
-        }
-        if (isNseries) series = model.slice(4, 9);
-        if (!series) series = 'לא ידוע';
-
-        let broadcast = (year >= '2018' && year !== 'לא ידוע') ? 'DVB-T2' : 'DVB-T1';
-
-        let os = 'לא צוינה';
-        if (year !== 'לא ידוע') {
-            const yearNum = parseInt(year);
-            if (yearNum >= 2024) os = 'Tizen 9.0';
-            else if (yearNum === 2023) os = 'Tizen 8.0';
-            else if (yearNum === 2022) os = 'Tizen 7.0';
-            else if (yearNum === 2021) os = 'Tizen 6.5';
-            else if (yearNum === 2020) os = 'Tizen 6.0';
-            else if (yearNum === 2019) os = 'Tizen 5.5';
-            else if (yearNum === 2018) os = 'Tizen 5.0';
-            else if (yearNum === 2017) os = 'Tizen 4.0';
-            else if (yearNum === 2016) os = 'Tizen 3.0';
-            else if (yearNum === 2015) os = 'Tizen 2.4';
-            else if (yearNum === 2014) os = 'Tizen 2.3';
-            else if (yearNum <= 2013) os = 'Tizen 2.0';
-        }
-
-        let country = 'לא ידוע';
-        let countryNote = '';
-        if (model.length >= 13) {
-            let countryCode = model.slice(-2);
-            country = countryCodesTV[countryCode] || 'לא ידוע';
-            if (year === '2025') {
-                if (countryCode === 'IL') country = 'ישראל (ניופאן)';
-                else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
-            }
-            if (model[1] === 'U' || model[1] === 'Q') {
-                countryNote = ' - יבוא מקביל';
-            } else if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
-                countryNote = ' - יבוא מקביל';
-            }
-        }
-        let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
-        let image = productImages[imageKey] || '';
-
-        let featuresHtml = productFeatures[display] ? `
-            <br><strong>${productFeatures[display].description}</strong><br>
-            <ul style="text-align: right; padding-right: 20px;">
-                ${productFeatures[display].features.map(feature => `<li>${feature}</li>`).join('')}
-            </ul>
-        ` : '';
-
-        return `<div class="card-buttons">
+        let series = model[5] || 'לא ידוע';
+        let finishCode = model.length >= 8 ? model.slice(6, 8) : '';
+        let finish = finishCode ? fridgeFinish[finishCode] || 'לא ידוע' : 'לא זמין';
+        let countryCode = model.length >= 10 ? model.slice(-2) : '';
+        let country = countryCode ? countryCodesFridge[countryCode] || 'לא ידוע' : 'לא זמין';
+        let image = productImages[config] || '';
+        return `<div class="card">
+                    <div class="card-buttons">
                         <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
                         <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
                         <div class="search-note">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
                     </div>
-                    טלוויזיה סמסונג - דגם: ${model}<br>
-                    סוג תצוגה: ${display}<br>
-                    אזור שוק: ${market}<br>
-                    גודל מסך: ${size} אינץ'<br>
+                    מקרר סמסונג - דגם: ${model}<br>
+                    תצורה: ${config}<br>
+                    נפח: ${capacityLiters}<br>
                     שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
                     סדרת דגם: ${series}<br>
-                    מקלט שידור: ${broadcast}<br>
-                    מערכת הפעלה: ${os}<br>
-                    קוד מדינה: ${country}${countryNote}<br>
-                    ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${display}">` : ''}
-                    ${featuresHtml}
-                    <div style="font-size: 14px; color: #457b9d; margin-top: 10px;">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
+                    גימור: ${finish}<br>
+                    קוד מדינה: ${country}<br>
+                    ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${config}">` : ''}
                 </div>`;
-    } catch (e) {
-        console.error("שגיאה ב-getTVDetails:", e);
-        return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
     }
-}
-   function getMicrowaveOvenDetails(model) {
-    let type = microwaveType[model.slice(0, 2)] || 'לא ידוע';
-    let capacity = parseInt(model[2] + model[3]) || 0;
-    let capacityLiters = capacity >= 20 ? `${capacity} ליטר` : 'לא זמין';
-    let yearCode = model[4] || ''; // קוד השנה במיקום 4
-    let year = modelYearCodes[yearCode] || 'לא ידוע';
-    let series = model.slice(5, 9) || 'לא ידוע';
-    let colorCode = model.length >= 11 ? model.slice(9, 11) : '';
-    let color = colorCode ? microwaveColor[colorCode] || 'לא ידוע' : 'לא זמין';
-    let countryCode = model.length >= 13 ? model.slice(-2) : '';
-    let country = countryCode ? countryCodesMicrowave[countryCode] || 'לא ידוע' : 'לא זמין';
-    let image = productImages[type] || '';
-    return `<div class="card">
-                <div class="card-buttons">
-                    <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                    <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
-                </div>
-                ${type} סמסונג - דגם: ${model}<br>
-                נפח: ${capacityLiters}<br>
-                שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
-                סדרת דגם: ${series}<br>
-                צבע: ${color}<br>
-                קוד מדינה: ${country}<br>
-                ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${type}">` : ''}
-                <div style="font-size: 14px; color: #457b9d; margin-top: 10px;">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
-            </div>`;
-}
 
- function getCooktopDetails(model) {
-    let type = cooktopType[model.slice(0, 2)] || 'לא ידוע';
-    let width = parseInt(model[2] + model[3]) || 0;
-    let widthCm = (width >= 60 && width <= 90) ? `${width} ס"מ` : 'לא זמין';
-    let yearCode = model[4] || ''; // קוד השנה במיקום 4
-    let year = modelYearCodes[yearCode] || 'לא ידוע';
-    let series = model.slice(5, 9) || 'לא ידוע';
-    let colorCode = model.length >= 11 ? model.slice(9, 11) : '';
-    let color = colorCode ? cooktopColor[colorCode] || 'לא ידוע' : 'לא זמין';
-    let countryCode = model.length >= 13 ? model.slice(-2) : '';
-    let country = countryCode ? countryCodesCooktop[countryCode] || 'לא ידוע' : 'לא זמין';
-    let image = productImages[type] || '';
-    return `<div class="card-buttons">
+    function getWasherDryerDetails(model) {
+        let tech = washerTech[model.slice(0, 2)] || dryerTech[model.slice(0, 2)] || 'לא ידוע';
+        let capacityCode = model[2];
+        let capacity = '';
+        switch (capacityCode) {
+            case '6': capacity = '6 ק"ג'; break;
+            case '7': capacity = '7 ק"ג'; break;
+            case '8': capacity = '8 ק"ג'; break;
+            case '9': capacity = '9 ק"ג'; break;
+            case '1': capacity = model[3] === '1' ? '11 ק"ג' : '10 ק"ג'; break;
+            case '2': capacity = '12 ק"ג'; break;
+            default: capacity = 'לא זמין';
+        }
+        let yearCode = model[4] || '';
+        let year = modelYearCodes[yearCode] || 'לא ידוע';
+        let series = model.length >= 9 ? model.slice(5, 9) || 'לא ידוע' : 'לא זמין';
+        let design = dryerDesign[model[9]] || 'לא זמין';
+        let color = model.length >= 10 ? (washerColor[model[9]] || dryerColor[model[10]] || 'לא ידוע') : 'לא זמין';
+        let countryCode = model.length >= 12 ? model.slice(-2) : '';
+        let country = countryCode ? (countryCodesWasher[countryCode] || countryCodesDryer[countryCode] || 'לא ידוע') : 'לא זמין';
+        let image = productImages[tech] || '';
+        return `<div class="card">
+                    <div class="card-buttons">
                         <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
                         <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
                         <div class="search-note">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
                     </div>
-                ${type} סמסונג - דגם: ${model}<br>
-                רוחב: ${widthCm}<br>
-                שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
-                סדרת דגם: ${series}<br>
-                צבע: ${color}<br>
-                קוד מדינה: ${country}<br>
-                ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${type}">` : ''}
-                <div style="font-size: 14px; color: #457b9d; margin-top: 10px;">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
-            </div>`;
-}
- function getDishwasherDetails(model) {
-    let size = parseInt(model[2] + model[3]) || 0;
-    let sizeDisplay = (size >= 45 && size <= 80) ? `רוחב: ${size} ס"מ` : (size > 0 ? `נפח: ${size} ליטר` : 'לא זמין');
-    let yearCode = model[4] || ''; // קוד השנה במיקום 4
-    let year = modelYearCodes[yearCode] || 'לא ידוע';
-    let series = model.slice(5, 9) || 'לא ידוע';
-    let design = dishwasherDesign[model[9]] || 'לא זמין';
-    let color = model.length >= 11 ? dishwasherColor[model[10]] || 'לא ידוע' : 'לא זמין';
-    let countryCode = model.length >= 12 ? model.slice(-1) : '';
-    let country = countryCode ? countryCodesDishwasher[countryCode] || 'לא ידוע' : 'לא זמין';
-    let image = productImages['מדיח כלים'] || '';
-    return <div class="card-buttons">
+                    ${tech} סמסונג - דגם: ${model}<br>
+                    קיבולת: ${capacity}<br>
+                    שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
+                    סדרת דגם: ${series}<br>
+                    עיצוב: ${design}<br>
+                    צבע: ${color}<br>
+                    קוד מדינה: ${country}<br>
+                    ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${tech}">` : ''}
+                </div>`;
+    }
+
+    function getTVDetails(model) {
+        try {
+            let display = tvDisplay[model[0]] || 'לא ידוע';
+            let isFrame = model.includes('LS03');
+            let isOLED = model.includes('S95') || model.includes('S90') || model.includes('S85');
+            let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
+
+            if (isFrame) display = 'The Frame';
+            else if (isOLED) display = 'OLED';
+            else if (isNseries) display = 'N4000-N5500 Series';
+            else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) >= 2018) display = 'CRYSTAL UHD';
+            else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) < 2018) display = 'LED';
+
+            let market = tvMarket[model[1]] || 'לא ידוע';
+            let size = model.length >= 4 ? model[2] + model[3] : 'לא זמין';
+
+            let yearCode = '';
+            let series = '';
+            let seriesStart = 4;
+
+            if (model.includes('QN') || model.includes('NU')) {
+                let seriesMatch = model.match(/QN\d{2}|NU\d{4}/);
+                if (seriesMatch) {
+                    let seriesIndex = seriesMatch.index;
+                    series = seriesMatch[0];
+                    yearCode = model[seriesIndex + series.length] || '';
+                    seriesStart = seriesIndex + series.length + 1;
+                }
+            } else if (isFrame) {
+                let frameIndex = model.indexOf('LS03');
+                if (frameIndex !== -1) {
+                    series = 'LS03';
+                    yearCode = model[frameIndex + 4] || '';
+                    seriesStart = frameIndex + 5;
+                }
+            } else {
+                yearCode = model[4] || '';
+                seriesStart = 5;
+            }
+
+            let year = modelYearCodes[yearCode] || 'לא ידוע';
+
+            let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
+            if (!series) {
+                series = isOLED ? model.slice(seriesStart, seriesStart + 3) : model.slice(seriesStart, seriesEnd);
+            }
+            if (isNseries) series = model.slice(4, 9);
+            if (!series) series = 'לא ידוע';
+
+            let broadcast = (year >= '2018' && year !== 'לא ידוע') ? 'DVB-T2' : 'DVB-T1';
+
+            let os = 'לא צוינה';
+            if (year !== 'לא ידוע') {
+                const yearNum = parseInt(year);
+                if (yearNum >= 2024) os = 'Tizen 9.0';
+                else if (yearNum === 2023) os = 'Tizen 8.0';
+                else if (yearNum === 2022) os = 'Tizen 7.0';
+                else if (yearNum === 2021) os = 'Tizen 6.5';
+                else if (yearNum === 2020) os = 'Tizen 6.0';
+                else if (yearNum === 2019) os = 'Tizen 5.5';
+                else if (yearNum === 2018) os = 'Tizen 5.0';
+                else if (yearNum === 2017) os = 'Tizen 4.0';
+                else if (yearNum === 2016) os = 'Tizen 3.0';
+                else if (yearNum === 2015) os = 'Tizen 2.4';
+                else if (yearNum === 2014) os = 'Tizen 2.3';
+                else if (yearNum <= 2013) os = 'Tizen 2.0';
+            }
+
+            let country = 'לא ידוע';
+            let countryNote = '';
+            if (model.length >= 13) {
+                let countryCode = model.slice(-2);
+                country = countryCodesTV[countryCode] || 'לא ידוע';
+                if (year === '2025') {
+                    if (countryCode === 'IL') country = 'ישראל (ניופאן)';
+                    else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
+                }
+                if (model[1] === 'U' || model[1] === 'Q') {
+                    countryNote = ' - יבוא מקביל';
+                } else if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
+                    countryNote = ' - יבוא מקביל';
+                }
+            }
+            let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
+            let image = productImages[imageKey] || '';
+
+            let featuresHtml = productFeatures[display] ? `
+                <br><strong>${productFeatures[display].description}</strong><br>
+                <ul style="text-align: right; padding-right: 20px;">
+                    ${productFeatures[display].features.map(feature => `<li>${feature}</li>`).join('')}
+                </ul>
+            ` : '';
+
+            return `<div class="card">
+                        <div class="card-buttons">
+                            <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                            <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
+                            <div class="search-note">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
+                        </div>
+                        טלוויזיה סמסונג - דגם: ${model}<br>
+                        סוג תצוגה: ${display}<br>
+                        אזור שוק: ${market}<br>
+                        גודל מסך: ${size} אינץ'<br>
+                        שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
+                        סדרת דגם: ${series}<br>
+                        מקלט שידור: ${broadcast}<br>
+                        מערכת הפעלה: ${os}<br>
+                        קוד מדינה: ${country}${countryNote}<br>
+                        ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${display}">` : ''}
+                        ${featuresHtml}
+                    </div>`;
+        } catch (e) {
+            console.error("שגיאה ב-getTVDetails:", e);
+            return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
+        }
+    }
+
+    function getMicrowaveOvenDetails(model) {
+        let type = microwaveType[model.slice(0, 2)] || 'לא ידוע';
+        let capacity = parseInt(model[2] + model[3]) || 0;
+        let capacityLiters = capacity >= 20 ? `${capacity} ליטר` : 'לא זמין';
+        let yearCode = model[4] || '';
+        let year = modelYearCodes[yearCode] || 'לא ידוע';
+        let series = model.slice(5, 9) || 'לא ידוע';
+        let colorCode = model.length >= 11 ? model.slice(9, 11) : '';
+        let color = colorCode ? microwaveColor[colorCode] || 'לא ידוע' : 'לא זמין';
+        let countryCode = model.length >= 13 ? model.slice(-2) : '';
+        let country = countryCode ? countryCodesMicrowave[countryCode] || 'לא ידוע' : 'לא זמין';
+        let image = productImages[type] || '';
+        return `<div class="card">
+                    <div class="card-buttons">
                         <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
                         <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
                         <div class="search-note">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
                     </div>
-                מדיח כלים סמסונג - דגם: ${model}<br>
-                ${sizeDisplay}<br>
-                שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
-                סדרת דגם: ${series}<br>
-                עיצוב: ${design}<br>
-                צבע: ${color}<br>
-                קוד מדינה: ${country}<br>
-                ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="מדיח כלים">` : ''}
-                <div style="font-size: 14px; color: #457b9d; margin-top: 10px;">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
-            </div>`;
-}
+                    ${type} סמסונג - דגם: ${model}<br>
+                    נפח: ${capacityLiters}<br>
+                    שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
+                    סדרת דגם: ${series}<br>
+                    צבע: ${color}<br>
+                    קוד מדינה: ${country}<br>
+                    ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${type}">` : ''}
+                </div>`;
+    }
+
+    function getCooktopDetails(model) {
+        let type = cooktopType[model.slice(0, 2)] || 'לא ידוע';
+        let width = parseInt(model[2] + model[3]) || 0;
+        let widthCm = (width >= 60 && width <= 90) ? `${width} ס"מ` : 'לא זמין';
+        let yearCode = model[4] || '';
+        let year = modelYearCodes[yearCode] || 'לא ידוע';
+        let series = model.slice(5, 9) || 'לא ידוע';
+        let colorCode = model.length >= 11 ? model.slice(9, 11) : '';
+        let color = colorCode ? cooktopColor[colorCode] || 'לא ידוע' : 'לא זמין';
+        let countryCode = model.length >= 13 ? model.slice(-2) : '';
+        let country = countryCode ? countryCodesCooktop[countryCode] || 'לא ידוע' : 'לא זמין';
+        let image = productImages[type] || '';
+        return `<div class="card">
+                    <div class="card-buttons">
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                        <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
+                        <div class="search-note">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
+                    </div>
+                    ${type} סמסונג - דגם: ${model}<br>
+                    רוחב: ${widthCm}<br>
+                    שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
+                    סדרת דגם: ${series}<br>
+                    צבע: ${color}<br>
+                    קוד מדינה: ${country}<br>
+                    ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="${type}">` : ''}
+                </div>`;
+    }
+
+    function getDishwasherDetails(model) {
+        let size = parseInt(model[2] + model[3]) || 0;
+        let sizeDisplay = (size >= 45 && size <= 80) ? `רוחב: ${size} ס"מ` : (size > 0 ? `נפח: ${size} ליטר` : 'לא זמין');
+        let yearCode = model[4] || '';
+        let year = modelYearCodes[yearCode] || 'לא ידוע';
+        let series = model.slice(5, 9) || 'לא ידוע';
+        let design = dishwasherDesign[model[9]] || 'לא זמין';
+        let color = model.length >= 11 ? dishwasherColor[model[10]] || 'לא ידוע' : 'לא זמין';
+        let countryCode = model.length >= 12 ? model.slice(-1) : '';
+        let country = countryCode ? countryCodesDishwasher[countryCode] || 'לא ידוע' : 'לא זמין';
+        let image = productImages['מדיח כלים'] || '';
+        return `<div class="card">
+                    <div class="card-buttons">
+                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
+                        <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
+                        <div class="search-note">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
+                    </div>
+                    מדיח כלים סמסונג - דגם: ${model}<br>
+                    ${sizeDisplay}<br>
+                    שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
+                    סדרת דגם: ${series}<br>
+                    עיצוב: ${design}<br>
+                    צבע: ${color}<br>
+                    קוד מדינה: ${country}<br>
+                    ${image ? `<div class="image-asterisk">* תמונה זו היא של סוג המוצר ולא של הדגם הספציפי</div><img src="${image}" alt="מדיח כלים">` : ''}
+                </div>`;
+    }
+
     function lookupSerial() {
         try {
             var serial = document.getElementById("serialInput").value.trim().toUpperCase();
@@ -1125,16 +1111,16 @@ function getTVDetails(model) {
         closePopup();
         showPage('model');
     }
-function searchManual(model) {
-    try {
-        const url = 'https://www.samsung.com/il/support/user-manuals-and-guide/';
-        window.open(url, '_blank');
-    } catch (e) {
-        console.error("שגיאה ב-searchManual:", e);
-        alert("שגיאה בפתיחת אתר המדריכים. אנא נסה שוב.");
+
+    function searchManual(model) {
+        try {
+            const url = 'https://www.samsung.com/il/support/user-manuals-and-guide/';
+            window.open(url, '_blank');
+        } catch (e) {
+            console.error("שגיאה ב-searchManual:", e);
+            alert("שגיאה בפתיחת אתר המדריכים. אנא נסה שוב.");
+        }
     }
-}
-    
 </script>
 </body>
 </html>
