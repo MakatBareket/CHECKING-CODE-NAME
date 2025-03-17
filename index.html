@@ -1180,7 +1180,7 @@
             alert("שגיאה בפתיחת אתר המדריכים. אנא נסה שוב.");
         }
     }
-    function searchTroubleshooting() {
+   function searchTroubleshooting() {
     try {
         var query = document.getElementById("troubleshootingInput").value.trim();
         if (!query) {
@@ -1188,7 +1188,7 @@
             document.getElementById("troubleshooting-result").style.display = "block";
             return;
         }
-        var url = `https://www.samsung.com/il/support/?searchvalue=${encodeURIComponent(query)}`;
+        var url = `https://www.samsung.com/il/search/?searchvalue=${encodeURIComponent(query)}`;
         window.open(url, '_blank');
     } catch (e) {
         console.error("שגיאה ב-searchTroubleshooting:", e);
@@ -1196,7 +1196,6 @@
         document.getElementById("troubleshooting-result").style.display = "block";
     }
 }
-
 // הוספת Enter לחיפוש
 document.getElementById('troubleshootingInput').addEventListener('keypress', function(event) {
     if (event.key === 'Enter') {
