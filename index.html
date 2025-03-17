@@ -170,39 +170,46 @@
     left: 10px;
     display: flex;
     flex-direction: column;
-    gap: 8px; /* הקטנת המרווח בין הכפתורים מ-10px ל-8px */
+    gap: 6px; /* הקטנה מ-8px ל-6px למרווח קטן יותר בין הכפתורים */
 }
 
 .card-buttons a {
     display: block;
-    padding: 8px 15px; /* הקטנת ה-padding מ-10px 25px ל-8px 15px */
+    padding: 6px 12px; /* הקטנה מ-8px 15px ל-6px 12px */
     background: #1d3557;
     color: #ffffff;
     text-decoration: none;
-    border-radius: 6px; /* הקטנת ה-radius מ-8px ל-6px למראה עדין יותר */
+    border-radius: 5px; /* הקטנה מ-6px ל-5px למראה עדין יותר */
     transition: background 0.3s;
     font-weight: 500;
     text-align: center;
-    font-size: 14px; /* הקטנת גודל הגופן מ-16px ל-14px */
+    font-size: 13px; /* הקטנה מ-14px ל-13px */
 }
 
 .card-buttons a:hover {
     background: #457b9d;
 }
 
-.search-note {
-    font-size: 12px; /* הקטנת גודל הגופן מ-14px ל-12px */
-    color: #457b9d;
-    margin-top: 4px; /* הקטנת המרווח העליון מ-5px ל-4px */
+.card {
+    position: relative;
+    background: #ffffff;
+    padding: 20px;
+    padding-top: 120px; /* הגדלה מ-100px ל-120px כדי לפנות מקום לכפתורים */
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    line-height: 1.6;
     text-align: right;
-    line-height: 1.2; /* שיפור הקריאות עם רווח שורות קטן יותר */
+    direction: rtl;
+    max-width: 650px;
+    margin: 0 auto 20px auto;
 }
 
 /* התאמה למובייל */
 @media only screen and (max-width: 768px) {
     .card {
         padding: 15px;
-        padding-top: 100px; /* הקטנת ה-padding העליון מ-120px ל-100px כדי להתאים לכפתורים קטנים יותר */
+        padding-top: 100px; /* הגדלה מ-100px ל-100px (כבר מותאם, נשאר כך) */
         font-size: 14px;
         line-height: 1.4;
     }
@@ -212,12 +219,8 @@
         width: calc(100% - 20px);
     }
     .card-buttons a {
-        font-size: 12px; /* הקטנת גודל הגופן ל-12px במובייל */
-        padding: 6px 12px; /* הקטנת ה-padding ל-6px 12px במובייל */
-    }
-    .search-note {
-        font-size: 10px; /* הקטנת גודל הגופן ל-10px במובייל */
-        margin-top: 3px; /* הקטנת המרווח ל-3px */
+        font-size: 11px; /* הקטנה מ-12px ל-11px */
+        padding: 5px 10px; /* הקטנה מ-6px 12px ל-5px 10px */
     }
 }
     #loader, #loader-serial {
