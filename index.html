@@ -1191,7 +1191,7 @@ function getTVDetails(model) {
             const monthIndex = Object.keys(monthCodes).indexOf(serial[serial.length === 15 ? 8 : 4]);
             const productionYear = parseInt(year) || 0;
             const productionDateObj = productionYear ? new Date(productionYear, monthIndex) : null;
-            const currentDate = new Date('2025-03-17'); // תאריך נוכחי לפי ההגדרה שלך
+            const currentDate = new Date('2025-07-17'); // תאריך נוכחי לפי ההגדרה שלך
 
             // בדיקה ספציפית לדצמבר 2024 (XC)
             if (year === '2024' && month === 'דצמבר') {
