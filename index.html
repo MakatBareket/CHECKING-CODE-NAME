@@ -3,45 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>הזן קוד דגם</title>
+    <title>בדיקת מוצר לפי מספר סיריאלי</title>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="navbar">
-    <a href="#" onclick="showPage('model')" class="active">חיפוש לפי קוד דגם</a>
-    <a href="#" onclick="showPage('serial')">בדיקת מוצר לפי מספר סיריאלי</a>
-    <a href="#" onclick="showPage('troubleshooting')">מדריכים לתקלות</a>
-</div>
-    
-<div id="troubleshooting-page" class="container content">
-    <h2>מדריכים לתקלות</h2>
-    <input type="text" id="troubleshootingInput" placeholder="הכנס תיאור תקלה (למשל: טלוויזיה לא נדלקת)">
-    <div class="troubleshooting-note">* שימו לב, לחיפוש מדריכים לתקלות מומלץ להיעזר במערכת ידע, חיפוש המדריכים מתבצע באתר סמסונג ועלול להחזיר תוצאות ריקות.</div>
-    <div class="troubleshooting-buttons">
-        <button onclick="searchTroubleshootingSamsung()">מדריכים לתקלות באתר סמסונג</button>
-        <button onclick="searchTroubleshootingWyze()">מדריכים לתקלות במערכת הידע</button>
-    </div>
-    <div id="troubleshooting-result"></div>
-</div>
-
-    <div id="model-page" class="container content active">
-        <h2>הזן קוד דגם</h2>
-        <div style="position: relative;">
-            <input type="text" id="modelInput" placeholder="הכנס קוד דגם" oninput="showSuggestions(this.value)">
-            <div id="suggestions" class="suggestions"></div>
-        </div>
-        <button onclick="lookupModel()">חפש</button>
-        <button onclick="suggestRandomModel()" style="background: linear-gradient(90deg, #2a9d8f, #8ecae6); margin-top: 10px;">הצע דגם אקראי</button>
-        <div id="loader">
-            <div class="loader-circle"></div>
-            <div class="loader-circle"></div>
-            <div class="loader-circle"></div>
-            <span class="loader-text">טוען...</span>
-        </div>
-        <div id="result"></div>
-    </div>
-
-    <div id="serial-page" class="container content">
+    <div class="container content active">
         <h2>בדיקת מוצר לפי מספר סיריאלי</h2>
         <input type="text" id="serialInput" placeholder="הכנס מספר סיריאלי">
         <button onclick="lookupSerial()">חפש</button>
@@ -59,1239 +25,370 @@
         <h3>שימו לב!</h3>
         <p>בדיקה לפי מספר סיריאלי מאפשרת לך לראות את תאריך הייצור וסטטוס האחריות בלבד. כדי לוודא אם המוצר ביבוא רשמי או מקביל, יש לבדוק לפי קוד הדגם.</p>
         <div class="popup-buttons">
-            <button onclick="switchToModelPage()">עבור לחיפוש לפי קוד דגם</button>
             <button onclick="closePopup()">סגור</button>
         </div>
     </div>
 
-    
-<style>
-    body {
-        font-family: 'Rubik', Arial, sans-serif;
-        text-align: center;
-        background: linear-gradient(135deg, #0d1b2a, #1b263b);
-        padding: 40px;
-        margin: 0;
-        min-height: 100vh;
-        overflow-x: hidden;
-        color: #e0e1dd;
-    }
-    .container {
-        background: rgba(255, 255, 255, 0.98);
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-        max-width: 650px;
-        margin: 0 auto 20px;
-        text-align: center;
-        border: 1px solid rgba(69, 123, 157, 0.5);
-        backdrop-filter: blur(8px);
-    }
-    h2 {
-        color: #1b263b;
-        margin-bottom: 25px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        font-size: 24px;
-    }
-    input {
-        width: calc(100% - 24px);
-        padding: 14px;
-        margin-top: 15px;
-        border: 2px solid #457b9d;
-        border-radius: 8px;
-        font-size: 16px;
-        text-align: center;
-        background: #f7f9fb;
-        transition: border-color 0.3s, box-shadow 0.3s;
-        font-family: 'Rubik', sans-serif;
-    }
-    input:focus {
-        outline: none;
-        border-color: #1d3557;
-        box-shadow: 0 0 12px rgba(29, 53, 87, 0.5);
-    }
-    button {
-        width: 100%;
-        padding: 14px;
-        margin-top: 20px;
-        background: linear-gradient(90deg, #457b9d, #a8dadc);
-        color: #ffffff;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.3s;
-        font-family: 'Rubik', sans-serif;
-    }
-    button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(69, 123, 157, 0.6);
-    }
-    #result, #serial-result {
-        margin-top: 30px;
-        display: none;
-        text-align: center;
-        direction: rtl;
-        max-width: 650px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    .card {
-        background: linear-gradient(135deg, #ffffff, #edf2f4);
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
-        animation: slideIn 0.5s ease-in-out;
-        overflow: hidden;
-        text-align: right;
-        color: #1b263b;
-        font-size: 16px;
-        line-height: 1.6;
-        position: relative; /* כדי ש-card-buttons יוכל להיות absolute ביחס לזה */
-    }
-    .card img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 10px;
-        margin-top: 10px;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-    .image-asterisk {
-        font-size: 14px;
-        color: #457b9d;
-        font-weight: 500;
-        margin-top: 20px;
-        text-align: center;
-    }
-  .card {
-    position: relative;
-    background: #ffffff;
-    padding: 20px; /* הסרת padding-top גדול, הכל אחיד */
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-size: 16px;
-    line-height: 1.6;
-    text-align: right;
-    direction: rtl;
-    max-width: 650px;
-    margin: 0 auto 20px auto;
-}
-
-.card-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 6px; /* מרווח קטן בין הכפתורים */
-    margin-bottom: 15px; /* מרווח מתחת לכפתורים לפני הטקסט */
-}
-
-.card-buttons a {
-    display: inline-block; /* שינוי מ-block ל-inline-block להתאמה לזרימה */
-    padding: 5px 10px; /* הקטנה נוספת למראה עדין */
-    background: #1d3557;
-    color: #ffffff;
-    text-decoration: none;
-    border-radius: 4px; /* הקטנה מ-5px ל-4px */
-    transition: background 0.3s;
-    font-weight: 500;
-    text-align: center;
-    font-size: 12px; /* הקטנה מ-13px ל-12px */
-}
-
-.card-buttons a:hover {
-    background: #457b9d;
-}
-
-.search-note {
-    font-size: 11px; /* הקטנה מ-12px ל-11px למראה עדין יותר */
-    color: #457b9d;
-    margin-top: 4px;
-    text-align: right;
-    line-height: 1.3; /* הקטנה מ-1.4 ל-1.3 לפרופורציה טובה יותר */
-}
-
-/* התאמה למובייל */
-@media only screen and (max-width: 768px) {
-    .card {
-        padding: 15px;
-        font-size: 14px;
-        line-height: 1.4;
-    }
-    .card-buttons {
-        gap: 5px; /* מרווח קטן יותר במובייל */
-        margin-bottom: 10px;
-    }
-    .card-buttons a {
-        padding: 4px 8px; /* הקטנה נוספת במובייל */
-        font-size: 10px; /* הקטנה מ-11px ל-10px */
-    }
-    .search-note {
-        font-size: 9px; /* הקטנה מ-10px ל-9px */
-        margin-top: 3px;
-    }
-}
-    #loader, #loader-serial {
-        display: none;
-        margin: 20px auto;
-        position: relative;
-        width: 80px;
-        height: 80px;
-    }
-    .loader-circle {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        border: 4px solid transparent;
-        border-top: 4px solid #457b9d;
-        border-radius: 50%;
-        animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    }
-    .loader-circle:nth-child(2) {
-        border-top-color: #a8dadc;
-        animation-delay: -0.4s;
-        transform: scale(0.85);
-    }
-    .loader-circle:nth-child(3) {
-        border-top-color: #1d3557;
-        animation-delay: -0.8s;
-        transform: scale(0.7);
-    }
-    .loader-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 14px;
-        color: #457b9d;
-        animation: pulseText 1.5s infinite;
-        font-weight: 500;
-    }
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    @keyframes pulseText {
-        0% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-        50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
-        100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-    }
-    @keyframes slideIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    .suggestions {
-        position: absolute;
-        background: #ffffff;
-        border: 1px solid #457b9d;
-        border-radius: 5px;
-        max-height: 150px;
-        overflow-y: auto;
-        width: calc(100% - 24px);
-        margin-top: 5px;
-        z-index: 1000;
-        display: none;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-    .suggestion-item {
-        padding: 12px;
-        cursor: pointer;
-        transition: background 0.2s;
-        color: #1d3557;
-        font-weight: 500;
-    }
-    .suggestion-item:hover {
-        background: #edf2f4;
-    }
-    .navbar {
-        background: rgba(29, 53, 87, 0.95);
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-    }
-    .navbar a {
-        color: #e0e1dd;
-        text-decoration: none;
-        font-size: 16px;
-        font-weight: 500;
-        padding: 8px 16px;
-        border-radius: 5px;
-        transition: background 0.3s, color 0.3s;
-    }
-    .navbar a:hover, .navbar a.active {
-        background: #457b9d;
-        color: #ffffff;
-    }
-    .content {
-        display: none;
-    }
-    .content.active {
-        display: block;
-    }
-    .popup {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: linear-gradient(135deg, #1d3557, #457b9d);
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-        color: #ffffff;
-        max-width: 400px;
-        text-align: center;
-        z-index: 2000;
-        animation: popIn 0.4s ease-out;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    .popup h3 {
-        margin: 0 0 15px;
-        font-size: 22px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-    .popup p {
-        margin: 0 0 20px;
-        font-size: 16px;
-        line-height: 1.5;
-    }
-    .popup button {
-        background: #a8dadc;
-        color: #1d3557;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.3s, transform 0.2s;
-        display: inline-block;
-        margin: 10px 15px;
-        min-width: 140px;
-    }
-    .popup button:hover {
-        background: #ffffff;
-        transform: scale(1.05);
-    }
-    .popup-buttons {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 20px;
-        margin-top: 20px;
-    }
-    @keyframes popIn {
-        0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-        100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-    }
-    .popup-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.6);
-        z-index: 1500;
-    }
-    /* התאמה למובייל */
-    @media only screen and (max-width: 768px) {
+    <style>
         body {
-            padding: 20px;
+            font-family: 'Rubik', Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            padding: 40px;
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #e0e1dd;
         }
         .container {
-            max-width: 100%;
-            padding: 15px;
-            margin: 0 0 20px;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            max-width: 650px;
+            margin: 0 auto 20px;
+            text-align: center;
+            border: 1px solid rgba(69, 123, 157, 0.5);
+            backdrop-filter: blur(8px);
         }
-        .navbar {
-            flex-direction: column;
-            gap: 10px;
-            padding: 10px;
-        }
-        .navbar a {
-            font-size: 14px;
-            padding: 6px 12px;
+        h2 {
+            color: #1b263b;
+            margin-bottom: 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 24px;
         }
         input {
-            width: calc(100% - 20px);
-            padding: 10px;
-            font-size: 14px;
+            width: calc(100% - 24px);
+            padding: 14px;
+            margin-top: 15px;
+            border: 2px solid #457b9d;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+            background: #f7f9fb;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-family: 'Rubik', sans-serif;
+        }
+        input:focus {
+            outline: none;
+            border-color: #1d3557;
+            box-shadow: 0 0 12px rgba(29, 53, 87, 0.5);
         }
         button {
-            padding: 10px;
-            font-size: 14px;
+            width: 100%;
+            padding: 14px;
+            margin-top: 20px;
+            background: linear-gradient(90deg, #457b9d, #a8dadc);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+            font-family: 'Rubik', sans-serif;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(69, 123, 157, 0.6);
+        }
+        #serial-result {
+            margin-top: 30px;
+            display: none;
+            text-align: center;
+            direction: rtl;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
         }
         .card {
-            padding: 15px;
-            padding-top: 120px;
-            font-size: 14px;
-            line-height: 1.4;
+            background: linear-gradient(135deg, #ffffff, #edf2f4);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.5s ease-in-out;
+            overflow: hidden;
+            text-align: right;
+            color: #1b263b;
+            font-size: 16px;
+            line-height: 1.6;
         }
-        .card-buttons {
-            top: 10px;
-            left: 10px;
-            width: calc(100% - 20px);
+        .warranty-samline {
+            color: #ff0000;
+            font-weight: bold;
         }
-        .card-buttons a {
-            font-size: 12px;
-            padding: 8px 15px;
-            margin: 0;
-        }
-        .search-note {
-            font-size: 12px;
-            margin-top: 5px;
-        }
-        .card img {
-            max-width: 100%;
-            height: auto;
-        }
-        .image-asterisk {
-            font-size: 12px;
-        }
-        .card ul {
-            padding-right: 10px;
-        }
-        .suggestions {
-            width: calc(100% - 20px);
-            max-height: 120px;
-        }
-        .suggestion-item {
-            font-size: 14px;
-            padding: 8px;
-        }
-        .popup {
-            max-width: 90%;
-            padding: 15px;
-        }
-        .popup h3 {
-            font-size: 18px;
-        }
-        .popup p {
-            font-size: 14px;
-        }
-        .popup-buttons {
-            flex-direction: column;
-            gap: 10px;
-        }
-        .popup button {
-            min-width: 100px;
-            padding: 8px 15px;
-            font-size: 14px;
-        }
-        #loader, #loader-serial {
-            width: 60px;
-            height: 60px;
+        #loader-serial {
+            display: none;
+            margin: 20px auto;
+            position: relative;
+            width: 80px;
+            height: 80px;
         }
         .loader-circle {
-            border-width: 3px;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 4px solid transparent;
+            border-top: 4px solid #457b9d;
+            border-radius: 50%;
+            animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+        .loader-circle:nth-child(2) {
+            border-top-color: #a8dadc;
+            animation-delay: -0.4s;
+            transform: scale(0.85);
+        }
+        .loader-circle:nth-child(3) {
+            border-top-color: #1d3557;
+            animation-delay: -0.8s;
+            transform: scale(0.7);
         }
         .loader-text {
-            font-size: 12px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            color: #457b9d;
+            animation: pulseText 1.5s infinite;
+            font-weight: 500;
         }
-    }
-    #troubleshooting-result {
-    margin-top: 30px;
-    display: none;
-    text-align: center;
-    direction: rtl;
-    max-width: 650px;
-    margin-left: auto;
-    margin-right: auto;
-}
-    .troubleshooting-note {
-    font-size: 12px; /* גודל זהה ל-search-note בדסקטופ */
-    color: #457b9d; /* צבע תואם לעיצוב */
-    margin-top: 8px; /* מרווח קטן מה-input */
-    margin-bottom: 12px; /* מרווח לפני הכפתור */
-    text-align: right; /* יישור לימין כמו שאר הטקסט */
-    line-height: 1.4; /* שיפור קריאות */
-    direction: rtl;
-}
-
-/* התאמה למובייל */
-@media only screen and (max-width: 768px) {
-    .troubleshooting-note {
-        font-size: 10px; /* גודל זהה ל-search-note במובייל */
-        margin-top: 6px; /* מרווח קטן יותר */
-        margin-bottom: 10px;
-    }
-}
-    .troubleshooting-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 10px; /* מרווח בין הכפתורים, תואם לעיצוב הכללי */
-    margin-top: 20px; /* מרווח מהכוכבית */
-}
-
-.troubleshooting-buttons button {
-    width: 100%;
-    padding: 14px; /* תואם לכפתורים אחרים */
-    background: linear-gradient(90deg, #457b9d, #a8dadc); /* צבע תואם */
-    color: #ffffff;
-    border: none;
-    border-radius: 8px; /* תואם לעיצוב */
-    font-size: 16px; /* תואם לגודל הגופן */
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.3s;
-    font-family: 'Rubik', sans-serif;
-}
-
-.troubleshooting-buttons button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(69, 123, 157, 0.6); /* אפקט hover תואם */
-}
-
-/* התאמה למובייל */
-@media only screen and (max-width: 768px) {
-    .troubleshooting-buttons {
-        gap: 8px; /* מרווח קטן יותר במובייל */
-        margin-top: 15px;
-    }
-    .troubleshooting-buttons button {
-        padding: 10px; /* תואם לכפתורים במובייל */
-        font-size: 14px;
-    }
-}
-</style>
-
-<script>
-    console.log("הדף נטען בהצלחה");
-
-    function showPage(pageId) {
-        try {
-            document.querySelectorAll('.content').forEach(page => page.classList.remove('active'));
-            document.querySelectorAll('.navbar a').forEach(link => link.classList.remove('active'));
-            document.getElementById(pageId + '-page').classList.add('active');
-            document.querySelector(`a[onclick="showPage('${pageId}')"]`).classList.add('active');
-        } catch (e) {
-            console.error("שגיאה ב-showPage:", e);
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-    }
-
-    // הגדרות מוצרים
-    const fridgeConfig = {
-        'F': 'French Door (דלת צרפתית)', 'S': 'Side by Side (דלת ליד דלת)', 'T': 'Top Freezer (מקפיא עליון)',
-        'B': 'Bottom Freezer (מקפיא תחתון)', 'L': 'Bottom Freezer (מקפיא תחתון)'
-    };
-
-    const serialYearCodes = {
-        'F': '2014', 'G': '2015', 'H': '2016', 'J': '2017', 'K': '2018', 'M': '2019', 'N': '2020',
-        'R': '2021', 'T': '2022', 'W': '2023', 'X': '2024', 'Y': '2025'
-    };
-
-    const modelYearCodes = {
-        'H': '2014', 'J': '2015', 'K': '2016', 'M': '2017', 'N': '2018', 'R': '2019', 'T': '2020',
-        'A': '2021', 'B': '2022', 'C': '2023', 'D': '2024', 'F': '2025'
-    };
-
-    const monthCodes = {
-        '1': 'ינואר', '2': 'פברואר', '3': 'מרץ', '4': 'אפריל', '5': 'מאי', '6': 'יוני',
-        '7': 'יולי', '8': 'אוגוסט', '9': 'ספטמבר', 'A': 'אוקטובר', 'B': 'נובמבר', 'C': 'דצמבר'
-    };
-
-    const fridgeFinish = {
-        'SP': 'נירוסטה', 'SR': 'נירוסטה', 'SL': 'כסוף', 'UT': 'כחול', 'SA': 'גרפיט', 'WW': 'לבן'
-    };
-
-    const countryCodesFridge = {
-        'AA': 'ארה"ב', 'WT': 'הונג קונג', 'EC': 'קוריאה', 'TL': 'הודו', 'EM': 'מקסיקו', 'ML': 'ישראל'
-    };
-
-    const washerTech = {
-        'WW': 'מכונת כביסה פתח קידמי', 'WD': 'מייבש כביסה', 'DV': 'מייבש כביסה'
-    };
-
-    const washerColor = {
-        'G': 'לבן', 'P': 'נירוסטה', 'S': 'כסף', 'V': 'שחור'
-    };
-
-    const countryCodesWasher = {
-        'US': 'ארה"ב', 'LP': 'הונג קונג', 'AH': 'קוריאה', 'T1': 'הודו', 'AX': 'מקסיקו', 'KJ': 'ישראל'
-    };
-
-    const tvDisplay = {
-        'Q': 'QLED', 'U': 'LED', 'P': 'Plasma', 'L': 'LCD', 'K': 'OLED'
-    };
-
-    const tvMarket = {
-        'N': 'צפון אמריקה', 'E': 'אירופה', 'A': 'אסיה'
-    };
-
-    const countryCodesTV = {
-        'ZA': 'אפריקה', 'RU': 'רוסיה', 'UA': 'אוקראינה', '2C': 'סין', 'XU': 'בריטניה', 'XY': 'אוסטרליה',
-        'SQ': 'ישראל', 'IL': 'ישראל'
-    };
-
-    const dryerTech = {
-        'DV': 'מייבש כביסה'
-    };
-
-    const dryerDesign = {
-        'G': 'עיצוב כללי', 'B': 'Bespoke'
-    };
-
-    const dryerColor = {
-        'B': 'שחור', 'W': 'לבן', 'S': 'כסוף'
-    };
-
-    const countryCodesDryer = {
-        'KJ': 'ישראל', 'AH': 'אמריקה', 'LP': 'דרום אמריקה'
-    };
-
-    const microwaveType = {
-        'MC': 'מיקרוגל משולב אפייה', 'MG': 'מיקרוגל משולב גריל', 'MS': 'מיקרוגל', 'NV': 'תנור בילד-אין'
-    };
-
-    const microwaveColor = {
-        'RS': 'כסוף', 'LP': 'לבן', 'AN': 'שחור'
-    };
-
-    const countryCodesMicrowave = {
-        'LI': 'ישראל', 'EO': 'אירופה', 'AH': 'אמריקה'
-    };
-
-    const cooktopType = {
-        'NZ': 'כיריים אינדוקציה'
-    };
-
-    const cooktopColor = {
-        'EK': 'שחור', 'GK': 'לבן'
-    };
-
-    const countryCodesCooktop = {
-        'EO': 'ישראל/אירופה', 'E1': 'אירופה'
-    };
-
-    const dishwasherDesign = {
-        'U': 'עיצוב כללי'
-    };
-
-    const dishwasherColor = {
-        'G': 'כסוף', 'W': 'לבן', 'B': 'שחור'
-    };
-
-    const countryCodesDishwasher = {
-        'A': 'אמריקה', 'ML': 'ישראל'
-    };
-
-    const productImages = {
-        'QLED': 'https://images.samsung.com/is/image/samsung/p6pim/my/qa65q70dakxxm/gallery/my-qled-tv-qa65q70dakxxm-front-gray-540854235?$684_547_PNG$',
-        'CRYSTAL UHD': 'https://images.samsung.com/is/image/samsung/p6pim/il/ue75cu7100uxsq/gallery/il-crystal-uhd-cu7000-ue75cu7100uxsq-536351326?$684_547_PNG$',
-        'OLED': 'https://www.electricshop.co.il/images/itempics/QE65S95D_030620241010481.jpg',
-        'The Frame': 'https://www.topmarket.co.il/images/detailed/227/16e8949b60f75b0601296b8fe0b488db.jpg',
-        'French Door (דלת צרפתית)': 'https://www.alm.co.il/media/catalog/product/r/f/rf65dg965eb1ml_001_front_black_1_.jpg?auto=webp&format=pjpg&width=640&height=800&fit=cover',
-        'Side by Side (דלת ליד דלת)': 'https://www.electricshop.co.il/images/itempics/RF27T5001S92_12012023195056.jpg',
-        'Bottom Freezer (מקפיא תחתון)': 'https://res.cloudinary.com/shufersal/image/upload/f_auto,q_auto/v1551800922/prod/product_images/products_zoom/WKW52_Z_P_8806090184161_2.png',
-        'Top Freezer (מקפיא עליון)': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSO7r_kWY7GuXsXmU--f7VKVVBmm40A8FInjQ&s',
-        'מכונת כביסה פתח קידמי': 'https://images.samsung.com/is/image/samsung/assets/ru/support/home-appliances/what-to-do-if-my-washing-machine-turns-off-during-washing/washer-turns-off.png?$ORIGIN_PNG$',
-        'מייבש כביסה': 'https://images.samsung.com/is/image/samsung/p6pim/il/dv80cgc0b0aekj/gallery/il-dv5000c-dv80cgc0b0aekj-thumb-541329433?$UX_EXT2_PNG$',
-        'מיקרוגל': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2Kw4LIiEbeFJ-NrS89kITF1uZSHSdmCeLCg&s',
-        'מיקרוגל משולב אפייה': 'https://images.samsung.com/is/image/samsung/il-microwave-oven-mc28m6035cs-mc28m6035cs-li-frontsilver-thumb-266046635?$UX_EXT2_PNG$',
-        'מיקרוגל משולב גריל': 'https://images.samsung.com/is/image/samsung/p6pim/il/mg32dg4524atli/gallery/il-mw4000d-mg32dg4524atli-541276090?$684_547_PNG$',
-        'תנור בילד-אין': 'https://images.samsung.com/is/image/samsung/p6pim/ph/mc35r8088lc-tc/gallery/ph-bespoke-mw8000r-mc35r8088lc-tc-530525040?$684_547_PNG$',
-        'כיריים אינדוקציה': 'https://image-us.samsung.com/SamsungUS/home/home-appliances/cooktops-and-hoods/hoods/072619-gallery-updates/NZ36K7880UG.jpg?$product-details-jpg$',
-        'N4000-N5500 Series': 'https://www.eplus.co.il/images/itempics/UE32T5300_18032022102312_large.jpg',
-        'מדיח כלים': 'https://images.samsung.com/is/image/samsung/levant-dw60m5070fs-dw60m5070fs-fh-rperspectiveopensilver-thumb-210032233?$UX_EXT2_PNG$'
-    };
-
-    const sampleModels = [
-        'QE85QN85CATXSQ', 'UE65RU8000KXSQ', 'UA43LS03NAU', 'QE50Q7FAAUXIL',
-        'RF65DG965EB1ML', 'WW80TA046AX', 'UA65RU8000KXSQ', 'QE85LS03D',
-        'QE85LS03C', 'QE85LS03B', 'QE65S95D', 'QE65S90A', 'QE65S85T',
-        'UE32N4000UXSQ', 'UE32N4100UXSQ', 'UE32N4200UXSQ', 'UE32N4300UXSQ',
-        'UE32N4400UXSQ', 'UE32N4500UXSQ', 'UE32N5000UXSQ', 'UE32N5100UXSQ',
-        'UE32N5200UXSQ', 'UE32N5300UXSQ', 'UE32N5400UXSQ', 'UE32N5500UXSQ',
-        'DV90B9445GBKJ', 'MC35R8088LPLI', 'MG32DG4524ATLI', 'MS28J5255AWLI',
-        'NZ84J9770EKEO', 'DW80R7060UGA', 'NZ70J9770EKEO', 'MC28DA046AX',
-        'MC30DA046AX', 'MS30DA046AX', 'DW70DA046AX', 'DW40DA046AX'
-    ];
-
-    const productFeatures = {
-        'QLED': {
-            description: 'טכנולוגיית QLED (Quantum Dot LED) מבית סמסונג מציעה צבעים עשירים וחדים במיוחד עם ניגודיות גבוהה.',
-            features: [
-                '100% נפח צבע עם Quantum Dot - צבעים מדויקים בכל רמת בהירות.',
-                'תאורה אחורית מתקדמת עם Quantum HDR לחוויית צפייה דינמית.',
-                'זווית צפייה רחבה עם טכנולוגיית Anti-Reflection.',
-                'חסכוני בחשמל בהשוואה לטלוויזיות LED רגילות.'
-            ]
-        },
-        'The Frame': {
-            description: 'טלוויזיית The Frame משלבת עיצוב ייחודי שמתאים לקיר כמו תמונה, עם איכות תצוגה מתקדמת.',
-            features: [
-                'מצב אמנות (Art Mode) - הצגת תמונות ויצירות אמנות כשהטלוויזיה כבויה.',
-                'חיישן תנועה ותאורה להתאמה אוטומטית של התצוגה.',
-                'מסגרת הניתנת להתאמה אישית (לבן, חום, שחור ועוד).',
-                'תמיכה ב-QLED לניגודיות וצבעים משופרים.'
-            ]
-        },
-        'OLED': {
-            description: 'טכנולוגיית OLED מספקת שחור מושלם וצבעים עמוקים בזכות פיקסלים שמאירים עצמאית.',
-            features: [
-                'ניגודיות אינסופית עם שחור מוחלט.',
-                'זמן תגובה מהיר במיוחד למשחקים ותנועה חלקה.',
-                'זווית צפייה רחבה ללא איבוד איכות.',
-                'עיצוב דק במיוחד עם גמישות תכנונית.'
-            ]
-        },
-        'CRYSTAL UHD': {
-            description: 'טלוויזיות Crystal UHD מציעות רזולוציה גבוהה עם מעבד Crystal לשיפור התמונה.',
-            features: [
-                'מעבד Crystal 4K לשדרוג תמונה לרזולוציית 4K.',
-                'HDR 10+ לפרטים משופרים באזורים מוארים וכהים.',
-                'צבעים חיים עם טווח דינמי רחב.',
-                'עיצוב AirSlim דק ומודרני.'
-            ]
-        },
-        'LED': {
-            description: 'טלוויזיות LED סטנדרטיות עם איכות תמונה טובה במחיר נגיש.',
-            features: [
-                'תאורת LED חסכונית לאיכות תמונה בסיסית.',
-                'תמיכה ב-HDR לשיפור ניגודיות.',
-                'רזולוציה עד 4K (בדגמים מתקדמים).',
-                'מתאים לשימוש יומיומי פשוט.'
-            ]
-        },
-        'N4000-N5500 Series': {
-            description: 'סדרות N4000 עד N5500 הן טלוויזיות LED Full HD מבית סמסונג, המציעות איכות תמונה טובה לשימוש יומיומי עם עיצוב פשוט ופונקציונלי.',
-            features: [
-                'רזולוציה Full HD (1920x1080) לתמונה חדה וברורה.',
-                'טכנולוגיית PurColor לשיפור צבעים טבעיים.',
-                'תמיכה ב-HDR בסיסי לניגודיות משופרת.',
-                'מערכת הפעלה Tizen פשוטה לשימוש (גרסאות ישנות יותר בהתאם לשנה).',
-                'עיצוב דק וקומפקטי המתאים לכל חלל.'
-            ]
+        @keyframes pulseText {
+            0% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+            100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
         }
-    };
-
-    // פונקציות חיפוש ועיבוד דגמים
-    function showSuggestions(input) {
-        try {
-            const suggestionsDiv = document.getElementById('suggestions');
-            suggestionsDiv.innerHTML = '';
-            if (input.length < 2) {
-                suggestionsDiv.style.display = 'none';
-                return;
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1d3557, #457b9d);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            color: #ffffff;
+            max-width: 400px;
+            text-align: center;
+            z-index: 2000;
+            animation: popIn 0.4s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .popup h3 {
+            margin: 0 0 15px;
+            font-size: 22px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .popup p {
+            margin: 0 0 20px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .popup button {
+            background: #a8dadc;
+            color: #1d3557;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            display: inline-block;
+            margin: 10px 15px;
+            min-width: 140px;
+        }
+        .popup button:hover {
+            background: #ffffff;
+            transform: scale(1.05);
+        }
+        .popup-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1500;
+        }
+        @media only screen and (max-width: 768px) {
+            body {
+                padding: 20px;
             }
-            const filtered = sampleModels.filter(model => model.toUpperCase().startsWith(input.toUpperCase()));
-            if (filtered.length > 0) {
-                filtered.forEach(model => {
-                    const item = document.createElement('div');
-                    item.className = 'suggestion-item';
-                    item.textContent = model;
-                    item.onclick = () => {
-                        document.getElementById('modelInput').value = model;
-                        suggestionsDiv.style.display = 'none';
-                        lookupModel();
-                    };
-                    suggestionsDiv.appendChild(item);
-                });
-                suggestionsDiv.style.display = 'block';
-            } else {
-                suggestionsDiv.style.display = 'none';
+            .container {
+                max-width: 100%;
+                padding: 15px;
+                margin: 0 0 20px;
             }
-        } catch (e) {
-            console.error("שגיאה ב-showSuggestions:", e);
-        }
-    }
-
-    document.getElementById('modelInput').addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            lookupModel();
-        }
-    });
-
-    function lookupModel() {
-        try {
-            var model = document.getElementById("modelInput").value.trim().toUpperCase();
-            var resultDiv = document.getElementById("result");
-            var loader = document.getElementById("loader");
-
-            if (!model || model.length < 5) {
-                resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין קוד דגם חוקי (מינימום 5 תווים).</div>';
-                resultDiv.style.display = "block";
-                return;
+            input {
+                width: calc(100% - 20px);
+                padding: 10px;
+                font-size: 14px;
             }
+            button {
+                padding: 10px;
+                font-size: 14px;
+            }
+            .card {
+                padding: 15px;
+                font-size: 14px;
+                line-height: 1.4;
+            }
+            .popup {
+                max-width: 90%;
+                padding: 15px;
+            }
+            .popup h3 {
+                font-size: 18px;
+            }
+            .popup p {
+                font-size: 14px;
+            }
+            .popup-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .popup button {
+                min-width: 100px;
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+            #loader-serial {
+                width: 60px;
+                height: 60px;
+            }
+            .loader-circle {
+                border-width: 3px;
+            }
+            .loader-text {
+                font-size: 12px;
+            }
+        }
+    </style>
 
-            loader.style.display = "block";
-            resultDiv.style.display = "none";
+    <script>
+        console.log("הדף נטען בהצלחה");
 
-            setTimeout(() => {
-                try {
-                    var details = getModelDetails(model);
-                    resultDiv.innerHTML = details;
+        const serialYearCodes = {
+            'F': '2014', 'G': '2015', 'H': '2016', 'J': '2017', 'K': '2018', 'M': '2019', 'N': '2020',
+            'R': '2021', 'T': '2022', 'W': '2023', 'X': '2024', 'Y': '2025'
+        };
+
+        const monthCodes = {
+            '1': 'ינואר', '2': 'פברואר', '3': 'מרץ', '4': 'אפריל', '5': 'מאי', '6': 'יוני',
+            '7': 'יולי', '8': 'אוגוסט', '9': 'ספטמבר', 'A': 'אוקטובר', 'B': 'נובמבר', 'C': 'דצמבר'
+        };
+
+        function lookupSerial() {
+            try {
+                const serial = document.getElementById("serialInput").value.trim().toUpperCase();
+                const resultDiv = document.getElementById("serial-result");
+                const loader = document.getElementById("loader-serial");
+
+                if (!serial || (serial.length !== 11 && serial.length !== 15)) {
+                    resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי (11 או 15 תווים).</div>';
                     resultDiv.style.display = "block";
-                    loader.style.display = "none";
-                } catch (e) {
-                    console.error("שגיאה בתוך setTimeout של lookupModel:", e);
-                    resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
-                    resultDiv.style.display = "block";
-                    loader.style.display = "none";
+                    return;
                 }
-            }, 1000);
-        } catch (e) {
-            console.error("שגיאה ב-lookupModel:", e);
-            resultDiv.innerHTML = `<div class="card">שגיאה כללית: ${e.message}</div>`;
-            resultDiv.style.display = "block";
-            loader.style.display = "none";
-        }
-    }
 
-    function suggestRandomModel() {
-        try {
-            const randomModel = sampleModels[Math.floor(Math.random() * sampleModels.length)];
-            document.getElementById("modelInput").value = randomModel;
-            lookupModel();
-        } catch (e) {
-            console.error("שגיאה ב-suggestRandomModel:", e);
-        }
-    }
+                loader.style.display = "block";
+                resultDiv.style.display = "none";
 
-    function getModelDetails(model) {
-        try {
-            if (/^R[FSBTL]/.test(model)) {
-                return getFridgeDetails(model);
-            } else if (/^W[WD]|^DV/.test(model)) {
-                return getWasherDryerDetails(model);
-            } else if (/^[QULPK][NEA]/.test(model)) {
-                return getTVDetails(model);
-            } else if (/^M[CSG]|^NV/.test(model)) {
-                return getMicrowaveOvenDetails(model);
-            } else if (/^NZ/.test(model)) {
-                return getCooktopDetails(model);
-            } else if (/^DW/.test(model)) {
-                return getDishwasherDetails(model);
-            } else {
-                return `<div class="card">שגיאה: הדגם שהוזן אינו מזוהה. אנא ודא שהקוד תקין ונסה שוב.</div>`;
-            }
-        } catch (e) {
-            console.error("שגיאה ב-getModelDetails:", e);
-            return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
-        }
-    }
+                setTimeout(() => {
+                    let year, month, productionDate, warrantyStatus;
 
-    function getFridgeDetails(model) {
-        let config = fridgeConfig[model[1]] || 'לא ידוע';
-        let capacityCode = parseInt(model[2] + model[3]) || 0;
-        let capacityLiters = capacityCode ? capacityCode * 10 + ' ליטר' : 'לא זמין';
-        let yearCode = model[4] || '';
-        let year = modelYearCodes[yearCode] || 'לא ידוע';
-        let series = model[5] || 'לא ידוע';
-        let finishCode = model.length >= 8 ? model.slice(6, 8) : '';
-        let finish = finishCode ? fridgeFinish[finishCode] || 'לא ידוע' : 'לא זמין';
-        let countryCode = model.length >= 10 ? model.slice(-2) : '';
-        let country = countryCode ? countryCodesFridge[countryCode] || 'לא ידוע' : 'לא זמין';
-        let image = productImages[config] || '';
-        return `<div class="card">
-                    <div class="card-buttons">
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                        <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
-                        <div class="search-note">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
-                    </div>
-                    מקרר סמסונג - דגם: ${model}<br>
-                    תצורה: ${config}<br>
-                    נפח: ${capacityLiters}<br>
-                    שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
-                    סדרת דגם: ${series}<br>
-                    גימור: ${finish}<br>
-                    קוד מדינה: ${country}<br>
-                    ${image ? `<div class="image-asterisk">* התמונה הינה להמחשה בלבד ויכולה להשתנות מדגם לדגם</div><img src="${image}" alt="${config}">` : ''}
-                </div>`;
-    }
+                    // Extract year and month based on serial length
+                    if (serial.length === 15) {
+                        year = serialYearCodes[serial[7]] || 'לא ידוע';
+                        month = monthCodes[serial[8]] || 'לא ידוע';
+                        productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
+                    } else if (serial.length === 11) {
+                        year = serialYearCodes[serial[3]] || 'לא ידוע';
+                        month = monthCodes[serial[4]] || 'לא ידוע';
+                        productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
+                    }
 
-    function getWasherDryerDetails(model) {
-        let tech = washerTech[model.slice(0, 2)] || dryerTech[model.slice(0, 2)] || 'לא ידוע';
-        let capacityCode = model[2];
-        let capacity = '';
-        switch (capacityCode) {
-            case '6': capacity = '6 ק"ג'; break;
-            case '7': capacity = '7 ק"ג'; break;
-            case '8': capacity = '8 ק"ג'; break;
-            case '9': capacity = '9 ק"ג'; break;
-            case '1': capacity = model[3] === '1' ? '11 ק"ג' : '10 ק"ג'; break;
-            case '2': capacity = '12 ק"ג'; break;
-            default: capacity = 'לא זמין';
-        }
-        let yearCode = model[4] || '';
-        let year = modelYearCodes[yearCode] || 'לא ידוע';
-        let series = model.length >= 9 ? model.slice(5, 9) || 'לא ידוע' : 'לא זמין';
-        let design = dryerDesign[model[9]] || 'לא זמין';
-        let color = model.length >= 10 ? (washerColor[model[9]] || dryerColor[model[10]] || 'לא ידוע') : 'לא זמין';
-        let countryCode = model.length >= 12 ? model.slice(-2) : '';
-        let country = countryCode ? (countryCodesWasher[countryCode] || countryCodesDryer[countryCode] || 'לא ידוע') : 'לא זמין';
-        let image = productImages[tech] || '';
-        return `<div class="card">
-                    <div class="card-buttons">
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                        <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
-                        <div class="search-note">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
-                    </div>
-                    ${tech} סמסונג - דגם: ${model}<br>
-                    קיבולת: ${capacity}<br>
-                    שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
-                    סדרת דגם: ${series}<br>
-                    עיצוב: ${design}<br>
-                    צבע: ${color}<br>
-                    קוד מדינה: ${country}<br>
-                    ${image ? `<div class="image-asterisk">*תמונה זו הינה להמחשה בלבד ויכולה להשתנות מדגם לדגם</div><img src="${image}" alt="${tech}">` : ''}
-                </div>`;
-    }
+                    // Calculate production date
+                    const monthCode = serial[serial.length === 15 ? 8 : 4];
+                    const monthIndex = Object.keys(monthCodes).indexOf(monthCode) + 1; // 1-based month for Date object
+                    const productionYear = parseInt(year) || 0;
+                    const productionDateObj = productionYear && monthIndex >= 1 ? new Date(productionYear, monthIndex - 1, 1) : null;
 
-function getTVDetails(model) {
-    try {
-        let display = tvDisplay[model[0]] || 'לא ידוע';
-        let isFrame = model.includes('LS03');
-        let isOLED = /^Q[NEA]\d{2}S(95|90|85|80)/.test(model);
-        let isNseries = /^UE\d{2}N(4[0-4]00|4500|5[0-5]00)/.test(model);
+                    // Determine warranty status
+                    if (year === 'לא ידוע' || month === 'לא ידוע' || !productionDateObj) {
+                        warrantyStatus = 'לא באחריות';
+                    } else if (year === '2024' && month === 'דצמבר') {
+                        warrantyStatus = 'עלול להיות באחריות סמסונג ישראל, יש לבדוק לפי החשבונית';
+                    } else if (productionDateObj < new Date('2024-07-01')) {
+                        warrantyStatus = 'לא באחריות';
+                    } else if (year === '2024' && monthIndex >= 7 && monthIndex <= 12) {
+                        warrantyStatus = '<span class="warranty-samline">באחריות סמליין</span>';
+                    } else if (year === '2025' && monthIndex >= 1) {
+                        warrantyStatus = 'באחריות סמסונג ישראל';
+                    } else {
+                        warrantyStatus = 'לא באחריות';
+                    }
 
-        if (isFrame) display = 'The Frame';
-        else if (isOLED) display = 'OLED';
-        else if (isNseries) display = 'Full HD';
-        else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) >= 2018) display = 'CRYSTAL UHD';
-        else if (model[0] === 'U' && modelYearCodes[model[4]] && parseInt(modelYearCodes[model[4]]) < 2018) display = 'LED';
-        else if (model.includes('QN')) display = 'QLED';
-
-        let market = tvMarket[model[1]] || 'לא ידוע';
-        let size = model.length >= 4 ? model[2] + model[3] : 'לא זמין';
-
-        let yearCode = '';
-        let series = '';
-        let seriesStart = 4;
-
-        if (isFrame) {
-            let frameIndex = model.indexOf('LS03');
-            if (frameIndex !== -1) {
-                series = 'LS03';
-                yearCode = model[frameIndex + 4] || '';
-                seriesStart = frameIndex + 5;
-            }
-        } else if (/^Q[NEA]\d{2}(QN|S)\d{2}/.test(model)) {
-            let seriesMatch = model.match(/(QN|S)\d{2}/);
-            if (seriesMatch) {
-                let seriesIndex = seriesMatch.index;
-                series = seriesMatch[0];
-                yearCode = model[seriesIndex + series.length] || '';
-                seriesStart = seriesIndex + series.length + 1;
-            }
-        } else if (model.includes('QN') || model.includes('NU')) {
-            let seriesMatch = model.match(/QN\d{2}|NU\d{4}/);
-            if (seriesMatch) {
-                let seriesIndex = seriesMatch.index;
-                series = seriesMatch[0];
-                yearCode = model[seriesIndex + series.length] || '';
-                seriesStart = seriesIndex + series.length + 1;
-            }
-        } else {
-            yearCode = model[4] || '';
-            seriesStart = 5;
-        }
-
-        let year = modelYearCodes[yearCode] || 'לא ידוע';
-
-        let seriesEnd = model.length > 12 ? model.length - 3 : model.length;
-        if (!series) {
-            series = model.slice(seriesStart, seriesEnd);
-        }
-        if (isNseries) series = model.slice(4, 9);
-        if (!series) series = 'לא ידוע';
-
-        let broadcast = (year >= '2018' && year !== ' not ידוע') ? 'DVB-T2' : 'DVB-T1';
-
-        let os = 'לא צוינה';
-        if (year !== 'לא ידוע') {
-            const yearNum = parseInt(year);
-            if (yearNum >= 2024) os = 'Tizen 9.0';
-            else if (yearNum === 2023) os = 'Tizen 8.0';
-            else if (yearNum === 2022) os = 'Tizen 7.0';
-            else if (yearNum === 2021) os = 'Tizen 6.5';
-            else if (yearNum === 2020) os = 'Tizen 6.0';
-            else if (yearNum === 2019) os = 'Tizen 5.5';
-            else if (yearNum === 2018) os = 'Tizen 5.0';
-            else if (yearNum === 2017) os = 'Tizen 4.0';
-            else if (yearNum === 2016) os = 'Tizen 3.0';
-            else if (yearNum === 2015) os = 'Tizen 2.4';
-            else if (yearNum === 2014) os = 'Tizen 2.3';
-            else if (yearNum <= 2013) os = 'Tizen 2.0';
-        }
-
-        let country = 'לא ידוע';
-        let countryNote = '';
-        if (model.length >= 13) {
-            let countryCode = model.slice(-2);
-            country = countryCodesTV[countryCode] || 'לא ידוע';
-            if (year === '2025') {
-                if (countryCode === 'IL') country = 'ישראל (ניופאן)';
-                else if (countryCode === 'SQ') country = 'ישראל (מחסני חשמל)';
-            }
-            if (model[1] === 'U' || model[1] === 'Q') {
-                countryNote = ' - יבוא מקביל';
-            } else if (country !== 'ישראל' && country !== 'ישראל (ניופאן)' && country !== 'ישראל (מחסני חשמל)') {
-                countryNote = ' - יבוא מקביל';
+                    resultDiv.innerHTML = `<div class="card">
+                                            מספר סיריאלי: ${serial}<br>
+                                            תאריך ייצור: ${productionDate}<br>
+                                            סטטוס אחריות: ${warrantyStatus}<br>
+                                            הערה: למידע נוסף יש לבדוק לפי קוד דגם.
+                                          </div>`;
+                    resultDiv.style.display = "block";
+                    loader.style.display = "none";
+                    showPopup();
+                }, 1000);
+            } catch (e) {
+                console.error("שגיאה ב-lookupSerial:", e);
+                resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד המספר הסיריאלי: ${e.message}</div>`;
+                resultDiv.style.display = "block";
+                loader.style.display = "none";
             }
         }
-        let imageKey = display === 'LED' ? 'CRYSTAL UHD' : display;
-        let image = productImages[imageKey] || '';
 
-        let featuresHtml = productFeatures[display] ? `
-            <br><strong>${productFeatures[display].description}</strong><br>
-            <ul style="text-align: right; padding-right: 20px;">
-                ${productFeatures[display].features.map(feature => `<li>${feature}</li>`).join('')}
-            </ul>
-        ` : '';
-
-        return `<div class="card">
-                    <div class="card-buttons">
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                        <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
-                        <div class="search-note">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
-                    </div>
-                    טלוויזיה סמסונג - דגם: ${model}<br>
-                    סוג תצוגה: ${display}<br>
-                    אזור שוק: ${market}<br>
-                    גודל מסך: ${size} אינץ'<br>
-                    שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
-                    סדרת דגם: ${series}<br>
-                    מקלט שידור: ${broadcast}<br>
-                    מערכת הפעלה: ${os}<br>
-                    קוד מדינה: ${country}${countryNote}<br>
-                    ${image ? `<div class="image-asterisk">*תמונה זו הינה להמחשה בלבד ויכולה להשתנות מדגם לדגם</div><img src="${image}" alt="${display}">` : ''}
-                    ${featuresHtml}
-                </div>`;
-    } catch (e) {
-        console.error("שגיאה ב-getTVDetails:", e);
-        return `<div class="card">שגיאה בעיבוד הדגם: ${e.message}</div>`;
-    }
-}
-    function getMicrowaveOvenDetails(model) {
-        let type = microwaveType[model.slice(0, 2)] || 'לא ידוע';
-        let capacity = parseInt(model[2] + model[3]) || 0;
-        let capacityLiters = capacity >= 20 ? `${capacity} ליטר` : 'לא זמין';
-        let yearCode = model[4] || '';
-        let year = modelYearCodes[yearCode] || 'לא ידוע';
-        let series = model.slice(5, 9) || 'לא ידוע';
-        let colorCode = model.length >= 11 ? model.slice(9, 11) : '';
-        let color = colorCode ? microwaveColor[colorCode] || 'לא ידוע' : 'לא זמין';
-        let countryCode = model.length >= 13 ? model.slice(-2) : '';
-        let country = countryCode ? countryCodesMicrowave[countryCode] || 'לא ידוע' : 'לא זמין';
-        let image = productImages[type] || '';
-        return `<div class="card">
-                    <div class="card-buttons">
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                        <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
-                        <div class="search-note">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
-                    </div>
-                    ${type} סמסונג - דגם: ${model}<br>
-                    נפח: ${capacityLiters}<br>
-                    שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
-                    סדרת דגם: ${series}<br>
-                    צבע: ${color}<br>
-                    קוד מדינה: ${country}<br>
-                    ${image ? `<div class="image-asterisk">*תמונה זו הינה להמחשה בלבד ויכולה להשתנות מדגם לדגם</div><img src="${image}" alt="${type}">` : ''}
-                </div>`;
-    }
-
-    function getCooktopDetails(model) {
-        let type = cooktopType[model.slice(0, 2)] || 'לא ידוע';
-        let width = parseInt(model[2] + model[3]) || 0;
-        let widthCm = (width >= 60 && width <= 90) ? `${width} ס"מ` : 'לא זמין';
-        let yearCode = model[4] || '';
-        let year = modelYearCodes[yearCode] || 'לא ידוע';
-        let series = model.slice(5, 9) || 'לא ידוע';
-        let colorCode = model.length >= 11 ? model.slice(9, 11) : '';
-        let color = colorCode ? cooktopColor[colorCode] || 'לא ידוע' : 'לא זמין';
-        let countryCode = model.length >= 13 ? model.slice(-2) : '';
-        let country = countryCode ? countryCodesCooktop[countryCode] || 'לא ידוע' : 'לא זמין';
-        let image = productImages[type] || '';
-        return `<div class="card">
-                    <div class="card-buttons">
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                        <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
-                        <div class="search-note">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
-                    </div>
-                    ${type} סמסונג - דגם: ${model}<br>
-                    רוחב: ${widthCm}<br>
-                    שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
-                    סדרת דגם: ${series}<br>
-                    צבע: ${color}<br>
-                    קוד מדינה: ${country}<br>
-                    ${image ? `<div class="image-asterisk">*תמונה זו הינה להמחשה בלבד ויכולה להשתנות מדגם לדגם</div><img src="${image}" alt="${type}">` : ''}
-                </div>`;
-    }
-
-    function getDishwasherDetails(model) {
-        let size = parseInt(model[2] + model[3]) || 0;
-        let sizeDisplay = (size >= 45 && size <= 80) ? `רוחב: ${size} ס"מ` : (size > 0 ? `נפח: ${size} ליטר` : 'לא זמין');
-        let yearCode = model[4] || '';
-        let year = modelYearCodes[yearCode] || 'לא ידוע';
-        let series = model.slice(5, 9) || 'לא ידוע';
-        let design = dishwasherDesign[model[9]] || 'לא זמין';
-        let color = model.length >= 11 ? dishwasherColor[model[10]] || 'לא ידוע' : 'לא זמין';
-        let countryCode = model.length >= 12 ? model.slice(-1) : '';
-        let country = countryCode ? countryCodesDishwasher[countryCode] || 'לא ידוע' : 'לא זמין';
-        let image = productImages['מדיח כלים'] || '';
-        return `<div class="card">
-                    <div class="card-buttons">
-                        <a href="https://www.samsung.com/il/search/?searchvalue=${model}" target="_blank">עבור לדגם באתר סמסונג</a>
-                        <a href="#" onclick="searchManual('${model}'); return false;">חפש מדריך למשתמש</a>
-                        <div class="search-note">* לאחר המעבר, הזן את קוד הדגם "${model}" בשדה החיפוש בדף.</div>
-                    </div>
-                    מדיח כלים סמסונג - דגם: ${model}<br>
-                    ${sizeDisplay}<br>
-                    שנת ייצור: ${year}${year === 'לא ידוע' && yearCode ? ` (קוד לא מזוהה: ${yearCode})` : ''}<br>
-                    סדרת דגם: ${series}<br>
-                    עיצוב: ${design}<br>
-                    צבע: ${color}<br>
-                    קוד מדינה: ${country}<br>
-                    ${image ? `<div class="image-asterisk">* תמונה זו הינה להמחשה בלבד ויכולה להשתנות מדגם לדגם</div><img src="${image}" alt="מדיח כלים">` : ''}
-                </div>`;
-    }
-
-    function lookupSerial() {
-    try {
-        var serial = document.getElementById("serialInput").value.trim().toUpperCase();
-        var resultDiv = document.getElementById("serial-result");
-        var loader = document.getElementById("loader-serial");
-
-        if (!serial || (serial.length !== 11 && serial.length !== 15)) {
-            resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי (11 או 15 תווים).</div>';
-            resultDiv.style.display = "block";
-            return;
+        function showPopup() {
+            document.getElementById("popup").style.display = "block";
+            document.getElementById("popup-overlay").style.display = "block";
         }
 
-        loader.style.display = "block";
-        resultDiv.style.display = "none";
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+            document.getElementById("popup-overlay").style.display = "none";
+        }
 
-        setTimeout(() => {
-            let year, month, productionDate, warrantyStatus;
-
-            if (serial.length === 15) {
-                year = serialYearCodes[serial[7]] || 'לא ידוע';
-                month = monthCodes[serial[8]] || 'לא ידוע';
-                productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
-            } else if (serial.length === 11) {
-                year = serialYearCodes[serial[3]] || 'לא ידוע';
-                month = monthCodes[serial[4]] || 'לא ידוע';
-                productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
+        document.getElementById('serialInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                lookupSerial();
             }
-
-            const monthIndex = Object.keys(monthCodes).indexOf(serial[serial.length === 15 ? 8 : 4]);
-            const productionYear = parseInt(year) || 0;
-            const productionDateObj = productionYear ? new Date(productionYear, monthIndex) : null;
-            const currentDate = new Date('2025-07-17'); // תאריך נוכחי לפי ההגדרה שלך
-
-            // בדיקה ספציפית לדצמבר 2024 (XC)
-            if (year === '2024' && month === 'דצמבר') {
-                warrantyStatus = 'עלול להיות באחריות סמסונג ישראל, יש לבדוק לפי החשבונית';
-            } else if (!productionDateObj || productionDateObj <= new Date('2024-03-31')) {
-                warrantyStatus = 'לא באחריות';
-            } else if (productionDateObj <= new Date('2024-11-30')) {
-                warrantyStatus = 'באחריות סמליין';
-            } else {
-                warrantyStatus = 'באחריות סמסונג ישראל';
-            }
-
-            resultDiv.innerHTML = `<div class="card">
-                                    מספר סיריאלי: ${serial}<br>
-                                    תאריך ייצור: ${productionDate}<br>
-                                    סטטוס אחריות: ${warrantyStatus}<br>
-                                    הערה: למידע נוסף יש לבדוק לפי קוד דגם.
-                                  </div>`;
-            resultDiv.style.display = "block";
-            loader.style.display = "none";
-            showPopup();
-        }, 1000);
-    } catch (e) {
-        console.error("שגיאה ב-lookupSerial:", e);
-        resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד המספר הסיריאלי: ${e.message}</div>`;
-        resultDiv.style.display = "block";
-        loader.style.display = "none";
-    }
-}
-
-    // פונקציות ממשק משתמש
-    function showPopup() {
-        document.getElementById("popup").style.display = "block";
-        document.getElementById("popup-overlay").style.display = "block";
-    }
-
-    function closePopup() {
-        document.getElementById("popup").style.display = "none";
-        document.getElementById("popup-overlay").style.display = "none";
-    }
-
-    function switchToModelPage() {
-        closePopup();
-        showPage('model');
-    }
-
-    function searchManual(model) {
-        try {
-            const url = 'https://www.samsung.com/il/support/user-manuals-and-guide/';
-            window.open(url, '_blank');
-        } catch (e) {
-            console.error("שגיאה ב-searchManual:", e);
-            alert("שגיאה בפתיחת אתר המדריכים. אנא נסה שוב.");
-        }
-    }
-   function searchTroubleshootingSamsung() {
-    try {
-        var query = document.getElementById("troubleshootingInput").value.trim();
-        var resultDiv = document.getElementById("troubleshooting-result");
-        if (!query) {
-            resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין תיאור תקלה לחיפוש.</div>';
-            resultDiv.style.display = "block";
-            return;
-        }
-        var url = `https://www.samsung.com/il/search/?searchvalue=${encodeURIComponent(query)}`;
-        window.open(url, '_blank');
-        resultDiv.style.display = "none"; // מנקה תוצאות קודמות אם יש
-    } catch (e) {
-        console.error("שגיאה ב-searchTroubleshootingSamsung:", e);
-        resultDiv.innerHTML = `<div class="card">שגיאה בחיפוש: ${e.message}</div>`;
-        resultDiv.style.display = "block";
-    }
-}
-
-function searchTroubleshootingWyze() {
-    try {
-        var query = document.getElementById("troubleshootingInput").value.trim();
-        var resultDiv = document.getElementById("troubleshooting-result");
-        if (!query) {
-            resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין תיאור תקלה לחיפוש.</div>';
-            resultDiv.style.display = "block";
-            return;
-        }
-        var url = `https://samsung.wyze1.info/#/search/2/${encodeURIComponent(query)}`;
-        window.open(url, '_blank');
-        resultDiv.style.display = "none"; // מנקה תוצאות קודמות אם יש
-    } catch (e) {
-        console.error("שגיאה ב-searchTroubleshootingWyze:", e);
-        resultDiv.innerHTML = `<div class="card">שגיאה בחיפוש: ${e.message}</div>`;
-        resultDiv.style.display = "block";
-    }
-}
-
-// עדכון ה-Enter כדי שיפעיל את החיפוש באתר סמסונג כברירת מחדל
-document.getElementById('troubleshootingInput').addEventListener('keypress', function(event) {
-    if (event.key === 'Enter') {
-        event.preventDefault();
-        searchTroubleshootingSamsung(); // ברירת מחדל לאתר סמסונג
-    }
-});
-</script>
+        });
+    </script>
 </body>
 </html>
