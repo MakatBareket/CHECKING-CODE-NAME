@@ -305,6 +305,14 @@
             '7': 'יולי', '8': 'אוגוסט', '9': 'ספטמבר', 'A': 'אוקטובר', 'B': 'נובמבר', 'C': 'דצמבר'
         };
 
+        // Exception handling for specific serial numbers
+        const serialExceptions = {
+            '0L4E4DBXB0013E': {
+                productionDate: 'נובמבר 2024',
+                warrantyStatus: 'באחריות סמסונג ישראל'
+            }
+        };
+
         function lookupSerial() {
             try {
                 const serial = document.getElementById("serialInput").value.trim().toUpperCase();
@@ -321,6 +329,21 @@
                 resultDiv.style.display = "none";
 
                 setTimeout(() => {
+                    // Check for exceptions first
+                    if (serialExceptions[serial]) {
+                        const exception = serialExceptions[serial];
+                        resultDiv.innerHTML = `<div class="card">
+                                                מספר סיריאלי: ${serial}<br>
+                                                תאריך ייצור: ${exception.productionDate}<br>
+                                                סטטוס אחריות: ${exception.warrantyStatus}<br>
+                                                הערה: למידע נוסף יש לבדוק לפי קוד דגם.
+                                              </div>`;
+                        resultDiv.style.display = "block";
+                        loader.style.display = "none";
+                        showPopup();
+                        return;
+                    }
+
                     let year, month, productionDate, warrantyStatus;
 
                     // Extract year and month based on serial length
