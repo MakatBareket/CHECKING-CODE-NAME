@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>בדיקת מספר סידורי</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .result.success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .result.error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .warranty-samsung {
+            color: #007bff;
+            font-weight: bold;
+        }
+        
+        .warranty-samline {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .serial-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .info-row {
+            margin-bottom: 8px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>בדיקת מספר סידורי</h1>
+        
+        <div class="input-group">
+            <label for="serialNumber">הכנס מספר סידורי:</label>
+            <input type="text" id="serialNumber" placeholder="לדוגמה: 0L4E4DBXB0013E">
+        </div>
+        
+        <button onclick="lookupSerial()">בדוק מספר סידורי</button>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        // Exception handling for specific serial numbers
+        const serialExceptions = {
+            '0L4E4DBXB0013E': {
+                productionDate: 'נובמבר 2024',
+                warranty: '<span class="warranty-samsung">באחריות סמסונג ישראל</span>'
+            },
+            '6GR614BY100002H': {
+                productionDate: 'ינואר 2025',
+                warranty: '<span class="warranty-samline">באחריות סמליין</span>'
+            }
+        };
+
+        function lookupSerial() {
+            const serialNumber = document.getElementById('serialNumber').value.trim().toUpperCase();
+            const resultDiv = document.getElementById('result');
+            
+            if (!serialNumber) {
+                showError('אנא הכנס מספר סידורי');
+                return;
+            }
+            
+            // Check for exceptions first
+            if (serialExceptions[serialNumber]) {
+                const exception = serialExceptions[serialNumber];
+                showSuccess(`
+                    <div class="serial-info">
+                        <div class="info-row">
+                            <span class="info-label">מספר סידורי:</span> ${serialNumber}
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">תאריך ייצור:</span> ${exception.productionDate}
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">סטטוס אחריות:</span> ${exception.warranty}
+                        </div>
+                    </div>
+                `);
+                return;
+            }
+            
+            // Standard logic for other serial numbers
+            try {
+                const info = parseSerialNumber(serialNumber);
+                const warrantyInfo = determineWarranty(info);
+                
+                showSuccess(`
+                    <div class="serial-info">
+                        <div class="info-row">
+                            <span class="info-label">מספר סידורי:</span> ${serialNumber}
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">תאריך ייצור:</span> ${info.productionDate}
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">סטטוס אחריות:</span> ${warrantyInfo}
+                        </div>
+                    </div>
+                `);
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+        
+        function parseSerialNumber(serial) {
+            // Your existing parsing logic here
+            if (serial.length < 10) {
+                throw new Error('מספר סידורי לא תקין - אורך לא מספיק');
+            }
+            
+            // Example parsing logic - replace with your actual logic
+            const year = parseInt(serial.charAt(1));
+            const month = serial.charAt(2);
+            
+            const monthMap = {
+                '1': 'ינואר', '2': 'פברואר', '3': 'מרץ', '4': 'אפריל',
+                '5': 'מאי', '6': 'יוני', '7': 'יולי', '8': 'אוגוסט',
+                '9': 'ספטמבר', 'A': 'אוקטובר', 'B': 'נובמבר', 'C': 'דצמבר'
+            };
+            
+            const monthName = monthMap[month];
+            if (!monthName) {
+                throw new Error('מספר סידורי לא תקין - חודש לא מזוהה');
+            }
+            
+            const fullYear = 2020 + year; // Adjust based on your logic
+            
+            return {
+                productionDate: `${monthName} ${fullYear}`,
+                year: fullYear,
+                month: month
+            };
+        }
+        
+        function determineWarranty(info) {
+            // Your existing warranty determination logic
+            // This is just an example - replace with your actual logic
+            if (info.year >= 2024) {
+                return '<span class="warranty-samline">באחריות סמליין</span>';
+            } else {
+                return '<span class="warranty-samsung">באחריות סמסונג ישראל</span>';
+            }
+        }
+        
+        function showSuccess(message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result success';
+            resultDiv.innerHTML = message;
+            resultDiv.style.display = 'block';
+        }
+        
+        function showError(message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result error';
+            resultDiv.innerHTML = message;
+            resultDiv.style.display = 'block';
+        }
+        
+        // Allow Enter key to trigger lookup
+        document.getElementById('serialNumber').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                lookupSerial();
+            }
+        });
+    </script>
+</body>
+</html>
