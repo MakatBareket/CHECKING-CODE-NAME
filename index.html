@@ -305,13 +305,17 @@
             '7': 'יולי', '8': 'אוגוסט', '9': 'ספטמבר', 'A': 'אוקטובר', 'B': 'נובמבר', 'C': 'דצמבר'
         };
 
-        // Exception handling for specific serial numbers
-        const serialExceptions = {
-            '0L4E4DBXB00013E': {
-                productionDate: 'נובמבר 2024',
-                warrantyStatus: 'באחריות סמסונג ישראל'
-            }
-        };
+      // Exception handling for specific serial numbers
+const serialExceptions = {
+    '0L4E4DBXB00013E': {
+        productionDate: 'נובמבר 2024',
+        warrantyStatus: 'באחריות סמסונג ישראל'
+    },
+    '6GR614BY100002H': {
+        productionDate: 'ינואר 2025',
+        warrantyStatus: 'באחריות סמליין'
+    }
+};
 
         function lookupSerial() {
             try {
