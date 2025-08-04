@@ -442,11 +442,15 @@
                     } else if (smallProducts.includes(productType) && 
                               ((year === '2024' && month === 'דצמבר') || (year === '2025' && monthIndex >= 1))) {
                         warrantyProvider = '<span class="invoice-check">יש לוודא מול חשבונית רכישה</span>';
-                        explanation = `<div class="explanation">הסבר: חלק מהמוצרים הקטנים בייצור ${month} ${year} עדיין מיועדים לאחריות של סמליין (אלקטרוניקס פרו), לכן יש צורך בבדיקה מול חשבונית.<br><br>במידה וללקוח לא קיימת חשבונית - יש לפנות לבכיר / אחמ"ש לבירור נוסף.</div>`;
+                        if (year === '2024' && month === 'דצמבר') {
+                            explanation = `<div class="explanation">הסבר: חלק מהמוצרים הקטנים בייצור ${month} ${year} עדיין מיועדים לאחריות של סמליין (אלקטרוניקס פרו), לכן יש צורך בבדיקה מול חשבונית.<br><br>במידה וללקוח לא קיימת חשבונית - יש לפנות לבכיר / אחמ"ש לבירור נוסף.</div>`;
+                        }
                     } else if (whiteGoods.includes(productType) && 
                               ((year === '2024' && (month === 'נובמבר' || month === 'דצמבר')) || (year === '2025' && monthIndex >= 1))) {
                         warrantyProvider = '<span class="invoice-check">יש לוודא מול חשבונית רכישה</span>';
-                        explanation = `<div class="explanation">הסבר: חלק מהמקררים בייצור ${month} ${year} עדיין מיועדים לאחריות של סמליין (אלקטרוניקס פרו), לכן יש צורך בבדיקה מול חשבונית.<br><br>במידה וללקוח לא קיימת חשבונית - יש לפנות לבכיר / אחמ"ש לבירור נוסף.</div>`;
+                        if (year === '2024' && (month === 'נובמבר' || month === 'דצמבר')) {
+                            explanation = `<div class="explanation">הסבר: חלק מהמקררים בייצור ${month} ${year} עדיין מיועדים לאחריות של סמליין (אלקטרוניקס פרו), לכן יש צורך בבדיקה מול חשבונית.<br><br>במידה וללקוח לא קיימת חשבונית - יש לפנות לבכיר / אחמ"ש לבירור נוסף.</div>`;
+                        }
                     } else if (productionDateObj < new Date('2024-06-01')) {
                         warrantyProvider = 'לא באחריות';
                     } else if (year === '2024' && monthIndex >= 6 && monthIndex <= 12) {
