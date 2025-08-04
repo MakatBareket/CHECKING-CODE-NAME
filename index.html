@@ -9,6 +9,21 @@
 <body>
     <div class="container content active">
         <h2>בדיקת מוצר לפי מספר סיריאלי</h2>
+        <select id="productType">
+            <option value="">בחר סוג מוצר</option>
+            <option value="tv">טלוויזיה</option>
+            <option value="soundbar">מקרן קול</option>
+            <option value="projector">מקרן אור</option>
+            <option value="speaker">רמקול</option>
+            <option value="refrigerator">מקרר</option>
+            <option value="washing-machine">מכונת כביסה</option>
+            <option value="dryer">מייבש כביסה</option>
+            <option value="vacuum">שואב אבק</option>
+            <option value="microwave">מיקרוגל</option>
+            <option value="oven">תנור</option>
+            <option value="cooktop">כיריים</option>
+            <option value="dishwasher">מדיח כלים</option>
+        </select>
         <input type="text" id="serialInput" placeholder="הכנס מספר סיריאלי">
         <button onclick="lookupSerial()">חפש</button>
         <div id="loader-serial">
@@ -71,6 +86,24 @@
             transition: border-color 0.3s, box-shadow 0.3s;
             font-family: 'Rubik', sans-serif;
         }
+        select {
+            width: 100%;
+            padding: 14px;
+            margin-top: 15px;
+            border: 2px solid #457b9d;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+            background: #f7f9fb;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-family: 'Rubik', sans-serif;
+            color: #1b263b;
+        }
+        select:focus {
+            outline: none;
+            border-color: #1d3557;
+            box-shadow: 0 0 12px rgba(29, 53, 87, 0.5);
+        }
         input:focus {
             outline: none;
             border-color: #1d3557;
@@ -118,6 +151,19 @@
         .warranty-samline {
             color: #ff0000;
             font-weight: bold;
+        }
+        .warranty-samsung {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .invoice-check {
+            color: #ff0000;
+            font-weight: bold;
+        }
+        .explanation {
+            margin-top: 10px;
+            font-size: 14px;
+            line-height: 1.5;
         }
         #loader-serial {
             display: none;
@@ -251,6 +297,10 @@
                 padding: 10px;
                 font-size: 14px;
             }
+            select {
+                padding: 10px;
+                font-size: 14px;
+            }
             button {
                 padding: 10px;
                 font-size: 14px;
@@ -308,11 +358,18 @@
         function lookupSerial() {
             try {
                 const serial = document.getElementById("serialInput").value.trim().toUpperCase();
+                const productType = document.getElementById("productType").value;
                 const resultDiv = document.getElementById("serial-result");
                 const loader = document.getElementById("loader-serial");
 
-                if (!serial || (serial.length !== 11 && serial.length !== 15)) {
-                    resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי (11 או 15 תווים).</div>';
+                if (!serial) {
+                    resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי.</div>';
+                    resultDiv.style.display = "block";
+                    return;
+                }
+
+                if (!productType) {
+                    resultDiv.innerHTML = '<div class="card">שגיאה: יש לבחור סוג מוצר.</div>';
                     resultDiv.style.display = "block";
                     return;
                 }
@@ -321,7 +378,15 @@
                 resultDiv.style.display = "none";
 
                 setTimeout(() => {
-                    let year, month, productionDate, warrantyStatus;
+                    let year, month, productionDate, warrantyProvider, explanation = '';
+
+                    // Check if serial number has valid format
+                    if (serial.length !== 11 && serial.length !== 15) {
+                        resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי.</div>';
+                        resultDiv.style.display = "block";
+                        loader.style.display = "none";
+                        return;
+                    }
 
                     // Extract year and month based on serial length
                     if (serial.length === 15) {
@@ -334,32 +399,49 @@
                         productionDate = month !== 'לא ידוע' && year !== 'לא ידוע' ? `${month} ${year}` : 'לא ידוע';
                     }
 
+                    // Check if serial has valid year/month codes
+                    if (year === 'לא ידוע' || month === 'לא ידוע') {
+                        resultDiv.innerHTML = '<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי.</div>';
+                        resultDiv.style.display = "block";
+                        loader.style.display = "none";
+                        return;
+                    }
+
                     // Calculate production date
                     const monthCode = serial[serial.length === 15 ? 8 : 4];
                     const monthIndex = Object.keys(monthCodes).indexOf(monthCode) + 1; // 1-based month for Date object
                     const productionYear = parseInt(year) || 0;
                     const productionDateObj = productionYear && monthIndex >= 1 ? new Date(productionYear, monthIndex - 1, 1) : null;
 
-                    // Determine warranty status
-                    if (year === 'לא ידוע' || month === 'לא ידוע' || !productionDateObj) {
-                        warrantyStatus = 'לא באחריות';
-                    } else if (year === '2024' && month === 'דצמבר') {
-                        warrantyStatus = 'עלול להיות באחריות סמסונג ישראל, יש לבדוק לפי החשבונית';
+                    // Define small products and white goods
+                    const smallProducts = ['projector', 'soundbar', 'speaker', 'vacuum', 'microwave'];
+                    const whiteGoods = ['refrigerator'];
+                    
+                    // Determine warranty provider
+                    if (!productionDateObj) {
+                        warrantyProvider = 'לא באחריות';
+                    } else if (smallProducts.includes(productType) && 
+                              ((year === '2024' && month === 'דצמבר') || (year === '2025' && month === 'ינואר'))) {
+                        warrantyProvider = '<span class="invoice-check">יש לוודא מול חשבונית רכישה</span>';
+                        explanation = `<div class="explanation">הסבר: חלק מהמוצרים הקטנים בייצור ${month} ${year} עדיין מיועדים לאחריות של סמליין (אלקטרוניקס פרו), לכן יש צורך בבדיקה מול חשבונית.<br><br>במידה וללקוח לא קיימת חשבונית - יש לפנות לבכיר / אחמ"ש לבירור נוסף.</div>`;
+                    } else if (whiteGoods.includes(productType) && year === '2024' && month === 'נובמבר') {
+                        warrantyProvider = '<span class="invoice-check">יש לוודא מול חשבונית רכישה</span>';
+                        explanation = `<div class="explanation">הסבר: חלק מהמקררים בייצור ${month} ${year} עדיין מיועדים לאחריות של סמליין (אלקטרוניקס פרו), לכן יש צורך בבדיקה מול חשבונית.<br><br>במידה וללקוח לא קיימת חשבונית - יש לפנות לבכיר / אחמ"ש לבירור נוסף.</div>`;
                     } else if (productionDateObj < new Date('2024-06-01')) {
-                        warrantyStatus = 'לא באחריות';
+                        warrantyProvider = 'לא באחריות';
                     } else if (year === '2024' && monthIndex >= 6 && monthIndex <= 12) {
-                        warrantyStatus = '<span class="warranty-samline">באחריות סמליין</span>';
+                        warrantyProvider = '<span class="warranty-samline">באחריות סמליין</span>';
                     } else if (year === '2025' && monthIndex >= 1) {
-                        warrantyStatus = 'באחריות סמסונג ישראל';
+                        warrantyProvider = '<span class="warranty-samsung">באחריות סמסונג ישראל</span>';
                     } else {
-                        warrantyStatus = 'לא באחריות';
+                        warrantyProvider = 'לא באחריות';
                     }
 
                     resultDiv.innerHTML = `<div class="card">
                                             מספר סיריאלי: ${serial}<br>
                                             תאריך ייצור: ${productionDate}<br>
-                                            סטטוס אחריות: ${warrantyStatus}<br>
-                                            הערה: למידע נוסף יש לבדוק לפי קוד דגם.
+                                            ספק האחריות: ${warrantyProvider}
+                                            ${explanation}
                                           </div>`;
                     resultDiv.style.display = "block";
                     loader.style.display = "none";
@@ -367,7 +449,9 @@
                 }, 1000);
             } catch (e) {
                 console.error("שגיאה ב-lookupSerial:", e);
-                resultDiv.innerHTML = `<div class="card">שגיאה בעיבוד המספר הסיריאלי: ${e.message}</div>`;
+                const resultDiv = document.getElementById("serial-result");
+                const loader = document.getElementById("loader-serial");
+                resultDiv.innerHTML = `<div class="card">שגיאה: יש להזין מספר סיריאלי חוקי.</div>`;
                 resultDiv.style.display = "block";
                 loader.style.display = "none";
             }
